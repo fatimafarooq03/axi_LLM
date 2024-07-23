@@ -3,7 +3,19 @@
 // The module should serve as an AXI FIFO with parametrizable data and address interface widths.
 // It should support all burst types and optionally delay the address channel until either the write data is completely shifted into the FIFO or the read data FIFO has enough capacity to fit the whole burst.
 
-// Use the axi_fifo_rd and axi_fifo_wr submodules as they are generated and do not further modify them in any way (use them as black boxes).
+// Integrates two submodules (axi_fifo_wr and axi_fifo_rd) to handle AXI write and read transactions with FIFO buffering
+
+// Instantiates axi_fifo_wr:
+// Manages AXI write transactions
+// Buffers incoming write data using a FIFO buffer
+// Ensures write addresses are held until sufficient space is available in the FIFO (if WRITE_FIFO_DELAY is enabled)
+// Forwards write addresses and data to the AXI master interface
+
+// Instantiates axi_fifo_rd:
+// Manages AXI read transactions
+// Buffers incoming read data using a FIFO buffer
+// Ensures read addresses are held until sufficient space is available in the FIFO (if READ_FIFO_DELAY is enabled)
+// Forwards read addresses to the AXI master interface and provides read data to the AXI slave interface
 
 // Develop a Verilog module that includes the following parameters and ports:
 
@@ -126,7 +138,5 @@ module axi_fifo #
     input  wire                     m_axi_rvalid,
     output wire                     m_axi_rready
 );
-
-// The final output should be a complete Verilog code snippet with the module definition, input/output declaration, and the logic to handle the AXI FIFO.
 
 endmodule

@@ -3,6 +3,27 @@
 // The module should serve as a descriptor multiplexer/demultiplexer for the AXI CDMA module.
 // It should enable sharing the AXI CDMA module between multiple request sources, interleaving requests
 // and distributing responses.
+//  manages the multiplexing of descriptors from multiple input ports to a single output for the AXI CDMA core. It ensures fair arbitration using a round-robin scheme, and correctly handles the forwarding and demultiplexing of status signals, thus enabling smooth and efficient data transfer in the AXI CDMA system.
+
+// The module receives descriptor inputs (read address, write address, length, tag) from multiple ports
+// Validity of each input descriptor is checked
+
+// arbiter module instantiated to handle the arbitration logic
+// The arbiter submodule selects one of the valid input descriptors based on a round-robin scheme and priority settings
+// Signals grant and grant_encoded determine which input port's descriptor is selected
+
+// The selected descriptor fields are assigned to the internal registers and then to the output signals
+// Validity of the output descriptor is checked
+
+// The multiplexed descriptor fields are sent to the AXI CDMA core via the output signals
+// The module waits for the AXI CDMA core to be ready to accept the next descriptor
+
+// The module receives status inputs (tag, error) from the AXI CDMA core
+// Status validity is checked 
+
+// The status signals are demultiplexed back to the appropriate input port based on the status tag
+// The status fields are updated in the output signals
+
 
 // Develop a Verilog module that includes the following parameters and ports:
 
@@ -50,7 +71,4 @@ module axi_cdma_desc_mux #
     output wire [PORTS-1:0]                m_axis_desc_status_valid
 );
 
-// The final output should be a complete Verilog code snippet with the module definition, input/output declaration, and the logic to handle the descriptor multiplexing.
-
 endmodule
-

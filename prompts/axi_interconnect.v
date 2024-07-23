@@ -2,6 +2,34 @@
 
 // The module should serve as an AXI shared interconnect with parametrizable data and address interface widths and master and slave interface counts.
 // It should support all burst types and be small in area, but does not support concurrent operations.
+// efficiently routes AXI transactions between multiple slave and master interfaces, handling address decoding, arbitration, and data transfer
+
+// An arbiter instance is instantiated to manage access to shared resources by multiple slave interfaces. It implements round-robin arbitration to ensure fair access
+// Decodes the incoming addresses from the slave interfaces to determine which master interface should handle the transaction. This involves checking the base addresses and address widths of the configured regions
+
+// The axi_fifo_wr and axi_fifo_rd submodules are instantiated to handle write and read operations, respectively.
+
+// Read Operations:
+// Read requests are received from slave interfaces.
+// The appropriate master interface is selected based on address decoding.
+// Data is read from the master interface and buffered using the axi_fifo_rd submodule.
+// Buffered data is then forwarded to the requesting slave interface.
+
+// Write Operations:
+// Write requests are received from slave interfaces
+// The appropriate master interface is selected based on address decoding
+// Data is buffered using the axi_fifo_wr submodule
+// Buffered data is then forwarded to the master interface
+
+// Compromises of a state machine:
+// STATE_IDLE: The default state where the module waits for a transaction request.
+// STATE_DECODE: Determines the target master interface based on the address.
+// STATE_WRITE: Handles write operations, storing and forwarding write data.
+// STATE_WRITE_RESP: Manages write response from the master interface.
+// STATE_WRITE_DROP: Handles cases where the write operation is invalid and must be dropped.
+// STATE_READ: Manages read operations, storing and forwarding read data.
+// STATE_READ_DROP: Handles cases where the read operation is invalid and must be dropped.
+// STATE_WAIT_IDLE: Ensures all transactions are completed before returning to STATE_IDLE
 
 // Develop a Verilog module that includes the following parameters and ports:
 
@@ -129,7 +157,5 @@ module axi_interconnect #
     input  wire [M_COUNT-1:0]              m_axi_rvalid,
     output wire [M_COUNT-1:0]              m_axi_rready
 );
-
-// The final output should be a complete Verilog code snippet with the module definition, input/output declaration, and the logic to handle the AXI interconnect.
 
 endmodule

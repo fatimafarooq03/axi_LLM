@@ -2,6 +2,19 @@
 
 // The module should serve as a descriptor multiplexer/demultiplexer for an AXI DMA module.
 // It should enable sharing the AXI DMA module between multiple request sources, interleaving requests and distributing responses.
+// implements a mechanism to multiplex descriptor inputs from multiple sources and direct them to a single AXI CDMA core using arbitration.
+
+// Ensures that the tag width parameters are correctly set for proper operation.
+
+// Handles descriptor inputs from multiple sources.
+// Uses the arbiter submodule to handle arbitration logic (round robin). The arbiter decides which input port gets access to the shared descriptor output 
+// Based on the granted input port, the module selects the appropriate descriptor fields to forward to the AXI DMA core
+
+// The selected descriptor fields are forwarded to the AXI DMA core via the output ports.
+// Manages the readiness of the input and output paths, ensuring data is only transferred when both are ready.
+
+// Receives status information from the AXI DMA core, including length, tag, ID, destination, user signals, and error status.
+// Routes the status information back to the appropriate input port based on the tags, using internal registers and logic to ensure the correct matching of status responses to the corresponding requests.
 
 // Develop a Verilog module that includes the following parameters and ports:
 
@@ -66,7 +79,5 @@ module axi_dma_desc_mux #
     output wire [PORTS*4-1:0]               m_axis_desc_status_error,
     output wire [PORTS-1:0]                 m_axis_desc_status_valid
 );
-
-// The final output should be a complete Verilog code snippet with the module definition, input/output declaration, and the logic to handle the descriptor multiplexing/demultiplexing for the AXI DMA module.
 
 endmodule

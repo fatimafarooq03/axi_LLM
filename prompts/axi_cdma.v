@@ -3,6 +3,24 @@
 // The module should serve as an AXI to AXI DMA engine with parametrizable data and address interface widths.
 // It should generate full-width INCR bursts only, with a parametrizable maximum burst length.
 // The module must support unaligned transfers, which can be disabled via a parameter to save on resource consumption.
+// Handles descriptor-based DMA transfers between memory regions over the AXI bus
+
+// When s_axis_desc_valid is asserted, the module reads the descriptor, including the read and write addresses, length, and tag.
+
+// Compromises of the read state machine which transitions from READ_STATE_IDLE to READ_STATE_START to calculate the number of words to transfer
+// Manages the read address and the number of words remaining to be read.
+
+// Compromises of Write State Machine which transitions from AXI_STATE_IDLE to AXI_STATE_WRITE when a new write command is ready
+// Buffers the read data and issues write requests to the AXI bus
+// Manages the write address and the number of words remaining to be written.
+
+// Handles data alignment and burst transfers for both read and write operations.
+// Uses internal FIFO buffers to manage data flow and ensure efficient AXI transactions.
+
+// After completing a DMA transfer, updates the status FIFO with the tag and error status and outputs the status
+
+// Manages various control signals and registers to track the current state, addresses, counts, and flags necessary for the DMA operations.
+// Includes logic for handling unaligned transfers if enabled
 
 // Develop a Verilog module that includes the following parameters and ports:
 
@@ -78,8 +96,6 @@ module axi_cdma #
     // Configuration
     input  wire                       enable  // Configuration enable signal
 );
-
-// The final output should be a complete Verilog code snippet with the module definition, input/output declaration, and the logic to handle the AXI DMA engine.
 
 endmodule
 

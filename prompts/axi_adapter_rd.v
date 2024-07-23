@@ -1,8 +1,22 @@
 // Create a Verilog module named axi_adapter_rd.
 
-// The module should serve as an AXI width adapter with parametrizable data and address interface widths.
+// The module should serve as an AXI width adapter for read transactions with parametrizable data and address interface widths.
 // It must support INCR burst types and narrow bursts. This module is essential for designing an efficient
 // and flexible data transfer system within an AXI-based design.
+
+// Handles different data bus widths between the slave and master interfaces
+// can split or merge read transactions based on the width difference
+// EXPAND Parameter: Determines whether the master bus is wider (EXPAND = 1) or narrower (EXPAND = 0) than the slave bus
+
+// The module uses a state machine with states STATE_IDLE, STATE_DATA, STATE_DATA_READ, and STATE_DATA_SPLIT to manage read transactions
+// The module compromises of internal paramters, state registers, data registers, and control signals
+// IDLE State: Waits for a new read burst. When a valid read address is received (s_axi_arvalid), it captures the address and burst parameters and transitions to the appropriate state based on the bus widths and conversion parameters.
+// DATA State: Transfers read data directly if the master bus width is the same as the slave bus width. If the master bus is wider, it splits the read data. If the master bus is narrower, it merges read data from multiple transactions.
+// DATA_READ State: Handles splitting of reads for wider master bus widths. It calculates the correct segment of data to transfer based on the address and burst parameters.
+// DATA_SPLIT State: Manages the transfer of split data segments back to the slave interface.
+
+// CONVERT_BURST and CONVERT_NARROW_BURST control how bursts are handled when adapting between different bus widths
+// Allows repacking of bursts to optimize data transfer, either by splitting larger bursts into smaller ones or merging smaller bursts into larger ones
 
 // Develop a Verilog module that includes the following parameters and ports:
 
@@ -72,7 +86,5 @@ module axi_adapter_rd #
     input  wire                     m_axi_rvalid,
     output wire                     m_axi_rready
 );
-
-// The final output should be a complete Verilog code snippet with the module definition, input/output declaration, and the logic to handle the AXI width adaptation.
 
 endmodule

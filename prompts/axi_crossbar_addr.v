@@ -2,6 +2,20 @@
 
 // The module should serve as an address decode and admission control module for an AXI nonblocking crossbar interconnect.
 
+// The module receives address, ID, protection, and QoS signals from the slave interface
+// Determines the target master interface for each transaction based on the address
+// Iterates through all possible master regions to find a match for the incoming address
+
+// Manages concurrent transactions and ensures the proper handling of address requests and responses
+// Uses internal registers and counters to track in-flight transactions and ensure that the number of concurrent transactions does not exceed configured limits
+
+// Manages the completion and error responses for transactions
+// Tracks and matches completion IDs to ensure responses are sent to the correct slave interface
+
+// Comprises of state machine that controls the module's state transitions for address decoding and transaction processing
+// STATE_IDLE: Waits for a valid address request and initiates address decoding
+// STATE_DECODE: Processes the decoded address and manages transaction limits
+
 // Develop a Verilog module that includes the following parameters and ports:
 
 module axi_crossbar_addr #
@@ -60,7 +74,5 @@ module axi_crossbar_addr #
     input  wire [ID_WIDTH-1:0]        s_cpl_id,
     input  wire                       s_cpl_valid
 );
-
-// The final output should be a complete Verilog code snippet with the module definition, input/output declaration, and the logic to handle the address decode and admission control.
 
 endmodule

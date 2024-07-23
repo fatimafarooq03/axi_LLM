@@ -1,8 +1,48 @@
 // Create a Verilog module named axil_register_wr.
 
 // The module should serve as an AXI lite register with parametrizable data and address interface widths.
-// It should handle WR, W, and B channels only and insert simple buffers into all channels.
-// The channel registers can be individually bypassed.
+// It should handle AW, W, and B channels only and insert simple buffers into all channels.
+// The channel registers can be individually bypassed
+// includes the Address Write (AW) channel, Write Data (W) channel, and Write Response (B) channel
+// responsible for handling AXI Lite write transactions between a slave interface and a master interface
+// Handles single data transfers per transaction and does not support burst transactions
+
+// AW Channel (Address Write Channel): manages address write requests
+// Skid Buffer (AW_REG_TYPE > 1):
+// Registers are used to temporarily store the address and protect signals (m_axil_awaddr, m_axil_awprot).
+// Control logic handles the transfer of data between the input and output registers, ensuring no bubble cycles.
+// Uses additional temporary registers for holding data when the output is not ready.
+
+// Simple Buffer (AW_REG_TYPE == 1):
+// A single set of registers is used for address and protect signals.
+// Simpler control logic with possible bubble cycles.
+
+// Bypass (AW_REG_TYPE == 0):
+// Directly connects slave inputs to master outputs without any intermediate registers.
+
+// W Channel (Write Data Channel): handles the write data and strobe signals.
+// Skid Buffer (W_REG_TYPE > 1):
+// uses additional temporary registers to handle the data transfer without bubble cycles.
+// Ensures data (m_axil_wdata) and strobe signals (m_axil_wstrb) are stored and transferred correctly.
+
+// Simple Buffer (W_REG_TYPE == 1):
+// Uses a single set of registers for data and strobe signals.
+// Simpler control logic with possible bubble cycles.
+
+// Bypass (W_REG_TYPE == 0):
+// Direct connection of write data and strobe signals from the slave to the master interface.
+
+// B Channel (Write Response Channel): handles write responses from the master interface back to the slave.
+// Skid Buffer (B_REG_TYPE > 1):
+// Uses additional temporary registers for write responses to avoid bubble cycles.
+// Manages the transfer of response signals (s_axil_bresp, s_axil_bvalid) through control logic.
+
+// Simple Buffer (B_REG_TYPE == 1):
+// Uses a single set of registers for write response signals.
+// Simpler control logic with possible bubble cycles.
+
+// Bypass (B_REG_TYPE == 0):
+// Directly connects the write response signals from the master to the slave.
 
 // Develop a Verilog module that includes the following parameters and ports:
 
@@ -51,7 +91,5 @@ module axil_register_wr #
     input  wire                     m_axil_bvalid,  // Master write response valid
     output wire                     m_axil_bready  // Master write response ready
 );
-
-// The final output should be a complete Verilog code snippet with the module definition, input/output declaration, and the logic to handle the AXI lite register functionality.
 
 endmodule

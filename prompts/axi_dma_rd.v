@@ -5,6 +5,24 @@
 // The module should serve as an AXI to AXI stream DMA engine with parametrizable data and address interface widths.
 // It should generate full-width INCR bursts only, with a parametrizable maximum burst length.
 // The module must support unaligned transfers, which can be disabled via a parameter to save on resource consumption.
+// read engine designed to manage read transactions from an AXI master interface and stream the data out through an AXI stream interface
+
+// Defines various parameters for AXI data and address widths, stream data widths, descriptor lengths, tag widths, and optional features such as scatter/gather and unaligned transfers
+
+// AXI read descriptors are provided via signals, which specify the address, length, tag, and user-specific information 
+// Read descriptor status is sent out via signals, indicating the completion and any errors encountered
+
+// Sets up AXI read address transactions by issuing AR (address read) commands using the signals
+// Read data is received via signals, which include the data, response, and status information
+
+// compromises of AXI state machine 
+// operates in states like AXI_STATE_IDLE and AXI_STATE_START
+// Handles the flow of data from the AXI read interface to the AXI stream interface, including managing data shifts, cycle counts, and the transmission of signals
+
+// Output FIFO: Used to buffer data between the AXI read data and the AXI stream output, ensuring that data is stored and forwarded correctly even if there is backpressure on the stream interface
+
+// Data read from the AXI master is streamed out via the signals, which include data, keep, last, ID, destination, and user signals
+// The module includes logic to detect and report errors
 
 // Develop a Verilog module that includes the following parameters and ports:
 
@@ -82,7 +100,5 @@ module axi_dma_rd #
     // Configuration
     input  wire                       enable  // Configuration enable signal
 );
-
-// The final output should be a complete Verilog code snippet with the module definition, input/output declaration, and the logic to handle the AXI to AXI stream DMA engine.
 
 endmodule

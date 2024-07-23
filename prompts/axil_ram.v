@@ -1,6 +1,21 @@
-// Create a Verilog module named axil_ram.
+// Create a Verilog module named axil_ram
 
 // The module should serve as an AXI lite RAM with parametrizable data and address interface widths.
+// Handles read and write operations to an internal memory array. It supports an optional pipeline register for read data to improve performance
+// Only supports single, discrete read and write transactions
+
+// comprises of internal memory array initialized to 0
+
+// Check if both write address and write data are valid and there are no pending write responses.
+// If true, acknowledge the address and data, and enable memory write
+// Update memory array with new data using write strobe masking.
+
+// Check if the read address is valid and there is no pending read data.
+// If true, acknowledge the address and enable memory read (mem_rd_en).
+// Retrieve data from memory array.
+// If PIPELINE_OUTPUT is enabled, pipelines the read data
+
+// Drives output signals based on the internal state
 
 // Develop a Verilog module that includes the following parameters and ports:
 
@@ -37,7 +52,5 @@ module axil_ram #
     output wire                   s_axil_rvalid,  // Read response valid
     input  wire                   s_axil_rready  // Read response ready
 );
-
-// The final output should be a complete Verilog code snippet with the module definition, input/output declaration, and the logic to handle the AXI lite RAM functionality.
 
 endmodule

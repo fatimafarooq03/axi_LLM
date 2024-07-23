@@ -4,6 +4,31 @@
 // It should generate full-width INCR bursts only, with a parametrizable maximum burst length.
 // The module must support unaligned transfers, which can be disabled via a parameter to save on resource consumption.
 
+// Defines parameters for AXI data width, address width, ID width, burst length, and other configuration options for handling AXI and AXI Stream interfaces
+// compromises of state machine with the following states:
+// STATE_IDLE: Waits for a new write descriptor to initiate a write operation
+// STATE_START: Sets up the address, burst length, and other parameters to start a write transaction
+// STATE_WRITE: Manages the transfer of write data from the AXI Stream interface to the AXI write data transactions
+// STATE_FINISH_BURST: Completes the current AXI burst and prepares for the next burst if there is more data
+// STATE_DROP_DATA: Discards excess input data if the AXI write transaction is already complete
+
+// Shift Register Logic: Aligns incoming AXI Stream data to the AXI write data format, especially handling unaligned transfers
+// Status FIFO: Buffers the status information of write descriptors, to be reported after the AXI write transactions are completed
+// Output FIFO: Buffers AXI write data to ensure continuous data flow and to handle backpressure from the AXI interface
+
+// Accepts AXI write descriptors and stream data 
+// Manages the descriptors and data alignment, including support for unaligned transfers if enabled
+// Generates appropriate control signals for the readiness and validity of input data
+
+// Generates AXI write address transactions
+// Manages burst transactions and ensures data is correctly written to the target addresses
+// Reports the status of write transactions via status signals
+
+// state machine controls various signals to manage the data flow
+// uses internal signals to track progress and manage data alignment, cycle counts, and error handling
+
+// Detects and reports AXI protocol errors such as slave errors and decode errors through status outputs
+
 // Develop a Verilog module that includes the following parameters and ports:
 
 module axi_dma_wr #
@@ -85,7 +110,5 @@ module axi_dma_wr #
     input  wire                       enable,  // Configuration enable signal
     input  wire                       abort  // Configuration abort signal
 );
-
-// The final output should be a complete Verilog code snippet with the module definition, input/output declaration, and the logic to handle the AXI stream to AXI DMA engine.
 
 endmodule

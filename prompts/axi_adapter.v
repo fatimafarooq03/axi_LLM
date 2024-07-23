@@ -4,7 +4,14 @@
 // It must support INCR burst types and narrow bursts. This module acts as a wrapper for axi_adapter_rd
 // and axi_adapter_wr, providing an efficient and flexible data transfer system within an AXI-based design.
 
-// Use the axi_adapter_rd and axi_adapter_wr submodules as they are generated and do not further modify them in any way (use them as black boxes).
+// top-level module that integrates axi_adapter_rd and axi_adapter_wr
+// Instantiates axi_adapter_wr_inst to handle the write operations
+// Instantiates axi_adapter_rd_inst to handle the read operations
+
+// AXI slave interface receives write/read addresses, data, and control signals
+// The axi_adapter_wr/axi_adapter_rd submodule processes the incoming write transactions, adapting the data width if necessary
+// Outputs the adapted write transactions to the AXI master
+// The read data is then sent back to the AXI slave interface
 
 // Develop a Verilog module that includes the following parameters and ports:
 
@@ -129,6 +136,5 @@ module axi_adapter #
     output wire                     m_axi_rready
 );
 
-// The final output should be a complete Verilog code snippet with the module definition, input/output declaration, and the logic to handle the AXI width adaptation.
-
 endmodule
+

@@ -1,6 +1,21 @@
 // Create a Verilog module named axil_adapter_rd.
 
 // The module should serve as an AXI lite width adapter module with parametrizable data and address interface widths.
+// Intended for low-throughput control and status register accesses. AXI-Lite does not support burst transactions and has a simpler interface
+
+// comprises of AXI Lite Slave Interface: Receives read address and sends read data and response.
+// comprises of AXI Lite Master Interface: Sends read address and receives read data and response.
+
+// uses a state machine with two states, STATE_IDLE and STATE_DATA, to manage the read transaction
+// STATE_IDLE: Waits for a valid read address from the slave interface. Once received, it forwards this address to the master interface.
+// STATE_DATA: Waits for the read data from the master interface. It then processes and potentially segments the data before sending it back to the slave interface
+
+// Single Cycle Transfer: If the master interface data width is equal to or wider than the slave interface data width, the data transfer occurs in a single cycle.
+// Segmented Transfer: If the master interface data width is narrower than the slave interface data width, the data transfer may need multiple cycles to accumulate the full width of data
+
+// State Registers: Track the current state of the state machine.
+// Data and Address Registers: Store addresses, data, and control signals for both slave and master interfaces.
+// Segment Registers: Manage the segmentation of data when the master interface is narrower than the slave interface.
 
 // Develop a Verilog module that includes the following parameters and ports:
 

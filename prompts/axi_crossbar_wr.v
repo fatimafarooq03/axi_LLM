@@ -3,6 +3,20 @@
 // The module should serve as an AXI nonblocking crossbar interconnect with parametrizable data and address interface widths and master and slave interface counts.
 // It should support all burst types and be fully nonblocking with completely separate read and write paths;
 // ID based transaction ordering protection logic; and per-port address decode, admission control, and decode error handling.
+// responsible for routing write transactions from multiple AXI slave interfaces to multiple AXI master interfaces
+
+// Validates the configured parameters to ensure they are within acceptable ranges
+
+// For each slave interface, an axi_crossbar_addr submodule is instantiated that handles address decoding and determines which master interface should handle each transaction
+
+// Keeps track of the selected master interface for each write command using internal registers
+// If a write command is valid and not in error, the state is updated to reflect the selection
+
+// Writes data from each slave interface is routed to the appropriate master interface based on the selection made during address decoding
+
+// An arbiter submodule is initiated that manages the arbitration for write responses from master interfaces, ensuring correct routing back to the slave interfaces
+
+// Both slave and master interfaces use axi_register_wr submodules for buffering AXI signals. These submodules manage the register types for address (AW), data (W), and response (B) channels
 
 // Develop a Verilog module that includes the following parameters and ports:
 
@@ -108,7 +122,5 @@ module axi_crossbar_wr #
     input  wire [M_COUNT-1:0]               m_axi_bvalid,
     output wire [M_COUNT-1:0]               m_axi_bready
 );
-
-// The final output should be a complete Verilog code snippet with the module definition, input/output declaration, and the logic to handle the nonblocking crossbar interconnect.
 
 endmodule

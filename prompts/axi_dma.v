@@ -3,8 +3,12 @@
 // The module should serve as an AXI to AXI stream DMA engine with parametrizable data and address interface widths.
 // It should generate full-width INCR bursts only, with a parametrizable maximum burst length.
 // The module must support unaligned transfers, which can be disabled via a parameter to save on resource consumption.
+// combines the functionality of two submodules, axi_dma_rd and axi_dma_wr, to handle both read and write DMA operations over an AXI interface
+// Instantiates axi_dma_rd that handles AXI read operations and provides read data over an AXI Stream interface
+// Instantiates axi_dma_wr that Handles AXI write operations, taking data from an AXI Stream interface and writing it to AXI memory
 
-// Use the axi_dma_rd and axi_dma_wr submodules as they are generated and do not further modify them in any way (use them as black boxes).
+// Connects the external AXI interfaces and AXI Stream interfaces to the corresponding signals of the submodules
+// Read and write operations are enabled or disabled through control signals 
 
 // Develop a Verilog module that includes the following parameters and ports:
 

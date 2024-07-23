@@ -2,8 +2,19 @@
 
 // The module should serve as an AXI lite register with parametrizable data and address interface widths.
 // It should insert skid buffers into all channels. The channel registers can be individually bypassed.
-// This module is a wrapper for axil_register_rd and axil_register_wr.
-// Use the axil_register_rd and axil_register_wr submodules as they are generated and do not further modify them in any way (use them as black boxes).
+// This module is a wrapper for axil_register_rd and axil_register_wr
+// Handles single data transfers per transaction and does not support burst transactions
+
+// Instantiates axil_register_wr for handling write transactions.
+// Instantiates axil_register_rd for handling read transactions.
+
+// axil_register_wr:
+// Handles the write address (AW), data (W), and response (B) channels
+// Implements optional buffers to control data flow and pipeline stages based on the provided parameters
+
+// axil_register_rd:
+// Handles the read address (AR) and data (R) channels
+// Implements optional buffers to control data flow and pipeline stages based on the provided parameters
 
 // Develop a Verilog module that includes the following parameters and ports:
 
@@ -70,7 +81,5 @@ module axil_register #
     input  wire                     m_axil_rvalid,  // Master read response valid
     output wire                     m_axil_rready  // Master read response ready
 );
-
-// The final output should be a complete Verilog code snippet with the module definition, input/output declaration, and the logic to handle the AXI lite register functionality.
 
 endmodule

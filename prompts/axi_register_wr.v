@@ -3,6 +3,29 @@
 // The module should serve as an AXI register with parametrizable data and address interface widths.
 // It should support WR, W, and B channels only, support all burst types, and insert simple buffers or skid buffers into all channels.
 // The channel register types can be individually changed or bypassed.
+// Implements buffering and pipelining for AXI write channels (AW, W, B) with configurable register types
+
+// Compromises of AXI slave interface: Receives write address, write data, and write response signals.
+// Compromises of AXI master interface: Sends write address, write data, and write response signals.
+
+// AW Channel:
+// Skid Buffer (AW_REG_TYPE > 1): Implements no bubble cycles, using temporary storage registers.
+// Simple Register (AW_REG_TYPE == 1): Simple buffering with possible bubble cycles.
+// Bypass (AW_REG_TYPE == 0): Direct connection without buffering.
+
+// W Channel:
+// Skid Buffer (W_REG_TYPE > 1): Implements no bubble cycles, using temporary storage registers.
+// Simple Register (W_REG_TYPE == 1): Simple buffering with possible bubble cycles.
+// Bypass (W_REG_TYPE == 0): Direct connection without buffering.
+
+// B Channel:
+// Skid Buffer (B_REG_TYPE > 1): Implements no bubble cycles, using temporary storage registers.
+// Simple Register (B_REG_TYPE == 1): Simple buffering with possible bubble cycles.
+// Bypass (B_REG_TYPE == 0): Direct connection without buffering
+
+// Compromises of Registers and Control Signals: Manage data flow and readiness for each channel
+// Compromises of Datapath Control: Logic to transfer data between slave and master interfaces, with conditional storage based on buffer type
+// Compromises of State Management: Ensures proper data handling and transfer based on the AXI protocol
 
 // Develop a Verilog module that includes the following parameters and ports:
 
@@ -84,7 +107,5 @@ module axi_register_wr #
     input  wire                     m_axi_bvalid,
     output wire                     m_axi_bready
 );
-
-// The final output should be a complete Verilog code snippet with the module definition, input/output declaration, and the logic to handle the AXI register functionality.
 
 endmodule

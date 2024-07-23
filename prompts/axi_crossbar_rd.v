@@ -1,8 +1,28 @@
-// Create a Verilog module named axi_crossbar_rd.
+// Create a Verilog module named axi_crossbar_rd
 
+// Handles the routing of read transactions from multiple AXI slave interfaces to multiple AXI master interfaces
 // The module should serve as an AXI nonblocking crossbar interconnect with parametrizable data and address interface widths and master and slave interface counts.
 // It should support all burst types and be fully nonblocking with completely separate read and write paths;
 // ID based transaction ordering protection logic; and per-port address decode, admission control, and decode error handling.
+
+// Decodes addresses and arbitrates between multiple read address (AR) requests.
+// axi_crossbar_addr instantiated for each slave interface.
+// Determines the target master interface for each read request based on the address, managing access control and address region mapping
+
+// Manages read data (R) responses from master interfaces and forwards them to the appropriate slave interfaces
+// instantiates the arbiter to arbitrate read responses from multiple master interfaces to the slave interface, ensures that the correct response is forwarded to the correct slave based on the ID and grants access to one master interface at a time
+// instantiates axi_register_rd that registers the AXI read signals from the slave side to ensure proper timing and synchronization
+// Ensures that read responses are correctly routed back to the initiating slave interface, handling data, ID, and control signals
+
+// Tracks in-flight transactions to manage concurrency and ensure response matching.
+// Utilizes internal logic and counters
+// instantiates arbiter that arbitrates address requests from multiple slave interfaces to the master interface, ensures that only one slave interface can access the master interface at a time and handles blocking and acknowledgment of requests
+// Manages transaction counts and ensures that the number of concurrent transactions does not exceed configured limits.
+
+// master-side register (axi_register_rd) is instantiated to register the read address and read data channels for the master interface
+// ensures that the signals are properly buffered and synchronized before they are sent to the master interface
+// Configurable buffering (bypass, simple buffer, skid buffer) for AR and R channels to manage timing and data integrity
+// Read responses from the master interface are then forwarded back to the appropriate slave interface
 
 // Develop a Verilog module that includes the following parameters and ports:
 
@@ -94,7 +114,5 @@ module axi_crossbar_rd #
     input  wire [M_COUNT-1:0]               m_axi_rvalid,
     output wire [M_COUNT-1:0]               m_axi_rready
 );
-
-// The final output should be a complete Verilog code snippet with the module definition, input/output declaration, and the logic to handle the nonblocking crossbar interconnect.
 
 endmodule

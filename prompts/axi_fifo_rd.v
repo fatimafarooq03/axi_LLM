@@ -3,6 +3,24 @@
 // The module should serve as an AXI FIFO with parametrizable data and address interface widths.
 // It should handle AR and R channels only and support all burst types.
 // The module must optionally delay the address channel until either the read data FIFO is empty or has enough capacity to fit the whole burst.
+// manages the read address and data flow between AXI master and slave interfaces while ensuring data integrity and performance
+
+// FIFO buffer comprimses 
+// Memory Array that stores read data and associated signals (e.g., last signal, response, ID, user signals)
+// Write and Read Pointers that manage the write and read positions in the FIFO buffer
+
+// Module determines whether the FIFO is full or empty based on the pointer values
+
+// Depending on FIFO_DELAY, the module either bypasses the AR channel directly or uses a state machine to manage read address transactions based on FIFO availability
+// State Machine (optional with FIFO_DELAY) ensures read addresses are only sent to the AXI master when there is enough space in the FIFO to store the incoming data
+
+// Write Control: Determines when to write incoming read data to the FIFO.
+// Read Control: Determines when to read data from the FIFO and transfer it to the output register
+// Store Output: Controls the transfer of read data from the FIFO to the output register for the AXI slave interface
+
+// Write Logic: Writes data from the AXI master interface into the FIFO if it is not full.
+// Read Logic: Reads data from the FIFO if it is not empty and transfers it to the output register.
+// Output Register: Holds the read data and signals for the AXI slave interface until they are ready to be transferred
 
 // Develop a Verilog module that includes the following parameters and ports:
 

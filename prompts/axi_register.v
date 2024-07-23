@@ -4,7 +4,18 @@
 // It should support all burst types and insert simple buffers or skid buffers into all channels.
 // The channel register types can be individually changed or bypassed.
 // This module is a wrapper for axi_register_rd and axi_register_wr.
-// Use the axi_register_rd and axi_register_wr submodules as they are generated and do not further modify them in any way (use them as black boxes).
+// Top-level module that instantiates two submodules: axi_register_wr and axi_register_rd
+
+// Compromises of AXI slave interface: Receives write and read address, write data, and read/write responses.
+// Compromises of AXI master interface: Sends write and read address, write data, and read/write responses.
+
+// axi_register_wr instance: 
+// Handles AXI write address (AW), write data (W), and write response (B) channels.
+// Buffers or pipelines the write operations based on the configured register type (bypass, simple buffer, or skid buffer).
+
+// axi_register_rd instance:
+// Handles AXI read address (AR) and read data (R) channels.
+// Buffers or pipelines the read operations based on the configured register type (bypass, simple buffer, or skid buffer).
 
 // Develop a Verilog module that includes the following parameters and ports:
 
@@ -132,7 +143,5 @@ module axi_register #
     input  wire                     m_axi_rvalid,
     output wire                     m_axi_rready
 );
-
-// The final output should be a complete Verilog code snippet with the module definition, input/output declaration, and the logic to handle the AXI register functionality.
 
 endmodule

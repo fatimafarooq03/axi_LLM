@@ -4,6 +4,24 @@
 // It should handle WR, W, and B channels only and support all burst types.
 // The module must optionally delay the address channel until the write data is shifted completely into the write data FIFO,
 // or the current burst completely fills the write data FIFO.
+// Handles AXI write transactions efficiently using a FIFO buffer to store write data temporarily
+
+// FIFO buffer compromises of: 
+// Memory Array that stores write data and associated signals (e.g., last signal, write strobe, user signals).
+// Write and Read Pointers that manage the write (wr_ptr_reg) and read (rd_ptr_reg) positions in the FIFO buffer.
+
+// Determine whether the FIFO is full or empty based on the pointer values.
+
+// Depending on FIFO_DELAY, the module either bypasses the AW channel directly or uses a state machine to manage write address transactions based on FIFO availability.
+// State Machine (optional with FIFO_DELAY): Ensures write addresses are only sent to the AXI master when there is enough space in the FIFO to store the incoming data
+
+// Write Control signal: Determines when to write incoming write data to the FIFO.
+// Read Control signal: Determines when to read data from the FIFO and transfer it to the output register.
+// Store Output signal: Controls the transfer of write data from the FIFO to the output register for the AXI master interface.
+
+// Write Logic: Writes data from the AXI slave interface into the FIFO if it is not full.
+// Read Logic: Reads data from the FIFO if it is not empty and transfers it to the output register.
+// Output Register: Holds the write data and signals for the AXI master interface until they are ready to be transferred.
 
 // Develop a Verilog module that includes the following parameters and ports:
 
@@ -80,7 +98,5 @@ module axi_fifo_wr #
     input  wire                     m_axi_bvalid,
     output wire                     m_axi_bready
 );
-
-// The final output should be a complete Verilog code snippet with the module definition, input/output declaration, and the logic to handle the AXI FIFO for WR, W, and B channels.
 
 endmodule

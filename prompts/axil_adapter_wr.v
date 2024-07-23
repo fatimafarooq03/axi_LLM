@@ -1,6 +1,16 @@
 // Create a Verilog module named axil_adapter_wr.
 
-// The module should serve as an AXI lite width adapter module with parametrizable data and address interface widths.
+// The module should serve as an AXI lite width adapter module with parametrizable data and address interface widths
+// Intended for control and configuration tasks, handling single transactions without burst or multiple outstanding transactions
+
+// comprises of a State Machine that handles the write address, data, and response phases.
+// STATE_IDLE: Waits for a valid write address from the slave interface.
+// STATE_DATA: Waits for and captures the write data from the slave interface.
+// STATE_RESP: Sends the write response to the slave interface after the master interface acknowledges the write data.
+
+// The module checks if the output bus is wider or narrower than the input bus.
+// If the output bus is wider (EXPAND), data from the slave interface is directly transferred to the master interface.
+// If the output bus is narrower, the module splits the data into segments and transfers each segment in multiple cycles.
 
 // Develop a Verilog module that includes the following parameters and ports:
 
@@ -48,7 +58,5 @@ module axil_adapter_wr #
     input  wire                     m_axil_bvalid,
     output wire                     m_axil_bready
 );
-
-// The final output should be a complete Verilog code snippet with the module definition, input/output declaration, and the logic to handle the AXI lite width adaptation functionality.
 
 endmodule

@@ -1,8 +1,12 @@
 // Create a Verilog module named axil_adapter.
 
 // The module should serve as an AXI lite width adapter module with parametrizable data and address interface widths.
-// This module is a wrapper for axil_adapter_rd and axil_adapter_wr.
-// Use the axil_adapter_rd and axil_adapter_wr submodules as they are generated and do not further modify them in any way (use them as black boxes).
+// This module is a wrapper for axil_adapter_rd and axil_adapter_wr
+// Intended for control and configuration tasks, handling single transactions without burst or multiple outstanding transactions
+
+// Instantiates two submodules: axil_adapter_wr and axil_adapter_rd
+// axil_adapter_wr: Handles write transactions and Connects to the AXI Lite slave and master interfaces for write operations.
+// axil_adapter_rd: Handles read transactions and Connects to the AXI Lite slave and master interfaces for read operations.
 
 // Develop a Verilog module that includes the following parameters and ports:
 

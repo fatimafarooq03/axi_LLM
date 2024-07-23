@@ -3,6 +3,28 @@
 // The module should serve as an AXI register with parametrizable data and address interface widths.
 // It should support all burst types and insert simple buffers or skid buffers into all channels.
 // The channel register types can be individually changed or bypassed.
+// Serves as a read register for an AXI interface, allowing for various types of buffering on the AR (address read) and R (read data) channels
+
+// Interfaces with AXI read address (AR) and read data (R) channels for both slave and master interfaces
+// AR Channel:
+// Skid Buffer (AR_REG_TYPE > 1): No bubble cycles, uses temporary storage registers.
+// Simple Register (AR_REG_TYPE == 1): Simple buffering, may introduce bubble cycles.
+// Bypass (AR_REG_TYPE == 0): Direct connection, no buffering.
+
+// R Channel:
+// Skid Buffer (R_REG_TYPE > 1): No bubble cycles, temporary storage for read data.
+// Simple Register (R_REG_TYPE == 1): Simple buffering for read data, possible bubble cycles.
+// Bypass (R_REG_TYPE == 0): Direct connection, no buffering.
+
+// Compromises of control signals to manage readiness and data flow
+
+// Compromises of registers to store incoming requests and responses temporarily
+// Compromises of control logic to determine data transfer and storage based on buffer type and readiness
+
+// Compromises of a Data Path Control:
+// Skid Buffer: Uses additional registers to avoid bubble cycles
+// Simple Register: Direct transfer with readiness control
+// Bypass: Direct connection without intermediate storage
 
 // Develop a Verilog module that includes the following parameters and ports:
 

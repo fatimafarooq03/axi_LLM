@@ -4,6 +4,34 @@
 // The module should serve as an AXI lite register with parametrizable data and address interface widths.
 // It should handle AR and R channels only and insert simple buffers into all channels.
 // The channel registers can be individually bypassed.
+// Designed to interface between an AXI Lite slave and master interface, primarily focusing on the read (R) channel and the address read (AR) channel
+// Handles single data transfers per transaction and does not support burst transactions
+
+// AR Channel Logic:
+// Skid Buffer (AR_REG_TYPE > 1):
+// Utilizes intermediate registers to temporarily store address and control signals.
+// Logic ensures data is transferred from input to output directly if the master is ready or temporarily stored if not.
+// Manages ready signals and data transfers to avoid bubble cycles.
+
+// Simple Buffer (AR_REG_TYPE == 1):
+// Simple buffer with direct transfer and potential bubble cycles.
+// Manages ready signals and transfers with minimal logic.
+
+// Bypass (AR_REG_TYPE == 0):
+// Directly connects slave and master signals without additional logic or buffering.
+
+// R Channel Logic:
+// Skid Buffer (R_REG_TYPE > 1):
+// Uses intermediate registers to store read data and response signals.
+// Ensures data is transferred from input to output if the slave is ready or temporarily stored if not.
+// Manages ready signals and data transfers to avoid bubble cycles.
+
+// Simple Buffer (R_REG_TYPE == 1):
+// Simple buffer with direct transfer and potential bubble cycles.
+// Manages ready signals and transfers with minimal logic.
+
+// Bypass (R_REG_TYPE == 0):
+// Directly connects slave and master signals without additional logic or buffering
 
 // Develop a Verilog module that includes the following parameters and ports:
 

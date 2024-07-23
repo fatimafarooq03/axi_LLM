@@ -1,8 +1,23 @@
-
 // Create a Verilog module named axi_ram.
 
 // The module should serve as an AXI RAM with parametrizable data and address interface widths.
 // It should support FIXED and INCR burst types as well as narrow bursts.
+// Implements a RAM model with AXI slave interface, using state machines to handle read and write transactions
+
+// Comprises of Internal Memory: 
+// an internal memory array (mem) defined as a register array
+// memory size is determined by the address width
+
+// Comprises of Write State Machine: 
+// WRITE_STATE_IDLE: Waits for a write address valid (s_axi_awvalid). Once valid, captures the address and prepares for data
+// WRITE_STATE_BURST: Handles the burst write operations, writing data to memory as it is received. Manages the address increment and count decrement
+// WRITE_STATE_RESP: Sends the write response once the burst is complete
+
+// Comprises of Read State Machine:
+// READ_STATE_IDLE: Waits for a read address valid (s_axi_arvalid). Once valid, captures the address and prepares for data
+// READ_STATE_BURST: Handles the burst read operations, reading data from memory and sending it to the AXI master
+
+// Comprises of optional pipeline registers for output data
 
 // Develop a Verilog module that includes the following parameters and ports:
 
@@ -56,7 +71,5 @@ module axi_ram #
     output wire                   s_axi_rvalid,
     input  wire                   s_axi_rready
 );
-
-// The final output should be a complete Verilog code snippet with the module definition, input/output declaration, and the logic to handle the AXI RAM functionality.
 
 endmodule
