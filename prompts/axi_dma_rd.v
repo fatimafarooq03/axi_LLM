@@ -15,7 +15,7 @@
 // Sets up AXI read address transactions by issuing AR (address read) commands using the signals
 // Read data is received via signals, which include the data, response, and status information
 
-// compromises of AXI state machine 
+// compises of AXI state machine 
 // operates in states like AXI_STATE_IDLE and AXI_STATE_START
 // Handles the flow of data from the AXI read interface to the AXI stream interface, including managing data shifts, cycle counts, and the transmission of signals
 

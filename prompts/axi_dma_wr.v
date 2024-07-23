@@ -5,7 +5,7 @@
 // The module must support unaligned transfers, which can be disabled via a parameter to save on resource consumption.
 
 // Defines parameters for AXI data width, address width, ID width, burst length, and other configuration options for handling AXI and AXI Stream interfaces
-// compromises of state machine with the following states:
+// comprises of state machine with the following states:
 // STATE_IDLE: Waits for a new write descriptor to initiate a write operation
 // STATE_START: Sets up the address, burst length, and other parameters to start a write transaction
 // STATE_WRITE: Manages the transfer of write data from the AXI Stream interface to the AXI write data transactions

@@ -7,10 +7,10 @@
 
 // When s_axis_desc_valid is asserted, the module reads the descriptor, including the read and write addresses, length, and tag.
 
-// Compromises of the read state machine which transitions from READ_STATE_IDLE to READ_STATE_START to calculate the number of words to transfer
+// Comprises of the read state machine which transitions from READ_STATE_IDLE to READ_STATE_START to calculate the number of words to transfer
 // Manages the read address and the number of words remaining to be read.
 
-// Compromises of Write State Machine which transitions from AXI_STATE_IDLE to AXI_STATE_WRITE when a new write command is ready
+// Comprises of Write State Machine which transitions from AXI_STATE_IDLE to AXI_STATE_WRITE when a new write command is ready
 // Buffers the read data and issues write requests to the AXI bus
 // Manages the write address and the number of words remaining to be written.
 

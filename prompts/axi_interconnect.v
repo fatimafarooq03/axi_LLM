@@ -21,7 +21,7 @@
 // Data is buffered using the axi_fifo_wr submodule
 // Buffered data is then forwarded to the master interface
 
-// Compromises of a state machine:
+// Comprises of a state machine:
 // STATE_IDLE: The default state where the module waits for a transaction request.
 // STATE_DECODE: Determines the target master interface based on the address.
 // STATE_WRITE: Handles write operations, storing and forwarding write data.

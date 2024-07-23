@@ -16,12 +16,12 @@
 // Simple Register (R_REG_TYPE == 1): Simple buffering for read data, possible bubble cycles.
 // Bypass (R_REG_TYPE == 0): Direct connection, no buffering.
 
-// Compromises of control signals to manage readiness and data flow
+// Comprises of control signals to manage readiness and data flow
 
-// Compromises of registers to store incoming requests and responses temporarily
-// Compromises of control logic to determine data transfer and storage based on buffer type and readiness
+// Comprises of registers to store incoming requests and responses temporarily
+// Comprises of control logic to determine data transfer and storage based on buffer type and readiness
 
-// Compromises of a Data Path Control:
+// Comprises of a Data Path Control:
 // Skid Buffer: Uses additional registers to avoid bubble cycles
 // Simple Register: Direct transfer with readiness control
 // Bypass: Direct connection without intermediate storage
