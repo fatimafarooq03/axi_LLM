@@ -43,7 +43,8 @@ class TB(object):
         self.dut = dut
 
         self.log = logging.getLogger("cocotb.tb")
-        self.log.setLevel(logging.DEBUG)
+        self.log.setLevel(logging.DEBUG) # When you set a logging level on a logger, you specify the threshold level of severity for the logger. This means that the logger will handle only those log messages that are at this level or higher in severity
+                                         # level is used to indicate the severity of an event
 
         cocotb.start_soon(Clock(dut.clk, 10, units="ns").start())
 
@@ -58,6 +59,7 @@ class TB(object):
             self.axi_ram.write_if.b_channel.set_pause_generator(generator())
             self.axi_ram.read_if.r_channel.set_pause_generator(generator())
 
+    # refers to simulating scenarios where the receiving end (slave) of a data transfer is temporarily unable to accept more data, causing the sending end (master) to wait or "back off."
     def set_backpressure_generator(self, generator=None):
         if generator:
             self.axi_master.write_if.b_channel.set_pause_generator(generator())
@@ -66,23 +68,36 @@ class TB(object):
             self.axi_ram.write_if.w_channel.set_pause_generator(generator())
             self.axi_ram.read_if.ar_channel.set_pause_generator(generator())
 
+    # ensure that the design under test (DUT) is properly reset before starting the main test operations
     async def cycle_reset(self):
+
+        # ensures that the reset is applied immediately
         self.dut.rst.setimmediatevalue(0)
+
+        # introduces a delay, ensuring that the reset signal has been in the low state (0) for at least two clock cycles
+        # ensures that the reset line is stabilized
         await RisingEdge(self.dut.clk)
         await RisingEdge(self.dut.clk)
+
+        # ensures that the DUT correctly recognizes the reset signal
         self.dut.rst.value = 1
         await RisingEdge(self.dut.clk)
         await RisingEdge(self.dut.clk)
+
+        # DUT has time to stabilize after exiting the reset state
         self.dut.rst.value = 0
         await RisingEdge(self.dut.clk)
         await RisingEdge(self.dut.clk)
 
-
+# async functions allows the function to run concurrently with other tasks without blocking the execution of the program.
+# use of await in asynchronous functions allows the event loop to manage multiple tasks concurrently, ensuring that the program continues to run efficiently without being blocked by any single task
 async def run_test_write(dut, data_in=None, idle_inserter=None, backpressure_inserter=None, size=None):
 
     tb = TB(dut)
 
+    # Byte lanes refer to the individual byte-wide data paths within a wider data bus
     byte_lanes = tb.axi_master.write_if.byte_lanes
+    # burst size is used to define how many beats (data transfers) can be grouped together in a single transaction
     max_burst_size = tb.axi_master.write_if.max_burst_size
 
     if size is None:
