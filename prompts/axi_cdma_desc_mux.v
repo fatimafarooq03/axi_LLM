@@ -3,7 +3,7 @@
 // The module should serve as a descriptor multiplexer/demultiplexer for the AXI CDMA module.
 // It should enable sharing the AXI CDMA module between multiple request sources, interleaving requests
 // and distributing responses.
-//  manages the multiplexing of descriptors from multiple input ports to a single output for the AXI CDMA core. It ensures fair arbitration using a round-robin scheme, and correctly handles the forwarding and demultiplexing of status signals, thus enabling smooth and efficient data transfer in the AXI CDMA system.
+// manages the multiplexing of descriptors from multiple input ports to a single output for the AXI CDMA core. It ensures fair arbitration using a round-robin scheme, and correctly handles the forwarding and demultiplexing of status signals, thus enabling smooth and efficient data transfer in the AXI CDMA system.
 
 // The module receives descriptor inputs (read address, write address, length, tag) from multiple ports
 // Validity of each input descriptor is checked

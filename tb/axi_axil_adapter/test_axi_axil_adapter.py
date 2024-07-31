@@ -205,7 +205,7 @@ if cocotb.SIM_NAME:
 # cocotb-test
 
 tests_dir = os.path.abspath(os.path.dirname(__file__))
-rtl_dir = os.path.abspath(os.path.join(tests_dir, '..', '..', 'rtl'))
+rtl_dir = os.path.abspath(os.path.join(tests_dir, '..', '..', 'responses'))
 
 
 @pytest.mark.parametrize("axil_data_width", [8, 16, 32])

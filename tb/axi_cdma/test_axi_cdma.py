@@ -37,6 +37,9 @@ from cocotb.regression import TestFactory
 from cocotbext.axi import AxiBus, AxiRam
 from cocotbext.axi.stream import define_stream
 
+# Stream interfaces refer to a specific way of structuring data communication between different parts of a hardware design, typically used in FPGA and ASIC designs. 
+# These interfaces are designed to handle streaming data, meaning continuous sequences of data elements that are processed on-the-fly as they are received
+
 DescBus, DescTransaction, DescSource, DescSink, DescMonitor = define_stream("Desc",
     signals=["read_addr", "write_addr", "len", "tag", "valid", "ready"]
 )
@@ -152,7 +155,7 @@ if cocotb.SIM_NAME:
 # cocotb-test
 
 tests_dir = os.path.abspath(os.path.dirname(__file__))
-rtl_dir = os.path.abspath(os.path.join(tests_dir, '..', '..', 'rtl'))
+rtl_dir = os.path.abspath(os.path.join(tests_dir, '..', '..', 'responses'))
 
 
 @pytest.mark.parametrize("unaligned", [0, 1])

@@ -81,7 +81,7 @@ async def test_axi_crossbar_addr(dut):
 
 # cocotb-test integration
 tests_dir = os.path.abspath(os.path.dirname(__file__))
-rtl_dir = os.path.abspath(os.path.join(tests_dir, '..', '..', 'rtl'))
+rtl_dir = os.path.abspath(os.path.join(tests_dir, '..', '..', 'responses'))
 
 @pytest.mark.parametrize("parameters", [
     {
