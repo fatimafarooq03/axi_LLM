@@ -1,0 +1,17 @@
+<testsuites name="results">
+  <testsuite name="all" package="all">
+    <property name="random_seed" value="1724488638" />
+    <testcase name="run_test_write_001" classname="test_axi_crossbar_wr" file="/Users/fatimafarooq/Desktop/axi_LLM/venv/lib/python3.12/site-packages/cocotb/regression.py" lineno="731" time="0.009919881820678711" sim_time_ns="0.001" ratio_time="0.10080765255846372">
+      <failure message="Test failed with RANDOM_SEED=1724488638" />
+    </testcase>
+    <testcase name="run_test_write_002" classname="test_axi_crossbar_wr" file="/Users/fatimafarooq/Desktop/axi_LLM/venv/lib/python3.12/site-packages/cocotb/regression.py" lineno="731" time="0.004629850387573242" sim_time_ns="0.001" ratio_time="0.21598970080848653">
+      <failure message="Test failed with RANDOM_SEED=1724488638" />
+    </testcase>
+    <testcase name="run_test_write_003" classname="test_axi_crossbar_wr" file="/Users/fatimafarooq/Desktop/axi_LLM/venv/lib/python3.12/site-packages/cocotb/regression.py" lineno="731" time="0.0032939910888671875" sim_time_ns="0.001" ratio_time="0.3035830920671685">
+      <failure message="Test failed with RANDOM_SEED=1724488638" />
+    </testcase>
+    <testcase name="run_test_write_004" classname="test_axi_crossbar_wr" file="/Users/fatimafarooq/Desktop/axi_LLM/venv/lib/python3.12/site-packages/cocotb/regression.py" lineno="731" time="0.0032339096069335938" sim_time_ns="0.001" ratio_time="0.3092232379828959">
+      <failure message="Test failed with RANDOM_SEED=1724488638" />
+    </testcase>
+  </testsuite>
+</testsuites>

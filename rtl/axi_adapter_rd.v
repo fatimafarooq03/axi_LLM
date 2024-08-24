@@ -43,6 +43,7 @@ module axi_adapter_rd #
     parameter M_DATA_WIDTH = 32,
     // Width of output (master) interface wstrb (width of data bus in words)
     parameter M_STRB_WIDTH = (M_DATA_WIDTH/8),
+    
     // Width of ID signal
     parameter ID_WIDTH = 8,
     // Propagate aruser signal
@@ -79,6 +80,7 @@ module axi_adapter_rd #
     input  wire [3:0]               s_axi_arregion,
     input  wire [ARUSER_WIDTH-1:0]  s_axi_aruser,
     input  wire                     s_axi_arvalid,
+    
     output wire                     s_axi_arready,
     output wire [ID_WIDTH-1:0]      s_axi_rid,
     output wire [S_DATA_WIDTH-1:0]  s_axi_rdata,

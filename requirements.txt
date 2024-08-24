@@ -1,0 +1,8 @@
+openai==0.28
+cocotb==1.6.0
+cocotb-test==0.2.5
+pytest==7.1.2
+cocotbext-axi
+anthropic
+transformers
+torch

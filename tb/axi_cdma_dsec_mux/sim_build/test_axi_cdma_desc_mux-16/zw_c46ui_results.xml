@@ -1,0 +1,17 @@
+<testsuites name="results">
+  <testsuite name="all" package="all">
+    <property name="random_seed" value="1724409248" />
+    <testcase name="run_tb" classname="test_axi_cdma_dsec_mux" file="/Users/fatimafarooq/Desktop/axi_LLM/venv/lib/python3.12/site-packages/cocotb/regression.py" lineno="326" time="0.0017800331115722656" sim_time_ns="0.001" ratio_time="0.5617873024377177">
+      <failure />
+    </testcase>
+    <testcase name="run_tb" classname="test_axi_cdma_dsec_mux" file="/Users/fatimafarooq/Desktop/axi_LLM/venv/lib/python3.12/site-packages/cocotb/regression.py" lineno="326" time="0.00040912628173828125" sim_time_ns="0.001" ratio_time="2.4442331002331">
+      <failure />
+    </testcase>
+    <testcase name="run_tb" classname="test_axi_cdma_dsec_mux" file="/Users/fatimafarooq/Desktop/axi_LLM/venv/lib/python3.12/site-packages/cocotb/regression.py" lineno="326" time="0.0003781318664550781" sim_time_ns="0.001" ratio_time="2.644580075662043">
+      <failure />
+    </testcase>
+    <testcase name="run_tb" classname="test_axi_cdma_dsec_mux" file="/Users/fatimafarooq/Desktop/axi_LLM/venv/lib/python3.12/site-packages/cocotb/regression.py" lineno="326" time="0.0003719329833984375" sim_time_ns="0.001" ratio_time="2.68865641025641">
+      <failure />
+    </testcase>
+  </testsuite>
+</testsuites>

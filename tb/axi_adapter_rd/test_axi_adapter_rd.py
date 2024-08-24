@@ -13,6 +13,37 @@ from cocotb.regression import TestFactory
 
 from cocotbext.axi import AxiBus, AxiMaster, AxiRam
 
+class CustomAxiBus:
+    def __init__(self, entity, prefix="s_axi", is_master=True):
+        # AR Channel
+        self.arid = getattr(entity, f"{prefix}_arid")
+        self.araddr = getattr(entity, f"{prefix}_araddr")
+        self.arlen = getattr(entity, f"{prefix}_arlen")
+        self.arsize = getattr(entity, f"{prefix}_arsize")
+        self.arburst = getattr(entity, f"{prefix}_arburst")
+        self.arlock = getattr(entity, f"{prefix}_arlock")
+        self.arcache = getattr(entity, f"{prefix}_arcache")
+        self.arprot = getattr(entity, f"{prefix}_arprot")
+        self.arqos = getattr(entity, f"{prefix}_arqos")
+        self.arregion = getattr(entity, f"{prefix}_arregion")
+        self.aruser = getattr(entity, f"{prefix}_aruser", None)  # Optional signal
+        self.arvalid = getattr(entity, f"{prefix}_arvalid")
+        self.arready = getattr(entity, f"{prefix}_arready")
+        
+        # R Channel
+        self.rid = getattr(entity, f"{prefix}_rid")
+        self.rdata = getattr(entity, f"{prefix}_rdata")
+        self.rresp = getattr(entity, f"{prefix}_rresp")
+        self.rlast = getattr(entity, f"{prefix}_rlast")
+        self.ruser = getattr(entity, f"{prefix}_ruser", None)  # Optional signal
+        self.rvalid = getattr(entity, f"{prefix}_rvalid")
+        self.rready = getattr(entity, f"{prefix}_rready")
+
+        # For master, swap the ready and valid signals
+        if is_master:
+            self.arvalid, self.arready = self.arready, self.arvalid
+            self.rvalid, self.rready = self.rready, self.rvalid
+
 
 class TB(object):
     def __init__(self, dut):
@@ -23,8 +54,34 @@ class TB(object):
 
         cocotb.start_soon(Clock(dut.clk, 10, units="ns").start())
 
-        self.axi_master = AxiMaster(AxiBus.from_prefix(dut, "s_axi"), dut.clk, dut.rst)
-        self.axi_ram = AxiRam(AxiBus.from_prefix(dut, "m_axi"), dut.clk, dut.rst, size=2**16)
+        master_bus = AxiBus()
+        # AR Channel
+        self.arid = dut.s_axi_arid 
+        self.araddr = dut.s_axi_arid
+        self.arlen = getattr(entity, f"{prefix}_arlen")
+        self.arsize = getattr(entity, f"{prefix}_arsize")
+        self.arburst = getattr(entity, f"{prefix}_arburst")
+        self.arlock = getattr(entity, f"{prefix}_arlock")
+        self.arcache = getattr(entity, f"{prefix}_arcache")
+        self.arprot = getattr(entity, f"{prefix}_arprot")
+        self.arqos = getattr(entity, f"{prefix}_arqos")
+        self.arregion = getattr(entity, f"{prefix}_arregion")
+        self.aruser = getattr(entity, f"{prefix}_aruser", None)  # Optional signal
+        self.arvalid = getattr(entity, f"{prefix}_arvalid")
+        self.arready = getattr(entity, f"{prefix}_arready")
+        
+        # R Channel
+        self.rid = getattr(entity, f"{prefix}_rid")
+        self.rdata = getattr(entity, f"{prefix}_rdata")
+        self.rresp = getattr(entity, f"{prefix}_rresp")
+        self.rlast = getattr(entity, f"{prefix}_rlast")
+        self.ruser = getattr(entity, f"{prefix}_ruser", None)  # Optional signal
+        self.rvalid = getattr(entity, f"{prefix}_rvalid")
+        self.rready = getattr(entity, f"{prefix}_rready")
+
+        # self.axi_master = AxiMaster(AxiBus.from_prefix(dut, "s_axi"), dut.clk, dut.rst)
+        # self.axi_ram = AxiRam(AxiBus.from_prefix(dut, "m_axi"), dut.clk, dut.rst, size=2**16)
+
 
     def set_idle_generator(self, generator=None):
         if generator:
@@ -117,15 +174,18 @@ def test_axi_adapter_rd(request, s_data_width, m_data_width):
     parameters['ADDR_WIDTH'] = 32
     parameters['S_DATA_WIDTH'] = s_data_width
     parameters['S_STRB_WIDTH'] = parameters['S_DATA_WIDTH'] // 8
+    
     parameters['M_DATA_WIDTH'] = m_data_width
     parameters['M_STRB_WIDTH'] = parameters['M_DATA_WIDTH'] // 8
+    
     parameters['ID_WIDTH'] = 8
-    parameters['AWUSER_ENABLE'] = 0
-    parameters['AWUSER_WIDTH'] = 1
-    parameters['WUSER_ENABLE'] = 0
-    parameters['WUSER_WIDTH'] = 1
-    parameters['BUSER_ENABLE'] = 0
-    parameters['BUSER_WIDTH'] = 1
+    
+    # parameters['AWUSER_ENABLE'] = 0
+    # parameters['AWUSER_WIDTH'] = 1
+    # parameters['WUSER_ENABLE'] = 0
+   # parameters['WUSER_WIDTH'] = 1
+    # parameters['BUSER_ENABLE'] = 0
+   # parameters['BUSER_WIDTH'] = 1
     parameters['ARUSER_ENABLE'] = 0
     parameters['ARUSER_WIDTH'] = 1
     parameters['RUSER_ENABLE'] = 0

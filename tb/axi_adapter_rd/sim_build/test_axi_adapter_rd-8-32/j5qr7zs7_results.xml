@@ -1,0 +1,17 @@
+<testsuites name="results">
+  <testsuite name="all" package="all">
+    <property name="random_seed" value="1722891047" />
+    <testcase name="run_test_read" classname="test_axi_adapter_rd_2" file="/Users/fatimafarooq/anaconda3/lib/python3.11/site-packages/cocotb/regression.py" lineno="62" time="0.0006282329559326172" sim_time_ns="0.001" ratio_time="1.5917662239089185">
+      <failure />
+    </testcase>
+    <testcase name="run_test_read" classname="test_axi_adapter_rd_2" file="/Users/fatimafarooq/anaconda3/lib/python3.11/site-packages/cocotb/regression.py" lineno="62" time="0.00028324127197265625" sim_time_ns="0.001" ratio_time="3.5305589225589227">
+      <failure />
+    </testcase>
+    <testcase name="run_test_read" classname="test_axi_adapter_rd_2" file="/Users/fatimafarooq/anaconda3/lib/python3.11/site-packages/cocotb/regression.py" lineno="62" time="0.0003440380096435547" sim_time_ns="0.001" ratio_time="2.9066555786555788">
+      <failure />
+    </testcase>
+    <testcase name="run_test_read" classname="test_axi_adapter_rd_2" file="/Users/fatimafarooq/anaconda3/lib/python3.11/site-packages/cocotb/regression.py" lineno="62" time="0.00025391578674316406" sim_time_ns="0.001" ratio_time="3.9383136150234743">
+      <failure />
+    </testcase>
+  </testsuite>
+</testsuites>
