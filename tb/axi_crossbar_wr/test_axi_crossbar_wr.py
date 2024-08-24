@@ -14,6 +14,7 @@ from cocotb.regression import TestFactory
 
 from cocotbext.axi import AxiBus, AxiMaster, AxiRam
 
+<<<<<<< HEAD
 class TB(object):
     def __init__(self, dut):
         # Initialize the testbench class with the DUT (Device Under Test)
@@ -37,12 +38,40 @@ class TB(object):
         self.axi_ram = [AxiRam(AxiBus.from_prefix(dut, f"m{k:02d}_axi"), dut.clk, dut.rst, size=2**16) for k in range(m_count)]
 
         # Set initial values for 'bid' and 'rid' to prevent X propagation in simulation
+=======
+
+class TB(object):
+    def __init__(self, dut):
+        # Initialize the testbench with the device under test (DUT)
+        self.dut = dut
+
+        # Get the number of slave and master interfaces
+        s_count = len(dut.axi_crossbar_wr_inst.s_axi_awvalid)
+        m_count = len(dut.axi_crossbar_wr_inst.m_axi_awvalid)
+
+        # Set up logging for debugging
+        self.log = logging.getLogger("cocotb.tb")
+        self.log.setLevel(logging.DEBUG)
+
+        # Start a 10ns clock
+        cocotb.start_soon(Clock(dut.clk, 10, units="ns").start())
+
+        # Create AXI master and AXI RAM instances
+        self.axi_master = [AxiMaster(AxiBus.from_prefix(dut, f"s{k:02d}_axi"), dut.clk, dut.rst) for k in range(s_count)]
+        self.axi_ram = [AxiRam(AxiBus.from_prefix(dut, f"m{k:02d}_axi"), dut.clk, dut.rst, size=2**16) for k in range(m_count)]
+
+        # Initialize bid and rid to prevent X propagation
+>>>>>>> refs/remotes/origin/main
         for ram in self.axi_ram:
             ram.write_if.b_channel.bus.bid.setimmediatevalue(0)
             ram.read_if.r_channel.bus.rid.setimmediatevalue(0)
 
     def set_idle_generator(self, generator=None):
+<<<<<<< HEAD
         # Method to introduce idle cycles in AXI channels if a generator function is provided
+=======
+        # Set idle cycles in AXI channels
+>>>>>>> refs/remotes/origin/main
         if generator:
             for master in self.axi_master:
                 master.write_if.aw_channel.set_pause_generator(generator())
@@ -53,7 +82,11 @@ class TB(object):
                 ram.read_if.r_channel.set_pause_generator(generator())
 
     def set_backpressure_generator(self, generator=None):
+<<<<<<< HEAD
         # Method to introduce backpressure in AXI channels if a generator function is provided
+=======
+        # Set backpressure in AXI channels
+>>>>>>> refs/remotes/origin/main
         if generator:
             for master in self.axi_master:
                 master.write_if.b_channel.set_pause_generator(generator())
@@ -64,6 +97,7 @@ class TB(object):
                 ram.read_if.ar_channel.set_pause_generator(generator())
 
     async def cycle_reset(self):
+<<<<<<< HEAD
         # Method to reset the DUT by cycling the reset signal ('rst')
         self.dut.rst.setimmediatevalue(0)  # Set reset to 0 initially
         await RisingEdge(self.dut.clk)     # Wait for two rising edges of the clock
@@ -73,10 +107,22 @@ class TB(object):
         await RisingEdge(self.dut.clk)
         self.dut.rst.value = 0             # De-assert the reset (back to 0)
         await RisingEdge(self.dut.clk)     # Wait for two rising edges to complete reset cycle
+=======
+        # Reset the DUT
+        self.dut.rst.setimmediatevalue(0)
+        await RisingEdge(self.dut.clk)
+        await RisingEdge(self.dut.clk)
+        self.dut.rst.value = 1
+        await RisingEdge(self.dut.clk)
+        await RisingEdge(self.dut.clk)
+        self.dut.rst.value = 0
+        await RisingEdge(self.dut.clk)
+>>>>>>> refs/remotes/origin/main
         await RisingEdge(self.dut.clk)
 
 
 async def run_test_write(dut, data_in=None, idle_inserter=None, backpressure_inserter=None, size=None, s=0, m=0):
+<<<<<<< HEAD
     # Function to run write tests on the DUT
     tb = TB(dut)  # Create an instance of the testbench
 
@@ -106,21 +152,61 @@ async def run_test_write(dut, data_in=None, idle_inserter=None, backpressure_ins
             tb.log.debug("%s", tb.axi_ram[m].hexdump_str((ram_addr & ~0xf)-16, (((ram_addr & 0xf)+length-1) & ~0xf)+48))
 
             # Assertions to verify correct data was written
+=======
+    # Function to test write functionality
+    tb = TB(dut)
+
+    byte_lanes = tb.axi_master[s].write_if.byte_lanes
+    max_burst_size = tb.axi_master[s].write_if.max_burst_size
+
+    if size is None:
+        size = max_burst_size
+
+    await tb.cycle_reset()
+
+    tb.set_idle_generator(idle_inserter)
+    tb.set_backpressure_generator(backpressure_inserter)
+
+    # Test different lengths and offsets for writing data
+    for length in list(range(1, byte_lanes*2))+[1024]:
+        for offset in list(range(byte_lanes, byte_lanes*2))+list(range(4096-byte_lanes, 4096)):
+            tb.log.info("length %d, offset %d, size %d", length, offset, size)
+            ram_addr = offset+0x1000
+            addr = ram_addr + m*0x1000000
+            test_data = bytearray([x % 256 for x in range(length)])
+
+            tb.axi_ram[m].write(ram_addr-128, b'\xaa'*(length+256))
+
+            await tb.axi_master[s].write(addr, test_data, size=size)
+
+            tb.log.debug("%s", tb.axi_ram[m].hexdump_str((ram_addr & ~0xf)-16, (((ram_addr & 0xf)+length-1) & ~0xf)+48))
+
+>>>>>>> refs/remotes/origin/main
             assert tb.axi_ram[m].read(ram_addr, length) == test_data
             assert tb.axi_ram[m].read(ram_addr-1, 1) == b'\xaa'
             assert tb.axi_ram[m].read(ram_addr+length, 1) == b'\xaa'
 
+<<<<<<< HEAD
     await RisingEdge(dut.clk)  # Wait for two rising edges after the test is complete
+=======
+    await RisingEdge(dut.clk)
+>>>>>>> refs/remotes/origin/main
     await RisingEdge(dut.clk)
 
 
 def cycle_pause():
+<<<<<<< HEAD
     # Generator function to create a pause cycle pattern
     return itertools.cycle([1, 1, 1, 0])  # Introduce pauses every 4th cycle
+=======
+    # Helper function to create cycle pause generator
+    return itertools.cycle([1, 1, 1, 0])
+>>>>>>> refs/remotes/origin/main
 
 
 if cocotb.SIM_NAME:
     # If running in a simulation environment, set up test factory and run tests
+<<<<<<< HEAD
     s_count = len(cocotb.top.s_axi_awvalid)  # Get the number of slave interfaces
     m_count = len(cocotb.top.m_axi_awvalid)  # Get the number of master interfaces
 
@@ -139,12 +225,33 @@ if cocotb.SIM_NAME:
 # cocotb-test integration
 tests_dir = os.path.abspath(os.path.dirname(__file__))  # Get the directory for test files
 rtl_dir = os.path.abspath(os.path.join(tests_dir, '..', '..', 'responses'))  # Define the RTL directory
+=======
+    s_count = len(cocotb.top.axi_crossbar_wr_inst.s_axi_awvalid)
+    m_count = len(cocotb.top.axi_crossbar_wr_inst.m_axi_awvalid)
+
+    data_width = len(cocotb.top.s00_axi_wdata)
+    byte_lanes = data_width // 8
+    max_burst_size = (byte_lanes-1).bit_length()
+
+    factory = TestFactory(run_test_write)
+    factory.add_option("idle_inserter", [None, cycle_pause])
+    factory.add_option("backpressure_inserter", [None, cycle_pause])
+    factory.add_option("s", range(min(s_count, 2)))
+    factory.add_option("m", range(min(m_count, 2)))
+    factory.generate_tests()
+
+# cocotb-test integration
+
+tests_dir = os.path.abspath(os.path.dirname(__file__))
+rtl_dir = os.path.abspath(os.path.join(tests_dir, '..', '..', 'responses'))
+>>>>>>> refs/remotes/origin/main
 
 @pytest.mark.parametrize("data_width", [8, 16, 32])
 @pytest.mark.parametrize("m_count", [1, 4])
 @pytest.mark.parametrize("s_count", [1, 4])
 def test_axi_crossbar_wr(request, s_count, m_count, data_width):
     # Pytest function to integrate cocotb tests
+<<<<<<< HEAD
     dut = "axi_crossbar_wr"  # Set the DUT module name
     module = os.path.splitext(os.path.basename(__file__))[0]  # Get the current script name (without extension)
     toplevel = dut  # Use the DUT module as the top-level module
@@ -155,13 +262,42 @@ def test_axi_crossbar_wr(request, s_count, m_count, data_width):
         os.path.join(rtl_dir, "axi_register_wr.v"),  # AXI register write module
         os.path.join(rtl_dir, "arbiter.v"),  # Arbiter module
         os.path.join(rtl_dir, "priority_encoder.v"),  # Priority encoder module
+=======
+    dut = "axi_crossbar_wr"
+    wrapper = f"{dut}_wrap_{s_count}x{m_count}"
+    module = os.path.splitext(os.path.basename(__file__))[0]
+    toplevel = wrapper
+
+    # Generate wrapper file if it does not exist
+    wrapper_file = os.path.join(tests_dir, f"{wrapper}.v")
+    if not os.path.exists(wrapper_file):
+        subprocess.Popen(
+            [os.path.join(rtl_dir, f"{dut}_wrap.py"), "-p", f"{s_count}", f"{m_count}"],
+            cwd=tests_dir
+        ).wait()
+
+    verilog_sources = [
+        wrapper_file,
+        os.path.join(rtl_dir, f"{dut}.v"),
+        os.path.join(rtl_dir, f"{dut}_addr.v"),
+        os.path.join(rtl_dir, f"{dut}_wr.v"),
+        os.path.join(rtl_dir, "axi_register_wr.v"),
+        os.path.join(rtl_dir, "arbiter.v"),
+        os.path.join(rtl_dir, "priority_encoder.v"),
+>>>>>>> refs/remotes/origin/main
     ]
 
     parameters = {}
 
+<<<<<<< HEAD
     # Define parameters to be passed to the simulation
     parameters['S_COUNT'] = s_count
     parameters['M_COUNT'] = m_count
+=======
+    parameters['S_COUNT'] = s_count
+    parameters['M_COUNT'] = m_count
+
+>>>>>>> refs/remotes/origin/main
     parameters['DATA_WIDTH'] = data_width
     parameters['ADDR_WIDTH'] = 32
     parameters['STRB_WIDTH'] = parameters['DATA_WIDTH'] // 8
@@ -173,6 +309,7 @@ def test_axi_crossbar_wr(request, s_count, m_count, data_width):
     parameters['WUSER_WIDTH'] = 1
     parameters['BUSER_ENABLE'] = 0
     parameters['BUSER_WIDTH'] = 1
+<<<<<<< HEAD
     parameters['M_REGIONS'] = 1
 
     extra_env = {f'PARAM_{k}': str(v) for k, v in parameters.items()}  # Pass parameters as environment variables
@@ -182,6 +319,19 @@ def test_axi_crossbar_wr(request, s_count, m_count, data_width):
         request.node.name.replace('[', '-').replace(']', ''))
 
     # Run the simulation using cocotb_test
+=======
+    parameters['ARUSER_ENABLE'] = 0
+    parameters['ARUSER_WIDTH'] = 1
+    parameters['RUSER_ENABLE'] = 0
+    parameters['RUSER_WIDTH'] = 1
+    parameters['M_REGIONS'] = 1
+
+    extra_env = {f'PARAM_{k}': str(v) for k, v in parameters.items()}
+
+    sim_build = os.path.join(tests_dir, "sim_build",
+        request.node.name.replace('[', '-').replace(']', ''))
+
+>>>>>>> refs/remotes/origin/main
     cocotb_test.simulator.run(
         python_search=[tests_dir],
         verilog_sources=verilog_sources,

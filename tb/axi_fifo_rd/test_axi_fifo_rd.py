@@ -15,7 +15,10 @@ from cocotbext.axi import AxiBus, AxiMaster, AxiRam
 
 class TB(object):
     def __init__(self, dut):
+<<<<<<< HEAD
         # Initialize the testbench with the device under test (DUT)
+=======
+>>>>>>> refs/remotes/origin/main
         self.dut = dut
 
         # Set up logging for debug information
@@ -50,6 +53,7 @@ class TB(object):
 
     async def cycle_reset(self):
         """Reset the DUT."""
+<<<<<<< HEAD
         self.dut.rst.setimmediatevalue(0)  # Deassert reset initially
         await RisingEdge(self.dut.clk)
         await RisingEdge(self.dut.clk)
@@ -67,6 +71,25 @@ async def run_test_read(dut, data_in=None, idle_inserter=None, backpressure_inse
     tb = TB(dut)
 
     # Determine byte lanes and maximum burst size for the AXI master interface
+=======
+        self.dut.rst.setimmediatevalue(0)
+        await RisingEdge(self.dut.clk)
+        await RisingEdge(self.dut.clk)
+        self.dut.rst.value = 1
+        await RisingEdge(self.dut.clk)
+        await RisingEdge(self.dut.clk)
+        self.dut.rst.value = 0
+        await RisingEdge(self.dut.clk)
+        await RisingEdge(self.dut.clk)
+
+
+async def run_test_read(dut, data_in=None, idle_inserter=None, backpressure_inserter=None, size=None):
+    """Test routine for AXI read functionality."""
+
+    tb = TB(dut)
+
+    # Determine byte lanes and maximum burst size
+>>>>>>> refs/remotes/origin/main
     byte_lanes = tb.axi_master.write_if.byte_lanes
     max_burst_size = tb.axi_master.write_if.max_burst_size
 
@@ -76,7 +99,11 @@ async def run_test_read(dut, data_in=None, idle_inserter=None, backpressure_inse
     # Reset the DUT
     await tb.cycle_reset()
 
+<<<<<<< HEAD
     # Set idle and backpressure generators if provided
+=======
+    # Set idle and backpressure generators
+>>>>>>> refs/remotes/origin/main
     tb.set_idle_generator(idle_inserter)
     tb.set_backpressure_generator(backpressure_inserter)
 
@@ -87,15 +114,23 @@ async def run_test_read(dut, data_in=None, idle_inserter=None, backpressure_inse
             addr = offset+0x1000
             test_data = bytearray([x % 256 for x in range(length)])
 
+<<<<<<< HEAD
             # Write test data to AXI RAM at the specified address
             tb.axi_ram.write(addr, test_data)
 
             # Perform the read transaction from the AXI master
+=======
+            # Write test data to AXI RAM
+            tb.axi_ram.write(addr, test_data)
+
+            # Perform the read transaction
+>>>>>>> refs/remotes/origin/main
             data = await tb.axi_master.read(addr, length, size=size)
 
             # Check if the read data matches the test data
             assert data.data == test_data
 
+<<<<<<< HEAD
     # Wait for a few clock cycles to ensure all transactions are completed
     await RisingEdge(dut.clk)
     await RisingEdge(dut.clk)
@@ -103,10 +138,21 @@ async def run_test_read(dut, data_in=None, idle_inserter=None, backpressure_inse
 def cycle_pause():
     """Generator for creating idle periods."""
     return itertools.cycle([1, 1, 1, 0])  # Create a pattern for idle cycles
+=======
+    await RisingEdge(dut.clk)
+    await RisingEdge(dut.clk)
+
+
+def cycle_pause():
+    """Generator for creating idle periods."""
+    return itertools.cycle([1, 1, 1, 0])
+
+>>>>>>> refs/remotes/origin/main
 
 if cocotb.SIM_NAME:
     # Register the test with cocotb
     factory = TestFactory(run_test_read)
+<<<<<<< HEAD
     factory.add_option("idle_inserter", [None, cycle_pause])  # Add option for idle periods
     factory.add_option("backpressure_inserter", [None, cycle_pause])  # Add option for backpressure
     factory.add_option("size", [None]+list(range(1, 32)))  # Specify different burst sizes to test
@@ -150,6 +196,57 @@ def test_axi_fifo_rd(request, data_width, delay):
         request.node.name.replace('[', '-').replace(']', ''))
 
     # Run the simulation with the specified configuration
+=======
+    factory.add_option("idle_inserter", [None, cycle_pause])
+    factory.add_option("backpressure_inserter", [None, cycle_pause])
+    factory.add_option("size", [None]+list(range(1, 32)))  # Modify range as needed
+    factory.generate_tests()
+
+
+# cocotb-test
+
+tests_dir = os.path.abspath(os.path.dirname(__file__))
+rtl_dir = os.path.abspath(os.path.join(tests_dir, '..', '..', 'responses'))
+
+
+@pytest.mark.parametrize("delay", [0, 1])
+@pytest.mark.parametrize("data_width", [8, 16, 32])
+def test_axi_fifo_rd(request, data_width, delay):
+    """Pytest configuration for the testbench."""
+    dut = "axi_fifo_rd"
+    module = os.path.splitext(os.path.basename(__file__))[0]
+    toplevel = dut
+
+    verilog_sources = [
+        os.path.join(rtl_dir, f"{dut}.v"),
+        os.path.join(rtl_dir, f"{dut}_rd.v"),
+    ]
+
+    parameters = {}
+
+    parameters['DATA_WIDTH'] = data_width
+    parameters['ADDR_WIDTH'] = 32
+    parameters['STRB_WIDTH'] = parameters['DATA_WIDTH'] // 8
+    parameters['ID_WIDTH'] = 8
+    parameters['AWUSER_ENABLE'] = 0
+    parameters['AWUSER_WIDTH'] = 1
+    parameters['WUSER_ENABLE'] = 0
+    parameters['WUSER_WIDTH'] = 1
+    parameters['BUSER_ENABLE'] = 0
+    parameters['BUSER_WIDTH'] = 1
+    parameters['ARUSER_ENABLE'] = 0
+    parameters['ARUSER_WIDTH'] = 1
+    parameters['RUSER_ENABLE'] = 0
+    parameters['RUSER_WIDTH'] = 1
+    parameters['READ_FIFO_DEPTH'] = 32
+    parameters['READ_FIFO_DELAY'] = delay
+
+    extra_env = {f'PARAM_{k}': str(v) for k, v in parameters.items()}
+
+    sim_build = os.path.join(tests_dir, "sim_build",
+        request.node.name.replace('[', '-').replace(']', ''))
+
+>>>>>>> refs/remotes/origin/main
     cocotb_test.simulator.run(
         python_search=[tests_dir],
         verilog_sources=verilog_sources,
