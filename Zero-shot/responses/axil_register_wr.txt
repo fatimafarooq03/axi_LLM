@@ -1,0 +1,165 @@
+```verilog
+module axil_register_wr #
+(
+    // Parameters
+    parameter DATA_WIDTH = 32,  // Width of data bus in bits
+    parameter ADDR_WIDTH = 32,  // Width of address bus in bits
+    parameter STRB_WIDTH = (DATA_WIDTH/8),  // Width of wstrb (width of data bus in words)
+    parameter AW_REG_TYPE = 1,  // AW channel register type: 0 to bypass, 1 for simple buffer
+    parameter W_REG_TYPE = 1,  // W channel register type: 0 to bypass, 1 for simple buffer
+    parameter B_REG_TYPE = 1  // B channel register type: 0 to bypass, 1 for simple buffer
+)
+(
+    // Ports
+    input  wire                     clk,  // Clock signal
+    input  wire                     rst,  // Reset signal
+
+    /*
+     * AXI lite slave interface
+     */
+    input  wire [ADDR_WIDTH-1:0]    s_axil_awaddr,  // Write address
+    input  wire [2:0]               s_axil_awprot,  // Write protection type
+    input  wire                     s_axil_awvalid,  // Write address valid
+    output wire                     s_axil_awready,  // Write address ready
+    input  wire [DATA_WIDTH-1:0]    s_axil_wdata,  // Write data
+    input  wire [STRB_WIDTH-1:0]    s_axil_wstrb,  // Write strobes
+    input  wire                     s_axil_wvalid,  // Write valid
+    output wire                     s_axil_wready,  // Write ready
+    output wire [1:0]               s_axil_bresp,  // Write response
+    output wire                     s_axil_bvalid,  // Write response valid
+    input  wire                     s_axil_bready,  // Write response ready
+
+    /*
+     * AXI lite master interface
+     */
+    output wire [ADDR_WIDTH-1:0]    m_axil_awaddr,  // Master write address
+    output wire [2:0]               m_axil_awprot,  // Master write protection type
+    output wire                     m_axil_awvalid,  // Master write address valid
+    input  wire                     m_axil_awready,  // Master write address ready
+    output wire [DATA_WIDTH-1:0]    m_axil_wdata,  // Master write data
+    output wire [STRB_WIDTH-1:0]    m_axil_wstrb,  // Master write strobes
+    output wire                     m_axil_wvalid,  // Master write valid
+    input  wire                     m_axil_wready,  // Master write ready
+    input  wire [1:0]               m_axil_bresp,  // Master write response
+    input  wire                     m_axil_bvalid,  // Master write response valid
+    output wire                     m_axil_bready  // Master write response ready
+);
+
+// Internal registers and wires
+reg [ADDR_WIDTH-1:0] awaddr_reg;
+reg [2:0] awprot_reg;
+reg awvalid_reg;
+reg [DATA_WIDTH-1:0] wdata_reg;
+reg [STRB_WIDTH-1:0] wstrb_reg;
+reg wvalid_reg;
+reg [1:0] bresp_reg;
+reg bvalid_reg;
+
+assign s_axil_awready = (AW_REG_TYPE == 0) ? m_axil_awready : ((AW_REG_TYPE == 1) ? awready_reg : awready_skid);
+assign m_axil_awaddr = (AW_REG_TYPE == 0) ? s_axil_awaddr : awaddr_reg;
+assign m_axil_awprot = (AW_REG_TYPE == 0) ? s_axil_awprot : awprot_reg;
+assign m_axil_awvalid = (AW_REG_TYPE == 0) ? s_axil_awvalid : awvalid_reg;
+
+assign s_axil_wready = (W_REG_TYPE == 0) ? m_axil_wready : ((W_REG_TYPE == 1) ? wready_reg : wready_skid);
+assign m_axil_wdata = (W_REG_TYPE == 0) ? s_axil_wdata : wdata_reg;
+assign m_axil_wstrb = (W_REG_TYPE == 0) ? s_axil_wstrb : wstrb_reg;
+assign m_axil_wvalid = (W_REG_TYPE == 0) ? s_axil_wvalid : wvalid_reg;
+
+assign s_axil_bresp = (B_REG_TYPE == 0) ? m_axil_bresp : bresp_reg;
+assign s_axil_bvalid = (B_REG_TYPE == 0) ? m_axil_bvalid : bvalid_reg;
+assign m_axil_bready = (B_REG_TYPE == 0) ? s_axil_bready : bready_reg;
+
+// Skid buffer logic
+reg awready_reg;
+reg wready_reg;
+reg bready_reg;
+reg awready_skid;
+reg wready_skid;
+
+always @(posedge clk or posedge rst) begin
+    if (rst) begin
+        awaddr_reg <= 0;
+        awprot_reg <= 0;
+        awvalid_reg <= 0;
+        wdata_reg <= 0;
+        wstrb_reg <= 0;
+        wvalid_reg <= 0;
+        bresp_reg <= 0;
+        bvalid_reg <= 0;
+        awready_reg <= 0;
+        wready_reg <= 0;
+        bready_reg <= 0;
+        awready_skid <= 0;
+        wready_skid <= 0;
+    end else begin
+        if (AW_REG_TYPE > 0) begin
+            if (AW_REG_TYPE == 1) begin
+                awready_reg <= (!awvalid_reg || m_axil_awready);
+                if (s_axil_awvalid && awready_reg) begin
+                    awaddr_reg <= s_axil_awaddr;
+                    awprot_reg <= s_axil_awprot;
+                    awvalid_reg <= 1;
+                end else if (m_axil_awready) begin
+                    awvalid_reg <= 0;
+                end
+            end else begin
+                if (s_axil_awvalid && awready_skid) begin
+                    awaddr_reg <= s_axil_awaddr;
+                    awprot_reg <= s_axil_awprot;
+                    awvalid_reg <= 1;
+                    awready_skid <= 0;
+                end else if (m_axil_awready) begin
+                    awvalid_reg <= 0;
+                    awready_skid <= 1;
+                end
+            end
+        end
+
+        if (W_REG_TYPE > 0) begin
+            if (W_REG_TYPE == 1) begin
+                wready_reg <= (!wvalid_reg || m_axil_wready);
+                if (s_axil_wvalid && wready_reg) begin
+                    wdata_reg <= s_axil_wdata;
+                    wstrb_reg <= s_axil_wstrb;
+                    wvalid_reg <= 1;
+                end else if (m_axil_wready) begin
+                    wvalid_reg <= 0;
+                end
+            end else begin
+                if (s_axil_wvalid && wready_skid) begin
+                    wdata_reg <= s_axil_wdata;
+                    wstrb_reg <= s_axil_wstrb;
+                    wvalid_reg <= 1;
+                    wready_skid <= 0;
+                end else if (m_axil_wready) begin
+                    wvalid_reg <= 0;
+                    wready_skid <= 1;
+                end
+            end
+        end
+
+        if (B_REG_TYPE > 0) begin
+            if (B_REG_TYPE == 1) begin
+                bready_reg <= (s_axil_bready || !bvalid_reg);
+                if (m_axil_bvalid && (s_axil_bready || !bvalid_reg)) begin
+                    bresp_reg <= m_axil_bresp;
+                    bvalid_reg <= 1;
+                end else if (s_axil_bready) begin
+                    bvalid_reg <= 0;
+                end
+            end else begin
+                if (m_axil_bvalid && (s_axil_bready || !bvalid_reg)) begin
+                    bresp_reg <= m_axil_bresp;
+                    bvalid_reg <= 1;
+                    bready_reg <= 1;
+                end else if (s_axil_bready) begin
+                    bvalid_reg <= 0;
+                    bready_reg <= 0;
+                end
+            end
+        end
+    end
+end
+
+endmodule
+```

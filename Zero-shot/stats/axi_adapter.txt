@@ -1,0 +1,587 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.12.4, pytest-7.1.2, pluggy-1.5.0
+rootdir: /Users/fatimafarooq/Desktop/axi_LLM
+plugins: cocotb-test-0.2.5, anyio-4.4.0
+collected 9 items
+
+tests/test_axi_adapter.py FFFFFFFFF                                      [100%]
+
+=================================== FAILURES ===================================
+____________________________ test_axi_adapter[8-8] _____________________________
+
+request = <FixtureRequest for <Function test_axi_adapter[8-8]>>
+s_data_width = 8, m_data_width = 8
+
+    @pytest.mark.parametrize("m_data_width", [8, 16, 32])
+    @pytest.mark.parametrize("s_data_width", [8, 16, 32])
+    def test_axi_adapter(request, s_data_width, m_data_width):
+        dut = "axi_adapter"
+        module = os.path.splitext(os.path.basename(__file__))[0]
+        toplevel = dut
+    
+        verilog_sources = [
+            os.path.join(rtl_dir, f"{dut}.v"),
+            os.path.join(rtl_dir, f"{dut}_rd.v"),
+            os.path.join(rtl_dir, f"{dut}_wr.v"),
+        ]
+    
+        parameters = {}
+    
+        parameters['ADDR_WIDTH'] = 32
+        parameters['S_DATA_WIDTH'] = s_data_width
+        parameters['S_STRB_WIDTH'] = parameters['S_DATA_WIDTH'] // 8
+        parameters['M_DATA_WIDTH'] = m_data_width
+        parameters['M_STRB_WIDTH'] = parameters['M_DATA_WIDTH'] // 8
+        parameters['ID_WIDTH'] = 8
+        parameters['AWUSER_ENABLE'] = 0
+        parameters['AWUSER_WIDTH'] = 1
+        parameters['WUSER_ENABLE'] = 0
+        parameters['WUSER_WIDTH'] = 1
+        parameters['BUSER_ENABLE'] = 0
+        parameters['BUSER_WIDTH'] = 1
+        parameters['ARUSER_ENABLE'] = 0
+        parameters['ARUSER_WIDTH'] = 1
+        parameters['RUSER_ENABLE'] = 0
+        parameters['RUSER_WIDTH'] = 1
+        parameters['CONVERT_BURST'] = 1
+        parameters['CONVERT_NARROW_BURST'] = 1
+        parameters['FORWARD_ID'] = 1
+    
+        extra_env = {f'PARAM_{k}': str(v) for k, v in parameters.items()}
+    
+        sim_build = os.path.join(tests_dir, "sim_build",
+            request.node.name.replace('[', '-').replace(']', ''))
+    
+>       cocotb_test.simulator.run(
+            python_search=[tests_dir],
+            verilog_sources=verilog_sources,
+            toplevel=toplevel,
+            module=module,
+            parameters=parameters,
+            sim_build=sim_build,
+            extra_env=extra_env,
+        )
+E       SystemExit: Process iverilog terminated with error 1
+
+tests/test_axi_adapter.py:266: SystemExit
+------------------------------ Captured log call -------------------------------
+INFO     cocotb:simulator.py:334 Running command: iverilog -o /Users/fatimafarooq/Desktop/axi_LLM/tests/sim_build/test_axi_adapter-8-8/axi_adapter.vvp -D COCOTB_SIM=1 -g2012 -s axi_adapter -Paxi_adapter.ADDR_WIDTH=32 -Paxi_adapter.S_DATA_WIDTH=8 -Paxi_adapter.S_STRB_WIDTH=1 -Paxi_adapter.M_DATA_WIDTH=8 -Paxi_adapter.M_STRB_WIDTH=1 -Paxi_adapter.ID_WIDTH=8 -Paxi_adapter.AWUSER_ENABLE=0 -Paxi_adapter.AWUSER_WIDTH=1 -Paxi_adapter.WUSER_ENABLE=0 -Paxi_adapter.WUSER_WIDTH=1 -Paxi_adapter.BUSER_ENABLE=0 -Paxi_adapter.BUSER_WIDTH=1 -Paxi_adapter.ARUSER_ENABLE=0 -Paxi_adapter.ARUSER_WIDTH=1 -Paxi_adapter.RUSER_ENABLE=0 -Paxi_adapter.RUSER_WIDTH=1 -Paxi_adapter.CONVERT_BURST=1 -Paxi_adapter.CONVERT_NARROW_BURST=1 -Paxi_adapter.FORWARD_ID=1 /Users/fatimafarooq/Desktop/modules/axi_adapter.v /Users/fatimafarooq/Desktop/modules/axi_adapter_rd.v /Users/fatimafarooq/Desktop/modules/axi_adapter_wr.v
+ERROR    cocotb:simulator.py:305 /Users/fatimafarooq/Desktop/modules/axi_adapter.v: No such file or directory
+ERROR    cocotb:simulator.py:305 error: Unable to find the root module "axi_adapter" in the Verilog source.
+ERROR    cocotb:simulator.py:305      : Perhaps ``-s axi_adapter'' is incorrect?
+ERROR    cocotb:simulator.py:305 1 error(s) during elaboration.
+____________________________ test_axi_adapter[8-16] ____________________________
+
+request = <FixtureRequest for <Function test_axi_adapter[8-16]>>
+s_data_width = 8, m_data_width = 16
+
+    @pytest.mark.parametrize("m_data_width", [8, 16, 32])
+    @pytest.mark.parametrize("s_data_width", [8, 16, 32])
+    def test_axi_adapter(request, s_data_width, m_data_width):
+        dut = "axi_adapter"
+        module = os.path.splitext(os.path.basename(__file__))[0]
+        toplevel = dut
+    
+        verilog_sources = [
+            os.path.join(rtl_dir, f"{dut}.v"),
+            os.path.join(rtl_dir, f"{dut}_rd.v"),
+            os.path.join(rtl_dir, f"{dut}_wr.v"),
+        ]
+    
+        parameters = {}
+    
+        parameters['ADDR_WIDTH'] = 32
+        parameters['S_DATA_WIDTH'] = s_data_width
+        parameters['S_STRB_WIDTH'] = parameters['S_DATA_WIDTH'] // 8
+        parameters['M_DATA_WIDTH'] = m_data_width
+        parameters['M_STRB_WIDTH'] = parameters['M_DATA_WIDTH'] // 8
+        parameters['ID_WIDTH'] = 8
+        parameters['AWUSER_ENABLE'] = 0
+        parameters['AWUSER_WIDTH'] = 1
+        parameters['WUSER_ENABLE'] = 0
+        parameters['WUSER_WIDTH'] = 1
+        parameters['BUSER_ENABLE'] = 0
+        parameters['BUSER_WIDTH'] = 1
+        parameters['ARUSER_ENABLE'] = 0
+        parameters['ARUSER_WIDTH'] = 1
+        parameters['RUSER_ENABLE'] = 0
+        parameters['RUSER_WIDTH'] = 1
+        parameters['CONVERT_BURST'] = 1
+        parameters['CONVERT_NARROW_BURST'] = 1
+        parameters['FORWARD_ID'] = 1
+    
+        extra_env = {f'PARAM_{k}': str(v) for k, v in parameters.items()}
+    
+        sim_build = os.path.join(tests_dir, "sim_build",
+            request.node.name.replace('[', '-').replace(']', ''))
+    
+>       cocotb_test.simulator.run(
+            python_search=[tests_dir],
+            verilog_sources=verilog_sources,
+            toplevel=toplevel,
+            module=module,
+            parameters=parameters,
+            sim_build=sim_build,
+            extra_env=extra_env,
+        )
+E       SystemExit: Process iverilog terminated with error 1
+
+tests/test_axi_adapter.py:266: SystemExit
+------------------------------ Captured log call -------------------------------
+INFO     cocotb:simulator.py:334 Running command: iverilog -o /Users/fatimafarooq/Desktop/axi_LLM/tests/sim_build/test_axi_adapter-8-16/axi_adapter.vvp -D COCOTB_SIM=1 -g2012 -s axi_adapter -Paxi_adapter.ADDR_WIDTH=32 -Paxi_adapter.S_DATA_WIDTH=8 -Paxi_adapter.S_STRB_WIDTH=1 -Paxi_adapter.M_DATA_WIDTH=16 -Paxi_adapter.M_STRB_WIDTH=2 -Paxi_adapter.ID_WIDTH=8 -Paxi_adapter.AWUSER_ENABLE=0 -Paxi_adapter.AWUSER_WIDTH=1 -Paxi_adapter.WUSER_ENABLE=0 -Paxi_adapter.WUSER_WIDTH=1 -Paxi_adapter.BUSER_ENABLE=0 -Paxi_adapter.BUSER_WIDTH=1 -Paxi_adapter.ARUSER_ENABLE=0 -Paxi_adapter.ARUSER_WIDTH=1 -Paxi_adapter.RUSER_ENABLE=0 -Paxi_adapter.RUSER_WIDTH=1 -Paxi_adapter.CONVERT_BURST=1 -Paxi_adapter.CONVERT_NARROW_BURST=1 -Paxi_adapter.FORWARD_ID=1 /Users/fatimafarooq/Desktop/modules/axi_adapter.v /Users/fatimafarooq/Desktop/modules/axi_adapter_rd.v /Users/fatimafarooq/Desktop/modules/axi_adapter_wr.v
+ERROR    cocotb:simulator.py:305 /Users/fatimafarooq/Desktop/modules/axi_adapter.v: No such file or directory
+ERROR    cocotb:simulator.py:305 error: Unable to find the root module "axi_adapter" in the Verilog source.
+ERROR    cocotb:simulator.py:305      : Perhaps ``-s axi_adapter'' is incorrect?
+ERROR    cocotb:simulator.py:305 1 error(s) during elaboration.
+____________________________ test_axi_adapter[8-32] ____________________________
+
+request = <FixtureRequest for <Function test_axi_adapter[8-32]>>
+s_data_width = 8, m_data_width = 32
+
+    @pytest.mark.parametrize("m_data_width", [8, 16, 32])
+    @pytest.mark.parametrize("s_data_width", [8, 16, 32])
+    def test_axi_adapter(request, s_data_width, m_data_width):
+        dut = "axi_adapter"
+        module = os.path.splitext(os.path.basename(__file__))[0]
+        toplevel = dut
+    
+        verilog_sources = [
+            os.path.join(rtl_dir, f"{dut}.v"),
+            os.path.join(rtl_dir, f"{dut}_rd.v"),
+            os.path.join(rtl_dir, f"{dut}_wr.v"),
+        ]
+    
+        parameters = {}
+    
+        parameters['ADDR_WIDTH'] = 32
+        parameters['S_DATA_WIDTH'] = s_data_width
+        parameters['S_STRB_WIDTH'] = parameters['S_DATA_WIDTH'] // 8
+        parameters['M_DATA_WIDTH'] = m_data_width
+        parameters['M_STRB_WIDTH'] = parameters['M_DATA_WIDTH'] // 8
+        parameters['ID_WIDTH'] = 8
+        parameters['AWUSER_ENABLE'] = 0
+        parameters['AWUSER_WIDTH'] = 1
+        parameters['WUSER_ENABLE'] = 0
+        parameters['WUSER_WIDTH'] = 1
+        parameters['BUSER_ENABLE'] = 0
+        parameters['BUSER_WIDTH'] = 1
+        parameters['ARUSER_ENABLE'] = 0
+        parameters['ARUSER_WIDTH'] = 1
+        parameters['RUSER_ENABLE'] = 0
+        parameters['RUSER_WIDTH'] = 1
+        parameters['CONVERT_BURST'] = 1
+        parameters['CONVERT_NARROW_BURST'] = 1
+        parameters['FORWARD_ID'] = 1
+    
+        extra_env = {f'PARAM_{k}': str(v) for k, v in parameters.items()}
+    
+        sim_build = os.path.join(tests_dir, "sim_build",
+            request.node.name.replace('[', '-').replace(']', ''))
+    
+>       cocotb_test.simulator.run(
+            python_search=[tests_dir],
+            verilog_sources=verilog_sources,
+            toplevel=toplevel,
+            module=module,
+            parameters=parameters,
+            sim_build=sim_build,
+            extra_env=extra_env,
+        )
+E       SystemExit: Process iverilog terminated with error 1
+
+tests/test_axi_adapter.py:266: SystemExit
+------------------------------ Captured log call -------------------------------
+INFO     cocotb:simulator.py:334 Running command: iverilog -o /Users/fatimafarooq/Desktop/axi_LLM/tests/sim_build/test_axi_adapter-8-32/axi_adapter.vvp -D COCOTB_SIM=1 -g2012 -s axi_adapter -Paxi_adapter.ADDR_WIDTH=32 -Paxi_adapter.S_DATA_WIDTH=8 -Paxi_adapter.S_STRB_WIDTH=1 -Paxi_adapter.M_DATA_WIDTH=32 -Paxi_adapter.M_STRB_WIDTH=4 -Paxi_adapter.ID_WIDTH=8 -Paxi_adapter.AWUSER_ENABLE=0 -Paxi_adapter.AWUSER_WIDTH=1 -Paxi_adapter.WUSER_ENABLE=0 -Paxi_adapter.WUSER_WIDTH=1 -Paxi_adapter.BUSER_ENABLE=0 -Paxi_adapter.BUSER_WIDTH=1 -Paxi_adapter.ARUSER_ENABLE=0 -Paxi_adapter.ARUSER_WIDTH=1 -Paxi_adapter.RUSER_ENABLE=0 -Paxi_adapter.RUSER_WIDTH=1 -Paxi_adapter.CONVERT_BURST=1 -Paxi_adapter.CONVERT_NARROW_BURST=1 -Paxi_adapter.FORWARD_ID=1 /Users/fatimafarooq/Desktop/modules/axi_adapter.v /Users/fatimafarooq/Desktop/modules/axi_adapter_rd.v /Users/fatimafarooq/Desktop/modules/axi_adapter_wr.v
+ERROR    cocotb:simulator.py:305 /Users/fatimafarooq/Desktop/modules/axi_adapter.v: No such file or directory
+ERROR    cocotb:simulator.py:305 error: Unable to find the root module "axi_adapter" in the Verilog source.
+ERROR    cocotb:simulator.py:305      : Perhaps ``-s axi_adapter'' is incorrect?
+ERROR    cocotb:simulator.py:305 1 error(s) during elaboration.
+____________________________ test_axi_adapter[16-8] ____________________________
+
+request = <FixtureRequest for <Function test_axi_adapter[16-8]>>
+s_data_width = 16, m_data_width = 8
+
+    @pytest.mark.parametrize("m_data_width", [8, 16, 32])
+    @pytest.mark.parametrize("s_data_width", [8, 16, 32])
+    def test_axi_adapter(request, s_data_width, m_data_width):
+        dut = "axi_adapter"
+        module = os.path.splitext(os.path.basename(__file__))[0]
+        toplevel = dut
+    
+        verilog_sources = [
+            os.path.join(rtl_dir, f"{dut}.v"),
+            os.path.join(rtl_dir, f"{dut}_rd.v"),
+            os.path.join(rtl_dir, f"{dut}_wr.v"),
+        ]
+    
+        parameters = {}
+    
+        parameters['ADDR_WIDTH'] = 32
+        parameters['S_DATA_WIDTH'] = s_data_width
+        parameters['S_STRB_WIDTH'] = parameters['S_DATA_WIDTH'] // 8
+        parameters['M_DATA_WIDTH'] = m_data_width
+        parameters['M_STRB_WIDTH'] = parameters['M_DATA_WIDTH'] // 8
+        parameters['ID_WIDTH'] = 8
+        parameters['AWUSER_ENABLE'] = 0
+        parameters['AWUSER_WIDTH'] = 1
+        parameters['WUSER_ENABLE'] = 0
+        parameters['WUSER_WIDTH'] = 1
+        parameters['BUSER_ENABLE'] = 0
+        parameters['BUSER_WIDTH'] = 1
+        parameters['ARUSER_ENABLE'] = 0
+        parameters['ARUSER_WIDTH'] = 1
+        parameters['RUSER_ENABLE'] = 0
+        parameters['RUSER_WIDTH'] = 1
+        parameters['CONVERT_BURST'] = 1
+        parameters['CONVERT_NARROW_BURST'] = 1
+        parameters['FORWARD_ID'] = 1
+    
+        extra_env = {f'PARAM_{k}': str(v) for k, v in parameters.items()}
+    
+        sim_build = os.path.join(tests_dir, "sim_build",
+            request.node.name.replace('[', '-').replace(']', ''))
+    
+>       cocotb_test.simulator.run(
+            python_search=[tests_dir],
+            verilog_sources=verilog_sources,
+            toplevel=toplevel,
+            module=module,
+            parameters=parameters,
+            sim_build=sim_build,
+            extra_env=extra_env,
+        )
+E       SystemExit: Process iverilog terminated with error 1
+
+tests/test_axi_adapter.py:266: SystemExit
+------------------------------ Captured log call -------------------------------
+INFO     cocotb:simulator.py:334 Running command: iverilog -o /Users/fatimafarooq/Desktop/axi_LLM/tests/sim_build/test_axi_adapter-16-8/axi_adapter.vvp -D COCOTB_SIM=1 -g2012 -s axi_adapter -Paxi_adapter.ADDR_WIDTH=32 -Paxi_adapter.S_DATA_WIDTH=16 -Paxi_adapter.S_STRB_WIDTH=2 -Paxi_adapter.M_DATA_WIDTH=8 -Paxi_adapter.M_STRB_WIDTH=1 -Paxi_adapter.ID_WIDTH=8 -Paxi_adapter.AWUSER_ENABLE=0 -Paxi_adapter.AWUSER_WIDTH=1 -Paxi_adapter.WUSER_ENABLE=0 -Paxi_adapter.WUSER_WIDTH=1 -Paxi_adapter.BUSER_ENABLE=0 -Paxi_adapter.BUSER_WIDTH=1 -Paxi_adapter.ARUSER_ENABLE=0 -Paxi_adapter.ARUSER_WIDTH=1 -Paxi_adapter.RUSER_ENABLE=0 -Paxi_adapter.RUSER_WIDTH=1 -Paxi_adapter.CONVERT_BURST=1 -Paxi_adapter.CONVERT_NARROW_BURST=1 -Paxi_adapter.FORWARD_ID=1 /Users/fatimafarooq/Desktop/modules/axi_adapter.v /Users/fatimafarooq/Desktop/modules/axi_adapter_rd.v /Users/fatimafarooq/Desktop/modules/axi_adapter_wr.v
+ERROR    cocotb:simulator.py:305 /Users/fatimafarooq/Desktop/modules/axi_adapter.v: No such file or directory
+ERROR    cocotb:simulator.py:305 error: Unable to find the root module "axi_adapter" in the Verilog source.
+ERROR    cocotb:simulator.py:305      : Perhaps ``-s axi_adapter'' is incorrect?
+ERROR    cocotb:simulator.py:305 1 error(s) during elaboration.
+___________________________ test_axi_adapter[16-16] ____________________________
+
+request = <FixtureRequest for <Function test_axi_adapter[16-16]>>
+s_data_width = 16, m_data_width = 16
+
+    @pytest.mark.parametrize("m_data_width", [8, 16, 32])
+    @pytest.mark.parametrize("s_data_width", [8, 16, 32])
+    def test_axi_adapter(request, s_data_width, m_data_width):
+        dut = "axi_adapter"
+        module = os.path.splitext(os.path.basename(__file__))[0]
+        toplevel = dut
+    
+        verilog_sources = [
+            os.path.join(rtl_dir, f"{dut}.v"),
+            os.path.join(rtl_dir, f"{dut}_rd.v"),
+            os.path.join(rtl_dir, f"{dut}_wr.v"),
+        ]
+    
+        parameters = {}
+    
+        parameters['ADDR_WIDTH'] = 32
+        parameters['S_DATA_WIDTH'] = s_data_width
+        parameters['S_STRB_WIDTH'] = parameters['S_DATA_WIDTH'] // 8
+        parameters['M_DATA_WIDTH'] = m_data_width
+        parameters['M_STRB_WIDTH'] = parameters['M_DATA_WIDTH'] // 8
+        parameters['ID_WIDTH'] = 8
+        parameters['AWUSER_ENABLE'] = 0
+        parameters['AWUSER_WIDTH'] = 1
+        parameters['WUSER_ENABLE'] = 0
+        parameters['WUSER_WIDTH'] = 1
+        parameters['BUSER_ENABLE'] = 0
+        parameters['BUSER_WIDTH'] = 1
+        parameters['ARUSER_ENABLE'] = 0
+        parameters['ARUSER_WIDTH'] = 1
+        parameters['RUSER_ENABLE'] = 0
+        parameters['RUSER_WIDTH'] = 1
+        parameters['CONVERT_BURST'] = 1
+        parameters['CONVERT_NARROW_BURST'] = 1
+        parameters['FORWARD_ID'] = 1
+    
+        extra_env = {f'PARAM_{k}': str(v) for k, v in parameters.items()}
+    
+        sim_build = os.path.join(tests_dir, "sim_build",
+            request.node.name.replace('[', '-').replace(']', ''))
+    
+>       cocotb_test.simulator.run(
+            python_search=[tests_dir],
+            verilog_sources=verilog_sources,
+            toplevel=toplevel,
+            module=module,
+            parameters=parameters,
+            sim_build=sim_build,
+            extra_env=extra_env,
+        )
+E       SystemExit: Process iverilog terminated with error 1
+
+tests/test_axi_adapter.py:266: SystemExit
+------------------------------ Captured log call -------------------------------
+INFO     cocotb:simulator.py:334 Running command: iverilog -o /Users/fatimafarooq/Desktop/axi_LLM/tests/sim_build/test_axi_adapter-16-16/axi_adapter.vvp -D COCOTB_SIM=1 -g2012 -s axi_adapter -Paxi_adapter.ADDR_WIDTH=32 -Paxi_adapter.S_DATA_WIDTH=16 -Paxi_adapter.S_STRB_WIDTH=2 -Paxi_adapter.M_DATA_WIDTH=16 -Paxi_adapter.M_STRB_WIDTH=2 -Paxi_adapter.ID_WIDTH=8 -Paxi_adapter.AWUSER_ENABLE=0 -Paxi_adapter.AWUSER_WIDTH=1 -Paxi_adapter.WUSER_ENABLE=0 -Paxi_adapter.WUSER_WIDTH=1 -Paxi_adapter.BUSER_ENABLE=0 -Paxi_adapter.BUSER_WIDTH=1 -Paxi_adapter.ARUSER_ENABLE=0 -Paxi_adapter.ARUSER_WIDTH=1 -Paxi_adapter.RUSER_ENABLE=0 -Paxi_adapter.RUSER_WIDTH=1 -Paxi_adapter.CONVERT_BURST=1 -Paxi_adapter.CONVERT_NARROW_BURST=1 -Paxi_adapter.FORWARD_ID=1 /Users/fatimafarooq/Desktop/modules/axi_adapter.v /Users/fatimafarooq/Desktop/modules/axi_adapter_rd.v /Users/fatimafarooq/Desktop/modules/axi_adapter_wr.v
+ERROR    cocotb:simulator.py:305 /Users/fatimafarooq/Desktop/modules/axi_adapter.v: No such file or directory
+ERROR    cocotb:simulator.py:305 error: Unable to find the root module "axi_adapter" in the Verilog source.
+ERROR    cocotb:simulator.py:305      : Perhaps ``-s axi_adapter'' is incorrect?
+ERROR    cocotb:simulator.py:305 1 error(s) during elaboration.
+___________________________ test_axi_adapter[16-32] ____________________________
+
+request = <FixtureRequest for <Function test_axi_adapter[16-32]>>
+s_data_width = 16, m_data_width = 32
+
+    @pytest.mark.parametrize("m_data_width", [8, 16, 32])
+    @pytest.mark.parametrize("s_data_width", [8, 16, 32])
+    def test_axi_adapter(request, s_data_width, m_data_width):
+        dut = "axi_adapter"
+        module = os.path.splitext(os.path.basename(__file__))[0]
+        toplevel = dut
+    
+        verilog_sources = [
+            os.path.join(rtl_dir, f"{dut}.v"),
+            os.path.join(rtl_dir, f"{dut}_rd.v"),
+            os.path.join(rtl_dir, f"{dut}_wr.v"),
+        ]
+    
+        parameters = {}
+    
+        parameters['ADDR_WIDTH'] = 32
+        parameters['S_DATA_WIDTH'] = s_data_width
+        parameters['S_STRB_WIDTH'] = parameters['S_DATA_WIDTH'] // 8
+        parameters['M_DATA_WIDTH'] = m_data_width
+        parameters['M_STRB_WIDTH'] = parameters['M_DATA_WIDTH'] // 8
+        parameters['ID_WIDTH'] = 8
+        parameters['AWUSER_ENABLE'] = 0
+        parameters['AWUSER_WIDTH'] = 1
+        parameters['WUSER_ENABLE'] = 0
+        parameters['WUSER_WIDTH'] = 1
+        parameters['BUSER_ENABLE'] = 0
+        parameters['BUSER_WIDTH'] = 1
+        parameters['ARUSER_ENABLE'] = 0
+        parameters['ARUSER_WIDTH'] = 1
+        parameters['RUSER_ENABLE'] = 0
+        parameters['RUSER_WIDTH'] = 1
+        parameters['CONVERT_BURST'] = 1
+        parameters['CONVERT_NARROW_BURST'] = 1
+        parameters['FORWARD_ID'] = 1
+    
+        extra_env = {f'PARAM_{k}': str(v) for k, v in parameters.items()}
+    
+        sim_build = os.path.join(tests_dir, "sim_build",
+            request.node.name.replace('[', '-').replace(']', ''))
+    
+>       cocotb_test.simulator.run(
+            python_search=[tests_dir],
+            verilog_sources=verilog_sources,
+            toplevel=toplevel,
+            module=module,
+            parameters=parameters,
+            sim_build=sim_build,
+            extra_env=extra_env,
+        )
+E       SystemExit: Process iverilog terminated with error 1
+
+tests/test_axi_adapter.py:266: SystemExit
+------------------------------ Captured log call -------------------------------
+INFO     cocotb:simulator.py:334 Running command: iverilog -o /Users/fatimafarooq/Desktop/axi_LLM/tests/sim_build/test_axi_adapter-16-32/axi_adapter.vvp -D COCOTB_SIM=1 -g2012 -s axi_adapter -Paxi_adapter.ADDR_WIDTH=32 -Paxi_adapter.S_DATA_WIDTH=16 -Paxi_adapter.S_STRB_WIDTH=2 -Paxi_adapter.M_DATA_WIDTH=32 -Paxi_adapter.M_STRB_WIDTH=4 -Paxi_adapter.ID_WIDTH=8 -Paxi_adapter.AWUSER_ENABLE=0 -Paxi_adapter.AWUSER_WIDTH=1 -Paxi_adapter.WUSER_ENABLE=0 -Paxi_adapter.WUSER_WIDTH=1 -Paxi_adapter.BUSER_ENABLE=0 -Paxi_adapter.BUSER_WIDTH=1 -Paxi_adapter.ARUSER_ENABLE=0 -Paxi_adapter.ARUSER_WIDTH=1 -Paxi_adapter.RUSER_ENABLE=0 -Paxi_adapter.RUSER_WIDTH=1 -Paxi_adapter.CONVERT_BURST=1 -Paxi_adapter.CONVERT_NARROW_BURST=1 -Paxi_adapter.FORWARD_ID=1 /Users/fatimafarooq/Desktop/modules/axi_adapter.v /Users/fatimafarooq/Desktop/modules/axi_adapter_rd.v /Users/fatimafarooq/Desktop/modules/axi_adapter_wr.v
+ERROR    cocotb:simulator.py:305 /Users/fatimafarooq/Desktop/modules/axi_adapter.v: No such file or directory
+ERROR    cocotb:simulator.py:305 error: Unable to find the root module "axi_adapter" in the Verilog source.
+ERROR    cocotb:simulator.py:305      : Perhaps ``-s axi_adapter'' is incorrect?
+ERROR    cocotb:simulator.py:305 1 error(s) during elaboration.
+____________________________ test_axi_adapter[32-8] ____________________________
+
+request = <FixtureRequest for <Function test_axi_adapter[32-8]>>
+s_data_width = 32, m_data_width = 8
+
+    @pytest.mark.parametrize("m_data_width", [8, 16, 32])
+    @pytest.mark.parametrize("s_data_width", [8, 16, 32])
+    def test_axi_adapter(request, s_data_width, m_data_width):
+        dut = "axi_adapter"
+        module = os.path.splitext(os.path.basename(__file__))[0]
+        toplevel = dut
+    
+        verilog_sources = [
+            os.path.join(rtl_dir, f"{dut}.v"),
+            os.path.join(rtl_dir, f"{dut}_rd.v"),
+            os.path.join(rtl_dir, f"{dut}_wr.v"),
+        ]
+    
+        parameters = {}
+    
+        parameters['ADDR_WIDTH'] = 32
+        parameters['S_DATA_WIDTH'] = s_data_width
+        parameters['S_STRB_WIDTH'] = parameters['S_DATA_WIDTH'] // 8
+        parameters['M_DATA_WIDTH'] = m_data_width
+        parameters['M_STRB_WIDTH'] = parameters['M_DATA_WIDTH'] // 8
+        parameters['ID_WIDTH'] = 8
+        parameters['AWUSER_ENABLE'] = 0
+        parameters['AWUSER_WIDTH'] = 1
+        parameters['WUSER_ENABLE'] = 0
+        parameters['WUSER_WIDTH'] = 1
+        parameters['BUSER_ENABLE'] = 0
+        parameters['BUSER_WIDTH'] = 1
+        parameters['ARUSER_ENABLE'] = 0
+        parameters['ARUSER_WIDTH'] = 1
+        parameters['RUSER_ENABLE'] = 0
+        parameters['RUSER_WIDTH'] = 1
+        parameters['CONVERT_BURST'] = 1
+        parameters['CONVERT_NARROW_BURST'] = 1
+        parameters['FORWARD_ID'] = 1
+    
+        extra_env = {f'PARAM_{k}': str(v) for k, v in parameters.items()}
+    
+        sim_build = os.path.join(tests_dir, "sim_build",
+            request.node.name.replace('[', '-').replace(']', ''))
+    
+>       cocotb_test.simulator.run(
+            python_search=[tests_dir],
+            verilog_sources=verilog_sources,
+            toplevel=toplevel,
+            module=module,
+            parameters=parameters,
+            sim_build=sim_build,
+            extra_env=extra_env,
+        )
+E       SystemExit: Process iverilog terminated with error 1
+
+tests/test_axi_adapter.py:266: SystemExit
+------------------------------ Captured log call -------------------------------
+INFO     cocotb:simulator.py:334 Running command: iverilog -o /Users/fatimafarooq/Desktop/axi_LLM/tests/sim_build/test_axi_adapter-32-8/axi_adapter.vvp -D COCOTB_SIM=1 -g2012 -s axi_adapter -Paxi_adapter.ADDR_WIDTH=32 -Paxi_adapter.S_DATA_WIDTH=32 -Paxi_adapter.S_STRB_WIDTH=4 -Paxi_adapter.M_DATA_WIDTH=8 -Paxi_adapter.M_STRB_WIDTH=1 -Paxi_adapter.ID_WIDTH=8 -Paxi_adapter.AWUSER_ENABLE=0 -Paxi_adapter.AWUSER_WIDTH=1 -Paxi_adapter.WUSER_ENABLE=0 -Paxi_adapter.WUSER_WIDTH=1 -Paxi_adapter.BUSER_ENABLE=0 -Paxi_adapter.BUSER_WIDTH=1 -Paxi_adapter.ARUSER_ENABLE=0 -Paxi_adapter.ARUSER_WIDTH=1 -Paxi_adapter.RUSER_ENABLE=0 -Paxi_adapter.RUSER_WIDTH=1 -Paxi_adapter.CONVERT_BURST=1 -Paxi_adapter.CONVERT_NARROW_BURST=1 -Paxi_adapter.FORWARD_ID=1 /Users/fatimafarooq/Desktop/modules/axi_adapter.v /Users/fatimafarooq/Desktop/modules/axi_adapter_rd.v /Users/fatimafarooq/Desktop/modules/axi_adapter_wr.v
+ERROR    cocotb:simulator.py:305 /Users/fatimafarooq/Desktop/modules/axi_adapter.v: No such file or directory
+ERROR    cocotb:simulator.py:305 error: Unable to find the root module "axi_adapter" in the Verilog source.
+ERROR    cocotb:simulator.py:305      : Perhaps ``-s axi_adapter'' is incorrect?
+ERROR    cocotb:simulator.py:305 1 error(s) during elaboration.
+___________________________ test_axi_adapter[32-16] ____________________________
+
+request = <FixtureRequest for <Function test_axi_adapter[32-16]>>
+s_data_width = 32, m_data_width = 16
+
+    @pytest.mark.parametrize("m_data_width", [8, 16, 32])
+    @pytest.mark.parametrize("s_data_width", [8, 16, 32])
+    def test_axi_adapter(request, s_data_width, m_data_width):
+        dut = "axi_adapter"
+        module = os.path.splitext(os.path.basename(__file__))[0]
+        toplevel = dut
+    
+        verilog_sources = [
+            os.path.join(rtl_dir, f"{dut}.v"),
+            os.path.join(rtl_dir, f"{dut}_rd.v"),
+            os.path.join(rtl_dir, f"{dut}_wr.v"),
+        ]
+    
+        parameters = {}
+    
+        parameters['ADDR_WIDTH'] = 32
+        parameters['S_DATA_WIDTH'] = s_data_width
+        parameters['S_STRB_WIDTH'] = parameters['S_DATA_WIDTH'] // 8
+        parameters['M_DATA_WIDTH'] = m_data_width
+        parameters['M_STRB_WIDTH'] = parameters['M_DATA_WIDTH'] // 8
+        parameters['ID_WIDTH'] = 8
+        parameters['AWUSER_ENABLE'] = 0
+        parameters['AWUSER_WIDTH'] = 1
+        parameters['WUSER_ENABLE'] = 0
+        parameters['WUSER_WIDTH'] = 1
+        parameters['BUSER_ENABLE'] = 0
+        parameters['BUSER_WIDTH'] = 1
+        parameters['ARUSER_ENABLE'] = 0
+        parameters['ARUSER_WIDTH'] = 1
+        parameters['RUSER_ENABLE'] = 0
+        parameters['RUSER_WIDTH'] = 1
+        parameters['CONVERT_BURST'] = 1
+        parameters['CONVERT_NARROW_BURST'] = 1
+        parameters['FORWARD_ID'] = 1
+    
+        extra_env = {f'PARAM_{k}': str(v) for k, v in parameters.items()}
+    
+        sim_build = os.path.join(tests_dir, "sim_build",
+            request.node.name.replace('[', '-').replace(']', ''))
+    
+>       cocotb_test.simulator.run(
+            python_search=[tests_dir],
+            verilog_sources=verilog_sources,
+            toplevel=toplevel,
+            module=module,
+            parameters=parameters,
+            sim_build=sim_build,
+            extra_env=extra_env,
+        )
+E       SystemExit: Process iverilog terminated with error 1
+
+tests/test_axi_adapter.py:266: SystemExit
+------------------------------ Captured log call -------------------------------
+INFO     cocotb:simulator.py:334 Running command: iverilog -o /Users/fatimafarooq/Desktop/axi_LLM/tests/sim_build/test_axi_adapter-32-16/axi_adapter.vvp -D COCOTB_SIM=1 -g2012 -s axi_adapter -Paxi_adapter.ADDR_WIDTH=32 -Paxi_adapter.S_DATA_WIDTH=32 -Paxi_adapter.S_STRB_WIDTH=4 -Paxi_adapter.M_DATA_WIDTH=16 -Paxi_adapter.M_STRB_WIDTH=2 -Paxi_adapter.ID_WIDTH=8 -Paxi_adapter.AWUSER_ENABLE=0 -Paxi_adapter.AWUSER_WIDTH=1 -Paxi_adapter.WUSER_ENABLE=0 -Paxi_adapter.WUSER_WIDTH=1 -Paxi_adapter.BUSER_ENABLE=0 -Paxi_adapter.BUSER_WIDTH=1 -Paxi_adapter.ARUSER_ENABLE=0 -Paxi_adapter.ARUSER_WIDTH=1 -Paxi_adapter.RUSER_ENABLE=0 -Paxi_adapter.RUSER_WIDTH=1 -Paxi_adapter.CONVERT_BURST=1 -Paxi_adapter.CONVERT_NARROW_BURST=1 -Paxi_adapter.FORWARD_ID=1 /Users/fatimafarooq/Desktop/modules/axi_adapter.v /Users/fatimafarooq/Desktop/modules/axi_adapter_rd.v /Users/fatimafarooq/Desktop/modules/axi_adapter_wr.v
+ERROR    cocotb:simulator.py:305 /Users/fatimafarooq/Desktop/modules/axi_adapter.v: No such file or directory
+ERROR    cocotb:simulator.py:305 error: Unable to find the root module "axi_adapter" in the Verilog source.
+ERROR    cocotb:simulator.py:305      : Perhaps ``-s axi_adapter'' is incorrect?
+ERROR    cocotb:simulator.py:305 1 error(s) during elaboration.
+___________________________ test_axi_adapter[32-32] ____________________________
+
+request = <FixtureRequest for <Function test_axi_adapter[32-32]>>
+s_data_width = 32, m_data_width = 32
+
+    @pytest.mark.parametrize("m_data_width", [8, 16, 32])
+    @pytest.mark.parametrize("s_data_width", [8, 16, 32])
+    def test_axi_adapter(request, s_data_width, m_data_width):
+        dut = "axi_adapter"
+        module = os.path.splitext(os.path.basename(__file__))[0]
+        toplevel = dut
+    
+        verilog_sources = [
+            os.path.join(rtl_dir, f"{dut}.v"),
+            os.path.join(rtl_dir, f"{dut}_rd.v"),
+            os.path.join(rtl_dir, f"{dut}_wr.v"),
+        ]
+    
+        parameters = {}
+    
+        parameters['ADDR_WIDTH'] = 32
+        parameters['S_DATA_WIDTH'] = s_data_width
+        parameters['S_STRB_WIDTH'] = parameters['S_DATA_WIDTH'] // 8
+        parameters['M_DATA_WIDTH'] = m_data_width
+        parameters['M_STRB_WIDTH'] = parameters['M_DATA_WIDTH'] // 8
+        parameters['ID_WIDTH'] = 8
+        parameters['AWUSER_ENABLE'] = 0
+        parameters['AWUSER_WIDTH'] = 1
+        parameters['WUSER_ENABLE'] = 0
+        parameters['WUSER_WIDTH'] = 1
+        parameters['BUSER_ENABLE'] = 0
+        parameters['BUSER_WIDTH'] = 1
+        parameters['ARUSER_ENABLE'] = 0
+        parameters['ARUSER_WIDTH'] = 1
+        parameters['RUSER_ENABLE'] = 0
+        parameters['RUSER_WIDTH'] = 1
+        parameters['CONVERT_BURST'] = 1
+        parameters['CONVERT_NARROW_BURST'] = 1
+        parameters['FORWARD_ID'] = 1
+    
+        extra_env = {f'PARAM_{k}': str(v) for k, v in parameters.items()}
+    
+        sim_build = os.path.join(tests_dir, "sim_build",
+            request.node.name.replace('[', '-').replace(']', ''))
+    
+>       cocotb_test.simulator.run(
+            python_search=[tests_dir],
+            verilog_sources=verilog_sources,
+            toplevel=toplevel,
+            module=module,
+            parameters=parameters,
+            sim_build=sim_build,
+            extra_env=extra_env,
+        )
+E       SystemExit: Process iverilog terminated with error 1
+
+tests/test_axi_adapter.py:266: SystemExit
+------------------------------ Captured log call -------------------------------
+INFO     cocotb:simulator.py:334 Running command: iverilog -o /Users/fatimafarooq/Desktop/axi_LLM/tests/sim_build/test_axi_adapter-32-32/axi_adapter.vvp -D COCOTB_SIM=1 -g2012 -s axi_adapter -Paxi_adapter.ADDR_WIDTH=32 -Paxi_adapter.S_DATA_WIDTH=32 -Paxi_adapter.S_STRB_WIDTH=4 -Paxi_adapter.M_DATA_WIDTH=32 -Paxi_adapter.M_STRB_WIDTH=4 -Paxi_adapter.ID_WIDTH=8 -Paxi_adapter.AWUSER_ENABLE=0 -Paxi_adapter.AWUSER_WIDTH=1 -Paxi_adapter.WUSER_ENABLE=0 -Paxi_adapter.WUSER_WIDTH=1 -Paxi_adapter.BUSER_ENABLE=0 -Paxi_adapter.BUSER_WIDTH=1 -Paxi_adapter.ARUSER_ENABLE=0 -Paxi_adapter.ARUSER_WIDTH=1 -Paxi_adapter.RUSER_ENABLE=0 -Paxi_adapter.RUSER_WIDTH=1 -Paxi_adapter.CONVERT_BURST=1 -Paxi_adapter.CONVERT_NARROW_BURST=1 -Paxi_adapter.FORWARD_ID=1 /Users/fatimafarooq/Desktop/modules/axi_adapter.v /Users/fatimafarooq/Desktop/modules/axi_adapter_rd.v /Users/fatimafarooq/Desktop/modules/axi_adapter_wr.v
+ERROR    cocotb:simulator.py:305 /Users/fatimafarooq/Desktop/modules/axi_adapter.v: No such file or directory
+ERROR    cocotb:simulator.py:305 error: Unable to find the root module "axi_adapter" in the Verilog source.
+ERROR    cocotb:simulator.py:305      : Perhaps ``-s axi_adapter'' is incorrect?
+ERROR    cocotb:simulator.py:305 1 error(s) during elaboration.
+=========================== short test summary info ============================
+FAILED tests/test_axi_adapter.py::test_axi_adapter[8-8] - SystemExit: Process...
+FAILED tests/test_axi_adapter.py::test_axi_adapter[8-16] - SystemExit: Proces...
+FAILED tests/test_axi_adapter.py::test_axi_adapter[8-32] - SystemExit: Proces...
+FAILED tests/test_axi_adapter.py::test_axi_adapter[16-8] - SystemExit: Proces...
+FAILED tests/test_axi_adapter.py::test_axi_adapter[16-16] - SystemExit: Proce...
+FAILED tests/test_axi_adapter.py::test_axi_adapter[16-32] - SystemExit: Proce...
+FAILED tests/test_axi_adapter.py::test_axi_adapter[32-8] - SystemExit: Proces...
+FAILED tests/test_axi_adapter.py::test_axi_adapter[32-16] - SystemExit: Proce...
+FAILED tests/test_axi_adapter.py::test_axi_adapter[32-32] - SystemExit: Proce...
+============================== 9 failed in 0.65s ===============================

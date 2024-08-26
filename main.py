@@ -4,19 +4,20 @@ import glob
 import sys
 
 # Ensure the script is called with the correct number of arguments
-if len(sys.argv) != 2:
-    print("Usage: python script_name.py <framework_name>")
+if len(sys.argv) != 3:
+    print("Usage: python script_name.py <framework_name> <model_name>")
     sys.exit(1)
 
-# Get the framework name from the command line arguments
+# Get the framework name and model name from the command line arguments
 framework_name = sys.argv[1]
+model_name = sys.argv[2]
 
 # Set the environment variable
 os.environ['framework_name'] = framework_name
 print(f"framework_name environment variable set to: {os.environ['framework_name']}")
 
 prompts_dir = os.path.join(framework_name, 'prompts')
-testbench_dir = 'tb'
+testbench_dir = 'tests'
 
 # Create a directory for logs within the framework directory
 stats_dir = os.path.join(framework_name, 'stats')
@@ -42,7 +43,7 @@ for v_file in v_files:
 
     # Define the commands
     commands = [
-        ['python', 'response.py', '--prompt', v_file, '--name', base_name],
+        ['python', 'response.py', '--prompt', v_file, '--name', base_name, '--model', model_name],
         ['python', 'regex.py']
     ]
     
@@ -54,7 +55,6 @@ for v_file in v_files:
 
     # Execute each command in sequence
     for command in commands:
-        print("hi")
         try:
             if 'pytest' in command:  # Check if the command is running the testbench
                 stat_file_path = os.path.join(stats_dir, f"{base_name}.txt")

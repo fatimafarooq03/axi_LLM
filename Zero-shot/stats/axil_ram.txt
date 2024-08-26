@@ -1,0 +1,146 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.12.4, pytest-7.1.2, pluggy-1.5.0
+rootdir: /Users/fatimafarooq/Desktop/axi_LLM
+plugins: cocotb-test-0.2.5, anyio-4.4.0
+collected 3 items
+
+tests/test_axil_ram.py FFF                                               [100%]
+
+=================================== FAILURES ===================================
+_______________________________ test_axil_ram[8] _______________________________
+
+request = <FixtureRequest for <Function test_axil_ram[8]>>, data_width = 8
+
+    @pytest.mark.parametrize("data_width", [8, 16, 32])
+    def test_axil_ram(request, data_width):
+        dut = "axil_ram"
+        module = os.path.splitext(os.path.basename(__file__))[0]
+        toplevel = dut
+    
+        verilog_sources = [
+            os.path.join(rtl_dir, f"{dut}.v"),
+        ]
+    
+        parameters = {}
+    
+        parameters['DATA_WIDTH'] = data_width
+        parameters['ADDR_WIDTH'] = 16
+        parameters['STRB_WIDTH'] = parameters['DATA_WIDTH'] // 8
+        parameters['PIPELINE_OUTPUT'] = 0
+    
+        extra_env = {f'PARAM_{k}': str(v) for k, v in parameters.items()}
+    
+        sim_build = os.path.join(tests_dir, "sim_build",
+            request.node.name.replace('[', '-').replace(']', ''))
+    
+>       cocotb_test.simulator.run(
+            python_search=[tests_dir],
+            verilog_sources=verilog_sources,
+            toplevel=toplevel,
+            module=module,
+            parameters=parameters,
+            sim_build=sim_build,
+            extra_env=extra_env,
+        )
+E       SystemExit: Process iverilog terminated with error 1
+
+tests/test_axil_ram.py:212: SystemExit
+------------------------------ Captured log call -------------------------------
+INFO     cocotb:simulator.py:334 Running command: iverilog -o /Users/fatimafarooq/Desktop/axi_LLM/tests/sim_build/test_axil_ram-8/axil_ram.vvp -D COCOTB_SIM=1 -g2012 -s axil_ram -Paxil_ram.DATA_WIDTH=8 -Paxil_ram.ADDR_WIDTH=16 -Paxil_ram.STRB_WIDTH=1 -Paxil_ram.PIPELINE_OUTPUT=0 /Users/fatimafarooq/Desktop/modules/axil_ram.v
+ERROR    cocotb:simulator.py:305 /Users/fatimafarooq/Desktop/modules/axil_ram.v: No such file or directory
+ERROR    cocotb:simulator.py:305 error: Unable to find the root module "axil_ram" in the Verilog source.
+ERROR    cocotb:simulator.py:305      : Perhaps ``-s axil_ram'' is incorrect?
+ERROR    cocotb:simulator.py:305 1 error(s) during elaboration.
+______________________________ test_axil_ram[16] _______________________________
+
+request = <FixtureRequest for <Function test_axil_ram[16]>>, data_width = 16
+
+    @pytest.mark.parametrize("data_width", [8, 16, 32])
+    def test_axil_ram(request, data_width):
+        dut = "axil_ram"
+        module = os.path.splitext(os.path.basename(__file__))[0]
+        toplevel = dut
+    
+        verilog_sources = [
+            os.path.join(rtl_dir, f"{dut}.v"),
+        ]
+    
+        parameters = {}
+    
+        parameters['DATA_WIDTH'] = data_width
+        parameters['ADDR_WIDTH'] = 16
+        parameters['STRB_WIDTH'] = parameters['DATA_WIDTH'] // 8
+        parameters['PIPELINE_OUTPUT'] = 0
+    
+        extra_env = {f'PARAM_{k}': str(v) for k, v in parameters.items()}
+    
+        sim_build = os.path.join(tests_dir, "sim_build",
+            request.node.name.replace('[', '-').replace(']', ''))
+    
+>       cocotb_test.simulator.run(
+            python_search=[tests_dir],
+            verilog_sources=verilog_sources,
+            toplevel=toplevel,
+            module=module,
+            parameters=parameters,
+            sim_build=sim_build,
+            extra_env=extra_env,
+        )
+E       SystemExit: Process iverilog terminated with error 1
+
+tests/test_axil_ram.py:212: SystemExit
+------------------------------ Captured log call -------------------------------
+INFO     cocotb:simulator.py:334 Running command: iverilog -o /Users/fatimafarooq/Desktop/axi_LLM/tests/sim_build/test_axil_ram-16/axil_ram.vvp -D COCOTB_SIM=1 -g2012 -s axil_ram -Paxil_ram.DATA_WIDTH=16 -Paxil_ram.ADDR_WIDTH=16 -Paxil_ram.STRB_WIDTH=2 -Paxil_ram.PIPELINE_OUTPUT=0 /Users/fatimafarooq/Desktop/modules/axil_ram.v
+ERROR    cocotb:simulator.py:305 /Users/fatimafarooq/Desktop/modules/axil_ram.v: No such file or directory
+ERROR    cocotb:simulator.py:305 error: Unable to find the root module "axil_ram" in the Verilog source.
+ERROR    cocotb:simulator.py:305      : Perhaps ``-s axil_ram'' is incorrect?
+ERROR    cocotb:simulator.py:305 1 error(s) during elaboration.
+______________________________ test_axil_ram[32] _______________________________
+
+request = <FixtureRequest for <Function test_axil_ram[32]>>, data_width = 32
+
+    @pytest.mark.parametrize("data_width", [8, 16, 32])
+    def test_axil_ram(request, data_width):
+        dut = "axil_ram"
+        module = os.path.splitext(os.path.basename(__file__))[0]
+        toplevel = dut
+    
+        verilog_sources = [
+            os.path.join(rtl_dir, f"{dut}.v"),
+        ]
+    
+        parameters = {}
+    
+        parameters['DATA_WIDTH'] = data_width
+        parameters['ADDR_WIDTH'] = 16
+        parameters['STRB_WIDTH'] = parameters['DATA_WIDTH'] // 8
+        parameters['PIPELINE_OUTPUT'] = 0
+    
+        extra_env = {f'PARAM_{k}': str(v) for k, v in parameters.items()}
+    
+        sim_build = os.path.join(tests_dir, "sim_build",
+            request.node.name.replace('[', '-').replace(']', ''))
+    
+>       cocotb_test.simulator.run(
+            python_search=[tests_dir],
+            verilog_sources=verilog_sources,
+            toplevel=toplevel,
+            module=module,
+            parameters=parameters,
+            sim_build=sim_build,
+            extra_env=extra_env,
+        )
+E       SystemExit: Process iverilog terminated with error 1
+
+tests/test_axil_ram.py:212: SystemExit
+------------------------------ Captured log call -------------------------------
+INFO     cocotb:simulator.py:334 Running command: iverilog -o /Users/fatimafarooq/Desktop/axi_LLM/tests/sim_build/test_axil_ram-32/axil_ram.vvp -D COCOTB_SIM=1 -g2012 -s axil_ram -Paxil_ram.DATA_WIDTH=32 -Paxil_ram.ADDR_WIDTH=16 -Paxil_ram.STRB_WIDTH=4 -Paxil_ram.PIPELINE_OUTPUT=0 /Users/fatimafarooq/Desktop/modules/axil_ram.v
+ERROR    cocotb:simulator.py:305 /Users/fatimafarooq/Desktop/modules/axil_ram.v: No such file or directory
+ERROR    cocotb:simulator.py:305 error: Unable to find the root module "axil_ram" in the Verilog source.
+ERROR    cocotb:simulator.py:305      : Perhaps ``-s axil_ram'' is incorrect?
+ERROR    cocotb:simulator.py:305 1 error(s) during elaboration.
+=========================== short test summary info ============================
+FAILED tests/test_axil_ram.py::test_axil_ram[8] - SystemExit: Process iverilo...
+FAILED tests/test_axil_ram.py::test_axil_ram[16] - SystemExit: Process iveril...
+FAILED tests/test_axil_ram.py::test_axil_ram[32] - SystemExit: Process iveril...
+============================== 3 failed in 0.24s ===============================

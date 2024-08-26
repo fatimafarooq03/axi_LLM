@@ -1,0 +1,30 @@
+<testsuites name="results">
+  <testsuite name="all" package="all">
+    <property name="random_seed" value="1724516745" />
+    <testcase name="run_test_write" classname="test_axi_adapter" file="/Users/fatimafarooq/anaconda3/lib/python3.11/site-packages/cocotb/regression.py" lineno="94" time="1.6368191242218018" sim_time_ns="21090.001" ratio_time="12884.747427439112" />
+    <testcase name="run_test_write" classname="test_axi_adapter" file="/Users/fatimafarooq/anaconda3/lib/python3.11/site-packages/cocotb/regression.py" lineno="94" time="1.6478919982910156" sim_time_ns="14049.999999999996" ratio_time="8526.044191349234">
+      <failure />
+    </testcase>
+    <testcase name="run_test_write" classname="test_axi_adapter" file="/Users/fatimafarooq/anaconda3/lib/python3.11/site-packages/cocotb/regression.py" lineno="94" time="0" sim_time_ns="0" ratio_time="nan">
+      <failure />
+    </testcase>
+    <testcase name="run_test_write" classname="test_axi_adapter" file="/Users/fatimafarooq/anaconda3/lib/python3.11/site-packages/cocotb/regression.py" lineno="94" time="0" sim_time_ns="0" ratio_time="nan">
+      <failure />
+    </testcase>
+    <testcase name="run_test_read" classname="test_axi_adapter" file="/Users/fatimafarooq/anaconda3/lib/python3.11/site-packages/cocotb/regression.py" lineno="131" time="0" sim_time_ns="0" ratio_time="nan">
+      <failure />
+    </testcase>
+    <testcase name="run_test_read" classname="test_axi_adapter" file="/Users/fatimafarooq/anaconda3/lib/python3.11/site-packages/cocotb/regression.py" lineno="131" time="0" sim_time_ns="0" ratio_time="nan">
+      <failure />
+    </testcase>
+    <testcase name="run_test_read" classname="test_axi_adapter" file="/Users/fatimafarooq/anaconda3/lib/python3.11/site-packages/cocotb/regression.py" lineno="131" time="0" sim_time_ns="0" ratio_time="nan">
+      <failure />
+    </testcase>
+    <testcase name="run_test_read" classname="test_axi_adapter" file="/Users/fatimafarooq/anaconda3/lib/python3.11/site-packages/cocotb/regression.py" lineno="131" time="0" sim_time_ns="0" ratio_time="nan">
+      <failure />
+    </testcase>
+    <testcase name="run_stress_test" classname="test_axi_adapter" file="/Users/fatimafarooq/anaconda3/lib/python3.11/site-packages/cocotb/regression.py" lineno="162" time="0" sim_time_ns="0" ratio_time="nan">
+      <failure />
+    </testcase>
+  </testsuite>
+</testsuites>

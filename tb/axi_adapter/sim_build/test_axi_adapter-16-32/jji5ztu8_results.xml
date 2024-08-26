@@ -1,0 +1,22 @@
+<testsuites name="results">
+  <testsuite name="all" package="all">
+    <property name="random_seed" value="1724516229" />
+    <testcase name="run_test_write" classname="test_axi_adapter" file="/Users/fatimafarooq/anaconda3/lib/python3.11/site-packages/cocotb/regression.py" lineno="94" time="1.6319842338562012" sim_time_ns="22110.001" ratio_time="13547.925611852557" />
+    <testcase name="run_test_write" classname="test_axi_adapter" file="/Users/fatimafarooq/anaconda3/lib/python3.11/site-packages/cocotb/regression.py" lineno="94" time="3.137944221496582" sim_time_ns="42920.001000000004" ratio_time="13677.74503637612" />
+    <testcase name="run_test_write" classname="test_axi_adapter" file="/Users/fatimafarooq/anaconda3/lib/python3.11/site-packages/cocotb/regression.py" lineno="94" time="287.2766559123993" sim_time_ns="43090.001" ratio_time="149.9947876486687" />
+    <testcase name="run_test_write" classname="test_axi_adapter" file="/Users/fatimafarooq/anaconda3/lib/python3.11/site-packages/cocotb/regression.py" lineno="94" time="5.354898929595947" sim_time_ns="43730.00099999999" ratio_time="8166.3541319723145" />
+    <testcase name="run_test_write" classname="test_axi_adapter" file="/Users/fatimafarooq/anaconda3/lib/python3.11/site-packages/cocotb/regression.py" lineno="94" time="5.652660846710205" sim_time_ns="83610.00100000002" ratio_time="14791.264373955895" />
+    <testcase name="run_test_write" classname="test_axi_adapter" file="/Users/fatimafarooq/anaconda3/lib/python3.11/site-packages/cocotb/regression.py" lineno="94" time="10.486023187637329" sim_time_ns="165610.001" ratio_time="15793.404042368384" />
+    <testcase name="run_test_write" classname="test_axi_adapter" file="/Users/fatimafarooq/anaconda3/lib/python3.11/site-packages/cocotb/regression.py" lineno="94" time="8.690248250961304" sim_time_ns="84170.00099999999" ratio_time="9685.569223029874" />
+    <testcase name="run_test_write" classname="test_axi_adapter" file="/Users/fatimafarooq/anaconda3/lib/python3.11/site-packages/cocotb/regression.py" lineno="94" time="17.19598388671875" sim_time_ns="165930.00100000005" ratio_time="9649.346155072606" />
+    <testcase name="run_test_read" classname="test_axi_adapter" file="/Users/fatimafarooq/anaconda3/lib/python3.11/site-packages/cocotb/regression.py" lineno="131" time="1.5271282196044922" sim_time_ns="16360.000999999931" ratio_time="10712.919052885405" />
+    <testcase name="run_test_read" classname="test_axi_adapter" file="/Users/fatimafarooq/anaconda3/lib/python3.11/site-packages/cocotb/regression.py" lineno="131" time="2.772611141204834" sim_time_ns="31910.001000000047" ratio_time="11509.006988312687" />
+    <testcase name="run_test_read" classname="test_axi_adapter" file="/Users/fatimafarooq/anaconda3/lib/python3.11/site-packages/cocotb/regression.py" lineno="131" time="6.2544310092926025" sim_time_ns="62570.00100000005" ratio_time="10004.10763297826" />
+    <testcase name="run_test_read" classname="test_axi_adapter" file="/Users/fatimafarooq/anaconda3/lib/python3.11/site-packages/cocotb/regression.py" lineno="131" time="12.592872858047485" sim_time_ns="124170.00099999993" ratio_time="9860.339447535118" />
+    <testcase name="run_test_read" classname="test_axi_adapter" file="/Users/fatimafarooq/anaconda3/lib/python3.11/site-packages/cocotb/regression.py" lineno="131" time="2.811326026916504" sim_time_ns="32090.001000000047" ratio_time="11414.542707875382" />
+    <testcase name="run_test_read" classname="test_axi_adapter" file="/Users/fatimafarooq/anaconda3/lib/python3.11/site-packages/cocotb/regression.py" lineno="131" time="3.0729830265045166" sim_time_ns="32660.00099999993" ratio_time="10628.109793743415" />
+    <testcase name="run_test_read" classname="test_axi_adapter" file="/Users/fatimafarooq/anaconda3/lib/python3.11/site-packages/cocotb/regression.py" lineno="131" time="6.460357189178467" sim_time_ns="62650.00100000005" ratio_time="9697.606365317233" />
+    <testcase name="run_test_read" classname="test_axi_adapter" file="/Users/fatimafarooq/anaconda3/lib/python3.11/site-packages/cocotb/regression.py" lineno="131" time="12.825655937194824" sim_time_ns="124170.00100000005" ratio_time="9681.376267072857" />
+    <testcase name="run_stress_test" classname="test_axi_adapter" file="/Users/fatimafarooq/anaconda3/lib/python3.11/site-packages/cocotb/regression.py" lineno="162" time="48.39578700065613" sim_time_ns="336930.00099999993" ratio_time="6961.9696647444125" />
+  </testsuite>
+</testsuites>

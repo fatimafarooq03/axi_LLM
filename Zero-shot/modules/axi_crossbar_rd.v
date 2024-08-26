@@ -1,0 +1,139 @@
+module axi_crossbar_rd #
+(
+    // Parameters
+    parameter S_COUNT = 4,                   // Number of AXI inputs (slave interfaces)
+    parameter M_COUNT = 4,                   // Number of AXI outputs (master interfaces)
+    parameter DATA_WIDTH = 32,               // Width of data bus in bits
+    parameter ADDR_WIDTH = 32,               // Width of address bus in bits
+    parameter STRB_WIDTH = (DATA_WIDTH/8),   // Width of wstrb
+    parameter S_ID_WIDTH = 8,                // Input ID field width (from AXI masters)
+    parameter M_ID_WIDTH = S_ID_WIDTH+$clog2(S_COUNT),  // Output ID field width (towards AXI slaves)
+                                                       // Additional bits required for response routing
+    parameter ARUSER_ENABLE = 0,             // Propagate aruser signal
+    parameter ARUSER_WIDTH = 1,              // Width of aruser signal
+    parameter RUSER_ENABLE = 0,              // Propagate ruser signal
+    parameter RUSER_WIDTH = 1,               // Width of ruser signal
+    parameter S_THREADS = {S_COUNT{32'd2}},  // Number of concurrent unique IDs for each slave interface
+                                              // S_COUNT concatenated fields of 32 bits
+    parameter S_ACCEPT = {S_COUNT{32'd16}},  // Number of concurrent operations for each slave interface
+                                              // S_COUNT concatenated fields of 32 bits
+    parameter M_REGIONS = 1,                 // Number of regions per master interface
+    parameter M_BASE_ADDR = 0,               // Master interface base addresses
+                                              // M_COUNT concatenated fields of M_REGIONS concatenated fields of ADDR_WIDTH bits
+                                              // set to zero for default addressing based on M_ADDR_WIDTH
+    parameter M_ADDR_WIDTH = {M_COUNT{{M_REGIONS{32'd24}}}},  // Master interface address widths
+                                                               // M_COUNT concatenated fields of M_REGIONS concatenated fields of 32 bits
+    parameter M_CONNECT = {M_COUNT{{S_COUNT{1'b1}}}},         // Read connections between interfaces
+                                                               // M_COUNT concatenated fields of S_COUNT bits
+    parameter M_ISSUE = {M_COUNT{32'd4}},     // Number of concurrent operations for each master interface
+                                              // M_COUNT concatenated fields of 32 bits
+    parameter M_SECURE = {M_COUNT{1'b0}},     // Secure master (fail operations based on awprot/arprot)
+                                              // M_COUNT bits
+    parameter S_AR_REG_TYPE = {S_COUNT{2'd0}},  // Slave interface AR channel register type (input)
+                                                // 0 to bypass, 1 for simple buffer, 2 for skid buffer
+    parameter S_R_REG_TYPE = {S_COUNT{2'd2}},   // Slave interface R channel register type (output)
+                                                // 0 to bypass, 1 for simple buffer, 2 for skid buffer
+    parameter M_AR_REG_TYPE = {M_COUNT{2'd1}},  // Master interface AR channel register type (output)
+                                                // 0 to bypass, 1 for simple buffer, 2 for skid buffer
+    parameter M_R_REG_TYPE = {M_COUNT{2'd0}}    // Master interface R channel register type (input)
+                                                // 0 to bypass, 1 for simple buffer, 2 for skid buffer
+)
+(
+    // Ports
+    input  wire                             clk,     // Clock signal
+    input  wire                             rst,     // Reset signal
+
+    // AXI Slave Interfaces
+    input  wire [S_COUNT*S_ID_WIDTH-1:0]    s_axi_arid,
+    input  wire [S_COUNT*ADDR_WIDTH-1:0]    s_axi_araddr,
+    input  wire [S_COUNT*8-1:0]             s_axi_arlen,
+    input  wire [S_COUNT*3-1:0]             s_axi_arsize,
+    input  wire [S_COUNT*2-1:0]             s_axi_arburst,
+    input  wire [S_COUNT-1:0]               s_axi_arlock,
+    input  wire [S_COUNT*4-1:0]             s_axi_arcache,
+    input  wire [S_COUNT*3-1:0]             s_axi_arprot,
+    input  wire [S_COUNT*4-1:0]             s_axi_arqos,
+    input  wire [S_COUNT*ARUSER_WIDTH-1:0]  s_axi_aruser,
+    input  wire [S_COUNT-1:0]               s_axi_arvalid,
+    output wire [S_COUNT-1:0]               s_axi_arready,
+    output wire [S_COUNT*S_ID_WIDTH-1:0]    s_axi_rid,
+    output wire [S_COUNT*DATA_WIDTH-1:0]    s_axi_rdata,
+    output wire [S_COUNT*2-1:0]             s_axi_rresp,
+    output wire [S_COUNT-1:0]               s_axi_rlast,
+    output wire [S_COUNT*RUSER_WIDTH-1:0]   s_axi_ruser,
+    output wire [S_COUNT-1:0]               s_axi_rvalid,
+    input  wire [S_COUNT-1:0]               s_axi_rready,
+
+    // AXI Master Interfaces
+    output wire [M_COUNT*M_ID_WIDTH-1:0]    m_axi_arid,
+    output wire [M_COUNT*ADDR_WIDTH-1:0]    m_axi_araddr,
+    output wire [M_COUNT*8-1:0]             m_axi_arlen,
+    output wire [M_COUNT*3-1:0]             m_axi_arsize,
+    output wire [M_COUNT*2-1:0]             m_axi_arburst,
+    output wire [M_COUNT-1:0]               m_axi_arlock,
+    output wire [M_COUNT*4-1:0]             m_axi_arcache,
+    output wire [M_COUNT*3-1:0]             m_axi_arprot,
+    output wire [M_COUNT*4-1:0]             m_axi_arqos,
+    output wire [M_COUNT*4-1:0]             m_axi_arregion,
+    output wire [M_COUNT*ARUSER_WIDTH-1:0]  m_axi_aruser,
+    output wire [M_COUNT-1:0]               m_axi_arvalid,
+    input  wire [M_COUNT-1:0]               m_axi_arready,
+    input  wire [M_COUNT*M_ID_WIDTH-1:0]    m_axi_rid,
+    input  wire [M_COUNT*DATA_WIDTH-1:0]    m_axi_rdata,
+    input  wire [M_COUNT*2-1:0]             m_axi_rresp,
+    input  wire [M_COUNT-1:0]               m_axi_rlast,
+    input  wire [M_COUNT*RUSER_WIDTH-1:0]   m_axi_ruser,
+    input  wire [M_COUNT-1:0]               m_axi_rvalid,
+    output wire [M_COUNT-1:0]               m_axi_rready
+);
+
+    // Internal registers and wires
+    reg [S_COUNT-1:0] arready_reg;
+    reg [S_COUNT*S_ID_WIDTH-1:0] rid_reg;
+    reg [S_COUNT*DATA_WIDTH-1:0] rdata_reg;
+    reg [S_COUNT*2-1:0] rresp_reg;
+    reg [S_COUNT-1:0] rlast_reg;
+    reg [S_COUNT*RUSER_WIDTH-1:0] ruser_reg;
+    reg [S_COUNT-1:0] rvalid_reg;
+    reg [M_COUNT-1:0] rready_reg;
+
+    // More internal state as required for state machines, arbiters, etc.
+
+    // Instantiation of address decoders, arbiters, and registers
+    // axi_crossbar_addr instances would be here
+    // arbiter, state machine logic would be here
+
+    // Assign outputs from internal state
+    assign s_axi_arready = arready_reg;
+    assign s_axi_rid = rid_reg;
+    assign s_axi_rdata = rdata_reg;
+    assign s_axi_rresp = rresp_reg;
+    assign s_axi_rlast = rlast_reg;
+    assign s_axi_ruser = ruser_reg;
+    assign s_axi_rvalid = rvalid_reg;
+    assign m_axi_rready = rready_reg;
+
+    // Address Decode and AR Channel handling
+    always @ (posedge clk or posedge rst) begin
+        if (rst) begin
+            arready_reg <= {S_COUNT{1'b0}};
+            rid_reg <= {S_COUNT*S_ID_WIDTH{1'b0}};
+            rdata_reg <= {S_COUNT*DATA_WIDTH{1'b0}};
+            rresp_reg <= {S_COUNT*2{1'b0}};
+            rlast_reg <= {S_COUNT{1'b0}};
+            ruser_reg <= {S_COUNT*RUSER_WIDTH{1'b0}};
+            rvalid_reg <= {S_COUNT{1'b0}};
+            rready_reg <= {M_COUNT{1'b0}};
+        end else begin
+            // Address decode logic
+            // This typically involves looking up the address to determine which master it maps to
+            // For simplicity, assuming single region base addresses are implemented directly
+            // arready, rid, rdata, rresp, rlast, ruser, rvalid, and rready registers assignments
+
+            // Arbiter state machine logic to handle arbitration between multiple slave and master interfaces
+
+            // Manage and track in-flight transactions
+        end
+    end
+
+endmodule

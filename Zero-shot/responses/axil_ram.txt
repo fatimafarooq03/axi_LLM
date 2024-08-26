@@ -1,0 +1,109 @@
+```verilog
+module axil_ram #
+(
+    // Parameters
+    parameter DATA_WIDTH = 32,  // Width of data bus in bits
+    parameter ADDR_WIDTH = 16,  // Width of address bus in bits
+    parameter STRB_WIDTH = (DATA_WIDTH/8),  // Width of wstrb (width of data bus in words)
+    parameter PIPELINE_OUTPUT = 0  // Extra pipeline register on output
+)
+(
+    // Ports
+    input  wire                   clk,  // Clock signal
+    input  wire                   rst,  // Reset signal
+
+    input  wire [ADDR_WIDTH-1:0]  s_axil_awaddr,  // Write address
+    input  wire [2:0]             s_axil_awprot,  // Write protection type
+    input  wire                   s_axil_awvalid,  // Write address valid
+    output reg                    s_axil_awready,  // Write address ready
+    input  wire [DATA_WIDTH-1:0]  s_axil_wdata,  // Write data
+    input  wire [STRB_WIDTH-1:0]  s_axil_wstrb,  // Write strobe
+    input  wire                   s_axil_wvalid,  // Write data valid
+    output reg                    s_axil_wready,  // Write data ready
+    output reg [1:0]              s_axil_bresp,  // Write response
+    output reg                    s_axil_bvalid,  // Write response valid
+    input  wire                   s_axil_bready,  // Write response ready
+    input  wire [ADDR_WIDTH-1:0]  s_axil_araddr,  // Read address
+    input  wire [2:0]             s_axil_arprot,  // Read protection type
+    input  wire                   s_axil_arvalid,  // Read address valid
+    output reg                    s_axil_arready,  // Read address ready
+    output reg [DATA_WIDTH-1:0]   s_axil_rdata,  // Read data
+    output reg [1:0]              s_axil_rresp,  // Read response
+    output reg                    s_axil_rvalid,  // Read response valid
+    input  wire                   s_axil_rready  // Read response ready
+);
+
+    // Internal memory array
+    reg [DATA_WIDTH-1:0] mem [(2**ADDR_WIDTH)-1:0];
+
+    // Read pipeline register
+    reg [DATA_WIDTH-1:0] rdata_pipe;
+    wire [DATA_WIDTH-1:0] mem_rdata;
+
+    // Write process
+    always @(posedge clk or posedge rst) begin
+        if (rst) begin
+            s_axil_awready <= 1'b0;
+            s_axil_wready <= 1'b0;
+            s_axil_bvalid <= 1'b0;
+            s_axil_bresp <= 2'b00;
+        end else begin
+            if (s_axil_awvalid && s_axil_wvalid && !s_axil_bvalid) begin
+                s_axil_awready <= 1'b1;
+                s_axil_wready <= 1'b1;
+                if (s_axil_awready && s_axil_awvalid) begin
+                    s_axil_awready <= 1'b0;
+                end
+                if (s_axil_wready && s_axil_wvalid) begin
+                    for (integer i = 0; i < STRB_WIDTH; i = i + 1) begin
+                        if (s_axil_wstrb[i]) begin
+                            mem[s_axil_awaddr][(i*8) +: 8] <= s_axil_wdata[(i*8) +: 8];
+                        end
+                    end
+                    s_axil_wready <= 1'b0;
+                    s_axil_bvalid <= 1'b1;
+                    s_axil_bresp <= 2'b00;  // OKAY response
+                end
+            end else if (s_axil_bready && s_axil_bvalid) begin
+                s_axil_bvalid <= 1'b0;
+            end
+        end
+    end
+
+    // Read process
+    always @(posedge clk or posedge rst) begin
+        if (rst) begin
+            s_axil_arready <= 1'b0;
+            s_axil_rvalid <= 1'b0;
+            s_axil_rresp <= 2'b00;
+            s_axil_rdata <= {DATA_WIDTH{1'b0}};
+        end else begin
+            if (s_axil_arvalid && !s_axil_rvalid) begin
+                s_axil_arready <= 1'b1;
+                if (s_axil_arready && s_axil_arvalid) begin
+                    s_axil_arready <= 1'b0;
+                    if (PIPELINE_OUTPUT) begin
+                        rdata_pipe <= mem[s_axil_araddr];
+                        s_axil_rdata <= rdata_pipe;
+                    end else begin
+                        s_axil_rdata <= mem[s_axil_araddr];
+                    end
+                    s_axil_rvalid <= 1'b1;
+                    s_axil_rresp <= 2'b00;  // OKAY response
+                end
+            end else if (s_axil_rready && s_axil_rvalid) begin
+                s_axil_rvalid <= 1'b0;
+            end
+        end
+    end
+
+    // Initialize memory to 0
+    integer idx;
+    initial begin
+        for (idx = 0; idx < (2**ADDR_WIDTH); idx = idx + 1) begin
+            mem[idx] = {DATA_WIDTH{1'b0}};
+        end
+    end
+
+endmodule
+```

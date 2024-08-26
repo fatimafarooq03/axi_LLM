@@ -1,0 +1,389 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.12.4, pytest-7.1.2, pluggy-1.5.0
+rootdir: /Users/fatimafarooq/Desktop/axi_LLM
+plugins: cocotb-test-0.2.5, anyio-4.4.0
+collected 6 items
+
+tests/test_axi_fifo.py FFFFFF                                            [100%]
+
+=================================== FAILURES ===================================
+______________________________ test_axi_fifo[8-0] ______________________________
+
+request = <FixtureRequest for <Function test_axi_fifo[8-0]>>, data_width = 8
+delay = 0
+
+    @pytest.mark.parametrize("delay", [0, 1])
+    @pytest.mark.parametrize("data_width", [8, 16, 32])
+    def test_axi_fifo(request, data_width, delay):
+        dut = "axi_fifo"
+        module = os.path.splitext(os.path.basename(__file__))[0]
+        toplevel = dut
+    
+        verilog_sources = [
+            os.path.join(rtl_dir, f"{dut}.v"),
+            os.path.join(rtl_dir, f"{dut}_rd.v"),
+            os.path.join(rtl_dir, f"{dut}_wr.v"),
+        ]
+    
+        parameters = {}
+    
+        parameters['DATA_WIDTH'] = data_width
+        parameters['ADDR_WIDTH'] = 32
+        parameters['STRB_WIDTH'] = parameters['DATA_WIDTH'] // 8
+        parameters['ID_WIDTH'] = 8
+        parameters['AWUSER_ENABLE'] = 0
+        parameters['AWUSER_WIDTH'] = 1
+        parameters['WUSER_ENABLE'] = 0
+        parameters['WUSER_WIDTH'] = 1
+        parameters['BUSER_ENABLE'] = 0
+        parameters['BUSER_WIDTH'] = 1
+        parameters['ARUSER_ENABLE'] = 0
+        parameters['ARUSER_WIDTH'] = 1
+        parameters['RUSER_ENABLE'] = 0
+        parameters['RUSER_WIDTH'] = 1
+        parameters['WRITE_FIFO_DEPTH'] = 32
+        parameters['READ_FIFO_DEPTH'] = 32
+        parameters['WRITE_FIFO_DELAY'] = delay
+        parameters['READ_FIFO_DELAY'] = delay
+    
+        extra_env = {f'PARAM_{k}': str(v) for k, v in parameters.items()}
+    
+        sim_build = os.path.join(tests_dir, "sim_build",
+            request.node.name.replace('[', '-').replace(']', ''))
+    
+>       cocotb_test.simulator.run(
+            python_search=[tests_dir],
+            verilog_sources=verilog_sources,
+            toplevel=toplevel,
+            module=module,
+            parameters=parameters,
+            sim_build=sim_build,
+            extra_env=extra_env,
+        )
+E       SystemExit: Process iverilog terminated with error 1
+
+tests/test_axi_fifo.py:251: SystemExit
+------------------------------ Captured log call -------------------------------
+INFO     cocotb:simulator.py:334 Running command: iverilog -o /Users/fatimafarooq/Desktop/axi_LLM/tests/sim_build/test_axi_fifo-8-0/axi_fifo.vvp -D COCOTB_SIM=1 -g2012 -s axi_fifo -Paxi_fifo.DATA_WIDTH=8 -Paxi_fifo.ADDR_WIDTH=32 -Paxi_fifo.STRB_WIDTH=1 -Paxi_fifo.ID_WIDTH=8 -Paxi_fifo.AWUSER_ENABLE=0 -Paxi_fifo.AWUSER_WIDTH=1 -Paxi_fifo.WUSER_ENABLE=0 -Paxi_fifo.WUSER_WIDTH=1 -Paxi_fifo.BUSER_ENABLE=0 -Paxi_fifo.BUSER_WIDTH=1 -Paxi_fifo.ARUSER_ENABLE=0 -Paxi_fifo.ARUSER_WIDTH=1 -Paxi_fifo.RUSER_ENABLE=0 -Paxi_fifo.RUSER_WIDTH=1 -Paxi_fifo.WRITE_FIFO_DEPTH=32 -Paxi_fifo.READ_FIFO_DEPTH=32 -Paxi_fifo.WRITE_FIFO_DELAY=0 -Paxi_fifo.READ_FIFO_DELAY=0 /Users/fatimafarooq/Desktop/modules/axi_fifo.v /Users/fatimafarooq/Desktop/modules/axi_fifo_rd.v /Users/fatimafarooq/Desktop/modules/axi_fifo_wr.v
+ERROR    cocotb:simulator.py:305 /Users/fatimafarooq/Desktop/modules/axi_fifo.v: No such file or directory
+ERROR    cocotb:simulator.py:305 error: Unable to find the root module "axi_fifo" in the Verilog source.
+ERROR    cocotb:simulator.py:305      : Perhaps ``-s axi_fifo'' is incorrect?
+ERROR    cocotb:simulator.py:305 1 error(s) during elaboration.
+______________________________ test_axi_fifo[8-1] ______________________________
+
+request = <FixtureRequest for <Function test_axi_fifo[8-1]>>, data_width = 8
+delay = 1
+
+    @pytest.mark.parametrize("delay", [0, 1])
+    @pytest.mark.parametrize("data_width", [8, 16, 32])
+    def test_axi_fifo(request, data_width, delay):
+        dut = "axi_fifo"
+        module = os.path.splitext(os.path.basename(__file__))[0]
+        toplevel = dut
+    
+        verilog_sources = [
+            os.path.join(rtl_dir, f"{dut}.v"),
+            os.path.join(rtl_dir, f"{dut}_rd.v"),
+            os.path.join(rtl_dir, f"{dut}_wr.v"),
+        ]
+    
+        parameters = {}
+    
+        parameters['DATA_WIDTH'] = data_width
+        parameters['ADDR_WIDTH'] = 32
+        parameters['STRB_WIDTH'] = parameters['DATA_WIDTH'] // 8
+        parameters['ID_WIDTH'] = 8
+        parameters['AWUSER_ENABLE'] = 0
+        parameters['AWUSER_WIDTH'] = 1
+        parameters['WUSER_ENABLE'] = 0
+        parameters['WUSER_WIDTH'] = 1
+        parameters['BUSER_ENABLE'] = 0
+        parameters['BUSER_WIDTH'] = 1
+        parameters['ARUSER_ENABLE'] = 0
+        parameters['ARUSER_WIDTH'] = 1
+        parameters['RUSER_ENABLE'] = 0
+        parameters['RUSER_WIDTH'] = 1
+        parameters['WRITE_FIFO_DEPTH'] = 32
+        parameters['READ_FIFO_DEPTH'] = 32
+        parameters['WRITE_FIFO_DELAY'] = delay
+        parameters['READ_FIFO_DELAY'] = delay
+    
+        extra_env = {f'PARAM_{k}': str(v) for k, v in parameters.items()}
+    
+        sim_build = os.path.join(tests_dir, "sim_build",
+            request.node.name.replace('[', '-').replace(']', ''))
+    
+>       cocotb_test.simulator.run(
+            python_search=[tests_dir],
+            verilog_sources=verilog_sources,
+            toplevel=toplevel,
+            module=module,
+            parameters=parameters,
+            sim_build=sim_build,
+            extra_env=extra_env,
+        )
+E       SystemExit: Process iverilog terminated with error 1
+
+tests/test_axi_fifo.py:251: SystemExit
+------------------------------ Captured log call -------------------------------
+INFO     cocotb:simulator.py:334 Running command: iverilog -o /Users/fatimafarooq/Desktop/axi_LLM/tests/sim_build/test_axi_fifo-8-1/axi_fifo.vvp -D COCOTB_SIM=1 -g2012 -s axi_fifo -Paxi_fifo.DATA_WIDTH=8 -Paxi_fifo.ADDR_WIDTH=32 -Paxi_fifo.STRB_WIDTH=1 -Paxi_fifo.ID_WIDTH=8 -Paxi_fifo.AWUSER_ENABLE=0 -Paxi_fifo.AWUSER_WIDTH=1 -Paxi_fifo.WUSER_ENABLE=0 -Paxi_fifo.WUSER_WIDTH=1 -Paxi_fifo.BUSER_ENABLE=0 -Paxi_fifo.BUSER_WIDTH=1 -Paxi_fifo.ARUSER_ENABLE=0 -Paxi_fifo.ARUSER_WIDTH=1 -Paxi_fifo.RUSER_ENABLE=0 -Paxi_fifo.RUSER_WIDTH=1 -Paxi_fifo.WRITE_FIFO_DEPTH=32 -Paxi_fifo.READ_FIFO_DEPTH=32 -Paxi_fifo.WRITE_FIFO_DELAY=1 -Paxi_fifo.READ_FIFO_DELAY=1 /Users/fatimafarooq/Desktop/modules/axi_fifo.v /Users/fatimafarooq/Desktop/modules/axi_fifo_rd.v /Users/fatimafarooq/Desktop/modules/axi_fifo_wr.v
+ERROR    cocotb:simulator.py:305 /Users/fatimafarooq/Desktop/modules/axi_fifo.v: No such file or directory
+ERROR    cocotb:simulator.py:305 error: Unable to find the root module "axi_fifo" in the Verilog source.
+ERROR    cocotb:simulator.py:305      : Perhaps ``-s axi_fifo'' is incorrect?
+ERROR    cocotb:simulator.py:305 1 error(s) during elaboration.
+_____________________________ test_axi_fifo[16-0] ______________________________
+
+request = <FixtureRequest for <Function test_axi_fifo[16-0]>>, data_width = 16
+delay = 0
+
+    @pytest.mark.parametrize("delay", [0, 1])
+    @pytest.mark.parametrize("data_width", [8, 16, 32])
+    def test_axi_fifo(request, data_width, delay):
+        dut = "axi_fifo"
+        module = os.path.splitext(os.path.basename(__file__))[0]
+        toplevel = dut
+    
+        verilog_sources = [
+            os.path.join(rtl_dir, f"{dut}.v"),
+            os.path.join(rtl_dir, f"{dut}_rd.v"),
+            os.path.join(rtl_dir, f"{dut}_wr.v"),
+        ]
+    
+        parameters = {}
+    
+        parameters['DATA_WIDTH'] = data_width
+        parameters['ADDR_WIDTH'] = 32
+        parameters['STRB_WIDTH'] = parameters['DATA_WIDTH'] // 8
+        parameters['ID_WIDTH'] = 8
+        parameters['AWUSER_ENABLE'] = 0
+        parameters['AWUSER_WIDTH'] = 1
+        parameters['WUSER_ENABLE'] = 0
+        parameters['WUSER_WIDTH'] = 1
+        parameters['BUSER_ENABLE'] = 0
+        parameters['BUSER_WIDTH'] = 1
+        parameters['ARUSER_ENABLE'] = 0
+        parameters['ARUSER_WIDTH'] = 1
+        parameters['RUSER_ENABLE'] = 0
+        parameters['RUSER_WIDTH'] = 1
+        parameters['WRITE_FIFO_DEPTH'] = 32
+        parameters['READ_FIFO_DEPTH'] = 32
+        parameters['WRITE_FIFO_DELAY'] = delay
+        parameters['READ_FIFO_DELAY'] = delay
+    
+        extra_env = {f'PARAM_{k}': str(v) for k, v in parameters.items()}
+    
+        sim_build = os.path.join(tests_dir, "sim_build",
+            request.node.name.replace('[', '-').replace(']', ''))
+    
+>       cocotb_test.simulator.run(
+            python_search=[tests_dir],
+            verilog_sources=verilog_sources,
+            toplevel=toplevel,
+            module=module,
+            parameters=parameters,
+            sim_build=sim_build,
+            extra_env=extra_env,
+        )
+E       SystemExit: Process iverilog terminated with error 1
+
+tests/test_axi_fifo.py:251: SystemExit
+------------------------------ Captured log call -------------------------------
+INFO     cocotb:simulator.py:334 Running command: iverilog -o /Users/fatimafarooq/Desktop/axi_LLM/tests/sim_build/test_axi_fifo-16-0/axi_fifo.vvp -D COCOTB_SIM=1 -g2012 -s axi_fifo -Paxi_fifo.DATA_WIDTH=16 -Paxi_fifo.ADDR_WIDTH=32 -Paxi_fifo.STRB_WIDTH=2 -Paxi_fifo.ID_WIDTH=8 -Paxi_fifo.AWUSER_ENABLE=0 -Paxi_fifo.AWUSER_WIDTH=1 -Paxi_fifo.WUSER_ENABLE=0 -Paxi_fifo.WUSER_WIDTH=1 -Paxi_fifo.BUSER_ENABLE=0 -Paxi_fifo.BUSER_WIDTH=1 -Paxi_fifo.ARUSER_ENABLE=0 -Paxi_fifo.ARUSER_WIDTH=1 -Paxi_fifo.RUSER_ENABLE=0 -Paxi_fifo.RUSER_WIDTH=1 -Paxi_fifo.WRITE_FIFO_DEPTH=32 -Paxi_fifo.READ_FIFO_DEPTH=32 -Paxi_fifo.WRITE_FIFO_DELAY=0 -Paxi_fifo.READ_FIFO_DELAY=0 /Users/fatimafarooq/Desktop/modules/axi_fifo.v /Users/fatimafarooq/Desktop/modules/axi_fifo_rd.v /Users/fatimafarooq/Desktop/modules/axi_fifo_wr.v
+ERROR    cocotb:simulator.py:305 /Users/fatimafarooq/Desktop/modules/axi_fifo.v: No such file or directory
+ERROR    cocotb:simulator.py:305 error: Unable to find the root module "axi_fifo" in the Verilog source.
+ERROR    cocotb:simulator.py:305      : Perhaps ``-s axi_fifo'' is incorrect?
+ERROR    cocotb:simulator.py:305 1 error(s) during elaboration.
+_____________________________ test_axi_fifo[16-1] ______________________________
+
+request = <FixtureRequest for <Function test_axi_fifo[16-1]>>, data_width = 16
+delay = 1
+
+    @pytest.mark.parametrize("delay", [0, 1])
+    @pytest.mark.parametrize("data_width", [8, 16, 32])
+    def test_axi_fifo(request, data_width, delay):
+        dut = "axi_fifo"
+        module = os.path.splitext(os.path.basename(__file__))[0]
+        toplevel = dut
+    
+        verilog_sources = [
+            os.path.join(rtl_dir, f"{dut}.v"),
+            os.path.join(rtl_dir, f"{dut}_rd.v"),
+            os.path.join(rtl_dir, f"{dut}_wr.v"),
+        ]
+    
+        parameters = {}
+    
+        parameters['DATA_WIDTH'] = data_width
+        parameters['ADDR_WIDTH'] = 32
+        parameters['STRB_WIDTH'] = parameters['DATA_WIDTH'] // 8
+        parameters['ID_WIDTH'] = 8
+        parameters['AWUSER_ENABLE'] = 0
+        parameters['AWUSER_WIDTH'] = 1
+        parameters['WUSER_ENABLE'] = 0
+        parameters['WUSER_WIDTH'] = 1
+        parameters['BUSER_ENABLE'] = 0
+        parameters['BUSER_WIDTH'] = 1
+        parameters['ARUSER_ENABLE'] = 0
+        parameters['ARUSER_WIDTH'] = 1
+        parameters['RUSER_ENABLE'] = 0
+        parameters['RUSER_WIDTH'] = 1
+        parameters['WRITE_FIFO_DEPTH'] = 32
+        parameters['READ_FIFO_DEPTH'] = 32
+        parameters['WRITE_FIFO_DELAY'] = delay
+        parameters['READ_FIFO_DELAY'] = delay
+    
+        extra_env = {f'PARAM_{k}': str(v) for k, v in parameters.items()}
+    
+        sim_build = os.path.join(tests_dir, "sim_build",
+            request.node.name.replace('[', '-').replace(']', ''))
+    
+>       cocotb_test.simulator.run(
+            python_search=[tests_dir],
+            verilog_sources=verilog_sources,
+            toplevel=toplevel,
+            module=module,
+            parameters=parameters,
+            sim_build=sim_build,
+            extra_env=extra_env,
+        )
+E       SystemExit: Process iverilog terminated with error 1
+
+tests/test_axi_fifo.py:251: SystemExit
+------------------------------ Captured log call -------------------------------
+INFO     cocotb:simulator.py:334 Running command: iverilog -o /Users/fatimafarooq/Desktop/axi_LLM/tests/sim_build/test_axi_fifo-16-1/axi_fifo.vvp -D COCOTB_SIM=1 -g2012 -s axi_fifo -Paxi_fifo.DATA_WIDTH=16 -Paxi_fifo.ADDR_WIDTH=32 -Paxi_fifo.STRB_WIDTH=2 -Paxi_fifo.ID_WIDTH=8 -Paxi_fifo.AWUSER_ENABLE=0 -Paxi_fifo.AWUSER_WIDTH=1 -Paxi_fifo.WUSER_ENABLE=0 -Paxi_fifo.WUSER_WIDTH=1 -Paxi_fifo.BUSER_ENABLE=0 -Paxi_fifo.BUSER_WIDTH=1 -Paxi_fifo.ARUSER_ENABLE=0 -Paxi_fifo.ARUSER_WIDTH=1 -Paxi_fifo.RUSER_ENABLE=0 -Paxi_fifo.RUSER_WIDTH=1 -Paxi_fifo.WRITE_FIFO_DEPTH=32 -Paxi_fifo.READ_FIFO_DEPTH=32 -Paxi_fifo.WRITE_FIFO_DELAY=1 -Paxi_fifo.READ_FIFO_DELAY=1 /Users/fatimafarooq/Desktop/modules/axi_fifo.v /Users/fatimafarooq/Desktop/modules/axi_fifo_rd.v /Users/fatimafarooq/Desktop/modules/axi_fifo_wr.v
+ERROR    cocotb:simulator.py:305 /Users/fatimafarooq/Desktop/modules/axi_fifo.v: No such file or directory
+ERROR    cocotb:simulator.py:305 error: Unable to find the root module "axi_fifo" in the Verilog source.
+ERROR    cocotb:simulator.py:305      : Perhaps ``-s axi_fifo'' is incorrect?
+ERROR    cocotb:simulator.py:305 1 error(s) during elaboration.
+_____________________________ test_axi_fifo[32-0] ______________________________
+
+request = <FixtureRequest for <Function test_axi_fifo[32-0]>>, data_width = 32
+delay = 0
+
+    @pytest.mark.parametrize("delay", [0, 1])
+    @pytest.mark.parametrize("data_width", [8, 16, 32])
+    def test_axi_fifo(request, data_width, delay):
+        dut = "axi_fifo"
+        module = os.path.splitext(os.path.basename(__file__))[0]
+        toplevel = dut
+    
+        verilog_sources = [
+            os.path.join(rtl_dir, f"{dut}.v"),
+            os.path.join(rtl_dir, f"{dut}_rd.v"),
+            os.path.join(rtl_dir, f"{dut}_wr.v"),
+        ]
+    
+        parameters = {}
+    
+        parameters['DATA_WIDTH'] = data_width
+        parameters['ADDR_WIDTH'] = 32
+        parameters['STRB_WIDTH'] = parameters['DATA_WIDTH'] // 8
+        parameters['ID_WIDTH'] = 8
+        parameters['AWUSER_ENABLE'] = 0
+        parameters['AWUSER_WIDTH'] = 1
+        parameters['WUSER_ENABLE'] = 0
+        parameters['WUSER_WIDTH'] = 1
+        parameters['BUSER_ENABLE'] = 0
+        parameters['BUSER_WIDTH'] = 1
+        parameters['ARUSER_ENABLE'] = 0
+        parameters['ARUSER_WIDTH'] = 1
+        parameters['RUSER_ENABLE'] = 0
+        parameters['RUSER_WIDTH'] = 1
+        parameters['WRITE_FIFO_DEPTH'] = 32
+        parameters['READ_FIFO_DEPTH'] = 32
+        parameters['WRITE_FIFO_DELAY'] = delay
+        parameters['READ_FIFO_DELAY'] = delay
+    
+        extra_env = {f'PARAM_{k}': str(v) for k, v in parameters.items()}
+    
+        sim_build = os.path.join(tests_dir, "sim_build",
+            request.node.name.replace('[', '-').replace(']', ''))
+    
+>       cocotb_test.simulator.run(
+            python_search=[tests_dir],
+            verilog_sources=verilog_sources,
+            toplevel=toplevel,
+            module=module,
+            parameters=parameters,
+            sim_build=sim_build,
+            extra_env=extra_env,
+        )
+E       SystemExit: Process iverilog terminated with error 1
+
+tests/test_axi_fifo.py:251: SystemExit
+------------------------------ Captured log call -------------------------------
+INFO     cocotb:simulator.py:334 Running command: iverilog -o /Users/fatimafarooq/Desktop/axi_LLM/tests/sim_build/test_axi_fifo-32-0/axi_fifo.vvp -D COCOTB_SIM=1 -g2012 -s axi_fifo -Paxi_fifo.DATA_WIDTH=32 -Paxi_fifo.ADDR_WIDTH=32 -Paxi_fifo.STRB_WIDTH=4 -Paxi_fifo.ID_WIDTH=8 -Paxi_fifo.AWUSER_ENABLE=0 -Paxi_fifo.AWUSER_WIDTH=1 -Paxi_fifo.WUSER_ENABLE=0 -Paxi_fifo.WUSER_WIDTH=1 -Paxi_fifo.BUSER_ENABLE=0 -Paxi_fifo.BUSER_WIDTH=1 -Paxi_fifo.ARUSER_ENABLE=0 -Paxi_fifo.ARUSER_WIDTH=1 -Paxi_fifo.RUSER_ENABLE=0 -Paxi_fifo.RUSER_WIDTH=1 -Paxi_fifo.WRITE_FIFO_DEPTH=32 -Paxi_fifo.READ_FIFO_DEPTH=32 -Paxi_fifo.WRITE_FIFO_DELAY=0 -Paxi_fifo.READ_FIFO_DELAY=0 /Users/fatimafarooq/Desktop/modules/axi_fifo.v /Users/fatimafarooq/Desktop/modules/axi_fifo_rd.v /Users/fatimafarooq/Desktop/modules/axi_fifo_wr.v
+ERROR    cocotb:simulator.py:305 /Users/fatimafarooq/Desktop/modules/axi_fifo.v: No such file or directory
+ERROR    cocotb:simulator.py:305 error: Unable to find the root module "axi_fifo" in the Verilog source.
+ERROR    cocotb:simulator.py:305      : Perhaps ``-s axi_fifo'' is incorrect?
+ERROR    cocotb:simulator.py:305 1 error(s) during elaboration.
+_____________________________ test_axi_fifo[32-1] ______________________________
+
+request = <FixtureRequest for <Function test_axi_fifo[32-1]>>, data_width = 32
+delay = 1
+
+    @pytest.mark.parametrize("delay", [0, 1])
+    @pytest.mark.parametrize("data_width", [8, 16, 32])
+    def test_axi_fifo(request, data_width, delay):
+        dut = "axi_fifo"
+        module = os.path.splitext(os.path.basename(__file__))[0]
+        toplevel = dut
+    
+        verilog_sources = [
+            os.path.join(rtl_dir, f"{dut}.v"),
+            os.path.join(rtl_dir, f"{dut}_rd.v"),
+            os.path.join(rtl_dir, f"{dut}_wr.v"),
+        ]
+    
+        parameters = {}
+    
+        parameters['DATA_WIDTH'] = data_width
+        parameters['ADDR_WIDTH'] = 32
+        parameters['STRB_WIDTH'] = parameters['DATA_WIDTH'] // 8
+        parameters['ID_WIDTH'] = 8
+        parameters['AWUSER_ENABLE'] = 0
+        parameters['AWUSER_WIDTH'] = 1
+        parameters['WUSER_ENABLE'] = 0
+        parameters['WUSER_WIDTH'] = 1
+        parameters['BUSER_ENABLE'] = 0
+        parameters['BUSER_WIDTH'] = 1
+        parameters['ARUSER_ENABLE'] = 0
+        parameters['ARUSER_WIDTH'] = 1
+        parameters['RUSER_ENABLE'] = 0
+        parameters['RUSER_WIDTH'] = 1
+        parameters['WRITE_FIFO_DEPTH'] = 32
+        parameters['READ_FIFO_DEPTH'] = 32
+        parameters['WRITE_FIFO_DELAY'] = delay
+        parameters['READ_FIFO_DELAY'] = delay
+    
+        extra_env = {f'PARAM_{k}': str(v) for k, v in parameters.items()}
+    
+        sim_build = os.path.join(tests_dir, "sim_build",
+            request.node.name.replace('[', '-').replace(']', ''))
+    
+>       cocotb_test.simulator.run(
+            python_search=[tests_dir],
+            verilog_sources=verilog_sources,
+            toplevel=toplevel,
+            module=module,
+            parameters=parameters,
+            sim_build=sim_build,
+            extra_env=extra_env,
+        )
+E       SystemExit: Process iverilog terminated with error 1
+
+tests/test_axi_fifo.py:251: SystemExit
+------------------------------ Captured log call -------------------------------
+INFO     cocotb:simulator.py:334 Running command: iverilog -o /Users/fatimafarooq/Desktop/axi_LLM/tests/sim_build/test_axi_fifo-32-1/axi_fifo.vvp -D COCOTB_SIM=1 -g2012 -s axi_fifo -Paxi_fifo.DATA_WIDTH=32 -Paxi_fifo.ADDR_WIDTH=32 -Paxi_fifo.STRB_WIDTH=4 -Paxi_fifo.ID_WIDTH=8 -Paxi_fifo.AWUSER_ENABLE=0 -Paxi_fifo.AWUSER_WIDTH=1 -Paxi_fifo.WUSER_ENABLE=0 -Paxi_fifo.WUSER_WIDTH=1 -Paxi_fifo.BUSER_ENABLE=0 -Paxi_fifo.BUSER_WIDTH=1 -Paxi_fifo.ARUSER_ENABLE=0 -Paxi_fifo.ARUSER_WIDTH=1 -Paxi_fifo.RUSER_ENABLE=0 -Paxi_fifo.RUSER_WIDTH=1 -Paxi_fifo.WRITE_FIFO_DEPTH=32 -Paxi_fifo.READ_FIFO_DEPTH=32 -Paxi_fifo.WRITE_FIFO_DELAY=1 -Paxi_fifo.READ_FIFO_DELAY=1 /Users/fatimafarooq/Desktop/modules/axi_fifo.v /Users/fatimafarooq/Desktop/modules/axi_fifo_rd.v /Users/fatimafarooq/Desktop/modules/axi_fifo_wr.v
+ERROR    cocotb:simulator.py:305 /Users/fatimafarooq/Desktop/modules/axi_fifo.v: No such file or directory
+ERROR    cocotb:simulator.py:305 error: Unable to find the root module "axi_fifo" in the Verilog source.
+ERROR    cocotb:simulator.py:305      : Perhaps ``-s axi_fifo'' is incorrect?
+ERROR    cocotb:simulator.py:305 1 error(s) during elaboration.
+=========================== short test summary info ============================
+FAILED tests/test_axi_fifo.py::test_axi_fifo[8-0] - SystemExit: Process iveri...
+FAILED tests/test_axi_fifo.py::test_axi_fifo[8-1] - SystemExit: Process iveri...
+FAILED tests/test_axi_fifo.py::test_axi_fifo[16-0] - SystemExit: Process iver...
+FAILED tests/test_axi_fifo.py::test_axi_fifo[16-1] - SystemExit: Process iver...
+FAILED tests/test_axi_fifo.py::test_axi_fifo[32-0] - SystemExit: Process iver...
+FAILED tests/test_axi_fifo.py::test_axi_fifo[32-1] - SystemExit: Process iver...
+============================== 6 failed in 0.38s ===============================

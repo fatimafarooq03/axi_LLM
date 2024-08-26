@@ -1,0 +1,221 @@
+module axi_dma_wr #
+(
+    // Parameters
+    parameter AXI_DATA_WIDTH = 32,  // Width of AXI data bus in bits
+    parameter AXI_ADDR_WIDTH = 16,  // Width of AXI address bus in bits
+    parameter AXI_STRB_WIDTH = (AXI_DATA_WIDTH/8),  // Width of AXI wstrb (width of data bus in words)
+    parameter AXI_ID_WIDTH = 8,  // Width of AXI ID signal
+    parameter AXI_MAX_BURST_LEN = 16,  // Maximum AXI burst length to generate
+    parameter AXIS_DATA_WIDTH = AXI_DATA_WIDTH,  // Width of AXI stream interfaces in bits
+    parameter AXIS_KEEP_ENABLE = (AXIS_DATA_WIDTH>8),  // Use AXI stream tkeep signal
+    parameter AXIS_KEEP_WIDTH = (AXIS_DATA_WIDTH/8),  // AXI stream tkeep signal width (words per cycle)
+    parameter AXIS_LAST_ENABLE = 1,  // Use AXI stream tlast signal
+    parameter AXIS_ID_ENABLE = 0,  // Propagate AXI stream tid signal
+    parameter AXIS_ID_WIDTH = 8,  // AXI stream tid signal width
+    parameter AXIS_DEST_ENABLE = 0,  // Propagate AXI stream tdest signal
+    parameter AXIS_DEST_WIDTH = 8,  // AXI stream tdest signal width
+    parameter AXIS_USER_ENABLE = 1,  // Propagate AXI stream tuser signal
+    parameter AXIS_USER_WIDTH = 1,  // AXI stream tuser signal width
+    parameter LEN_WIDTH = 20,  // Width of length field
+    parameter TAG_WIDTH = 8,  // Width of tag field
+    parameter ENABLE_SG = 0,  // Enable support for scatter/gather DMA (multiple descriptors per AXI stream frame)
+    parameter ENABLE_UNALIGNED = 0  // Enable support for unaligned transfers
+)
+(
+    // Ports
+    input  wire                       clk,  // Clock signal
+    input  wire                       rst,  // Reset signal
+
+    // AXI write descriptor input
+    input  wire [AXI_ADDR_WIDTH-1:0]  s_axis_write_desc_addr,
+    input  wire [LEN_WIDTH-1:0]       s_axis_write_desc_len,
+    input  wire [TAG_WIDTH-1:0]       s_axis_write_desc_tag,
+    input  wire                       s_axis_write_desc_valid,
+    output wire                       s_axis_write_desc_ready,
+
+    // AXI write descriptor status output
+    output wire [LEN_WIDTH-1:0]       m_axis_write_desc_status_len,
+    output wire [TAG_WIDTH-1:0]       m_axis_write_desc_status_tag,
+    output wire [AXIS_ID_WIDTH-1:0]   m_axis_write_desc_status_id,
+    output wire [AXIS_DEST_WIDTH-1:0] m_axis_write_desc_status_dest,
+    output wire [AXIS_USER_WIDTH-1:0] m_axis_write_desc_status_user,
+    output wire [3:0]                 m_axis_write_desc_status_error,
+    output wire                       m_axis_write_desc_status_valid,
+
+    // AXI stream write data input
+    input  wire [AXIS_DATA_WIDTH-1:0] s_axis_write_data_tdata,
+    input  wire [AXIS_KEEP_WIDTH-1:0] s_axis_write_data_tkeep,
+    input  wire                       s_axis_write_data_tvalid,
+    output wire                       s_axis_write_data_tready,
+    input  wire                       s_axis_write_data_tlast,
+    input  wire [AXIS_ID_WIDTH-1:0]   s_axis_write_data_tid,
+    input  wire [AXIS_DEST_WIDTH-1:0] s_axis_write_data_tdest,
+    input  wire [AXIS_USER_WIDTH-1:0] s_axis_write_data_tuser,
+
+    // AXI master interface
+    output wire [AXI_ID_WIDTH-1:0]    m_axi_awid,
+    output wire [AXI_ADDR_WIDTH-1:0]  m_axi_awaddr,
+    output wire [7:0]                 m_axi_awlen,
+    output wire [2:0]                 m_axi_awsize,
+    output wire [1:0]                 m_axi_awburst,
+    output wire                       m_axi_awlock,
+    output wire [3:0]                 m_axi_awcache,
+    output wire [2:0]                 m_axi_awprot,
+    output wire                       m_axi_awvalid,
+    input  wire                       m_axi_awready,
+    output wire [AXI_DATA_WIDTH-1:0]  m_axi_wdata,
+    output wire [AXI_STRB_WIDTH-1:0]  m_axi_wstrb,
+    output wire                       m_axi_wlast,
+    output wire                       m_axi_wvalid,
+    input  wire                       m_axi_wready,
+    input  wire [AXI_ID_WIDTH-1:0]    m_axi_bid,
+    input  wire [1:0]                 m_axi_bresp,
+    input  wire                       m_axi_bvalid,
+    output wire                       m_axi_bready,
+
+    // Configuration
+    input  wire                       enable,  // Configuration enable signal
+    input  wire                       abort  // Configuration abort signal
+);
+
+// States for the state machine
+localparam STATE_IDLE = 3'd0,
+           STATE_START = 3'd1,
+           STATE_WRITE = 3'd2,
+           STATE_FINISH_BURST = 3'd3,
+           STATE_DROP_DATA = 3'd4;
+
+// State register
+reg [2:0] state_reg, state_next;
+
+// Registers
+reg [AXI_ADDR_WIDTH-1:0] axi_addr_reg, axi_addr_next;
+reg [LEN_WIDTH-1:0] transfer_len_reg, transfer_len_next;
+reg [TAG_WIDTH-1:0] transfer_tag_reg, transfer_tag_next;
+reg [LEN_WIDTH-1:0] burst_len_reg, burst_len_next;
+reg s_axis_write_desc_ready_reg, s_axis_write_desc_ready_next;
+reg m_axis_write_desc_status_valid_reg, m_axis_write_desc_status_valid_next;
+reg [LEN_WIDTH-1:0] m_axis_write_desc_status_len_reg, m_axis_write_desc_status_len_next;
+reg [TAG_WIDTH-1:0] m_axis_write_desc_status_tag_reg, m_axis_write_desc_status_tag_next;
+
+// AXI signals
+reg [AXI_ID_WIDTH-1:0] m_axi_awid_reg, m_axi_awid_next;
+reg [AXI_ADDR_WIDTH-1:0] m_axi_awaddr_reg, m_axi_awaddr_next;
+reg [7:0] m_axi_awlen_reg, m_axi_awlen_next;
+reg [2:0] m_axi_awsize_reg, m_axi_awsize_next;
+reg [1:0] m_axi_awburst_reg, m_axi_awburst_next;
+reg m_axi_awlock_reg, m_axi_awlock_next;
+reg [3:0] m_axi_awcache_reg, m_axi_awcache_next;
+reg [2:0] m_axi_awprot_reg, m_axi_awprot_next;
+reg m_axi_awvalid_reg, m_axi_awvalid_next;
+reg [AXI_DATA_WIDTH-1:0] m_axi_wdata_reg, m_axi_wdata_next;
+reg [AXI_STRB_WIDTH-1:0] m_axi_wstrb_reg, m_axi_wstrb_next;
+reg m_axi_wlast_reg, m_axi_wlast_next;
+reg m_axi_wvalid_reg, m_axi_wvalid_next;
+reg m_axi_bready_reg, m_axi_bready_next;
+
+assign s_axis_write_desc_ready = s_axis_write_desc_ready_reg;
+assign m_axis_write_desc_status_valid = m_axis_write_desc_status_valid_reg;
+assign m_axis_write_desc_status_len = m_axis_write_desc_status_len_reg;
+assign m_axis_write_desc_status_tag = m_axis_write_desc_status_tag_reg;
+
+assign m_axi_awid = m_axi_awid_reg;
+assign m_axi_awaddr = m_axi_awaddr_reg;
+assign m_axi_awlen = m_axi_awlen_reg;
+assign m_axi_awsize = m_axi_awsize_reg;
+assign m_axi_awburst = m_axi_awburst_reg;
+assign m_axi_awlock = m_axi_awlock_reg;
+assign m_axi_awcache = m_axi_awcache_reg;
+assign m_axi_awprot = m_axi_awprot_reg;
+assign m_axi_awvalid = m_axi_awvalid_reg;
+assign m_axi_wdata = m_axi_wdata_reg;
+assign m_axi_wstrb = m_axi_wstrb_reg;
+assign m_axi_wlast = m_axi_wlast_reg;
+assign m_axi_wvalid = m_axi_wvalid_reg;
+assign m_axi_bready = m_axi_bready_reg;
+
+always @(posedge clk) begin
+    if (rst) begin
+        state_reg <= STATE_IDLE;
+        s_axis_write_desc_ready_reg <= 1'b0;
+        m_axis_write_desc_status_valid_reg <= 1'b0;
+        axi_addr_reg <= {AXI_ADDR_WIDTH{1'b0}};
+        transfer_len_reg <= {LEN_WIDTH{1'b0}};
+        transfer_tag_reg <= {TAG_WIDTH{1'b0}};
+        burst_len_reg <= {LEN_WIDTH{1'b0}};
+        m_axi_awvalid_reg <= 1'b0;
+        m_axi_wvalid_reg <= 1'b0;
+        m_axi_bready_reg <= 1'b0;
+    end else begin
+        state_reg <= state_next;
+        s_axis_write_desc_ready_reg <= s_axis_write_desc_ready_next;
+        m_axis_write_desc_status_valid_reg <= m_axis_write_desc_status_valid_next;
+        axi_addr_reg <= axi_addr_next;
+        transfer_len_reg <= transfer_len_next;
+        transfer_tag_reg <= transfer_tag_next;
+        burst_len_reg <= burst_len_next;
+        m_axi_awvalid_reg <= m_axi_awvalid_next;
+        m_axi_wvalid_reg <= m_axi_wvalid_next;
+        m_axi_bready_reg <= m_axi_bready_next;
+    end
+end
+
+always @* begin
+    state_next = state_reg;
+    s_axis_write_desc_ready_next = 1'b0;
+    m_axis_write_desc_status_valid_next = 1'b0;
+    axi_addr_next = axi_addr_reg;
+    transfer_len_next = transfer_len_reg;
+    transfer_tag_next = transfer_tag_reg;
+    burst_len_next = burst_len_reg;
+    m_axi_awvalid_next = m_axi_awvalid_reg;
+    m_axi_wvalid_next = m_axi_wvalid_reg;
+    m_axi_bready_next = m_axi_bready_reg;
+
+    case (state_reg)
+        STATE_IDLE: begin
+            s_axis_write_desc_ready_next = 1'b1;
+            if (s_axis_write_desc_valid) begin
+                s_axis_write_desc_ready_next = 1'b0;
+                axi_addr_next = s_axis_write_desc_addr;
+                transfer_len_next = s_axis_write_desc_len;
+                transfer_tag_next = s_axis_write_desc_tag;
+                burst_len_next = (s_axis_write_desc_len > AXI_MAX_BURST_LEN) ? AXI_MAX_BURST_LEN : s_axis_write_desc_len;
+                state_next = STATE_START;
+            end
+        end
+        STATE_START: begin
+            if (enable) begin
+                m_axi_awvalid_next = 1'b1;
+                m_axi_wvalid_next = 1'b1;
+                state_next = STATE_WRITE;
+            end else begin
+                state_next = STATE_IDLE;
+            end
+        end
+        STATE_WRITE: begin
+            if (m_axi_awready && m_axi_wready) begin
+                axi_addr_next = axi_addr_reg + (burst_len_reg * AXI_STRB_WIDTH);
+                transfer_len_next = transfer_len_reg - burst_len_reg;
+                burst_len_next = (transfer_len_next > AXI_MAX_BURST_LEN) ? AXI_MAX_BURST_LEN : transfer_len_next;
+                m_axi_awvalid_next = (transfer_len_next > 0) ? 1'b1 : 1'b0;
+                m_axi_wvalid_next = (transfer_len_next > 0) ? 1'b1 : 1'b0;
+                if (transfer_len_next == 0) begin
+                    state_next = STATE_FINISH_BURST;
+                end
+            end
+        end
+        STATE_FINISH_BURST: begin
+            m_axi_bready_next = 1'b1;
+            if (m_axi_bvalid) begin
+                m_axi_bready_next = 1'b0;
+                m_axis_write_desc_status_valid_next = 1'b1;
+                m_axis_write_desc_status_len_next = s_axis_write_desc_len;
+                m_axis_write_desc_status_tag_next = s_axis_write_desc_tag;
+                state_next = STATE_IDLE;
+            end
+        end
+    endcase
+end
+
+endmodule

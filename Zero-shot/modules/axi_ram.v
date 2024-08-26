@@ -1,0 +1,188 @@
+module axi_ram #
+(
+    // Parameters
+    parameter DATA_WIDTH = 32,  // Width of data bus in bits
+    parameter ADDR_WIDTH = 16,  // Width of address bus in bits
+    parameter STRB_WIDTH = (DATA_WIDTH/8),  // Width of wstrb (width of data bus in words)
+    parameter ID_WIDTH = 8,  // Width of ID signal
+    parameter PIPELINE_OUTPUT = 0  // Extra pipeline register on output
+)
+(
+    // Ports
+    input  wire                   clk,  // Clock signal
+    input  wire                   rst,  // Reset signal
+
+    input  wire [ID_WIDTH-1:0]    s_axi_awid,
+    input  wire [ADDR_WIDTH-1:0]  s_axi_awaddr,
+    input  wire [7:0]             s_axi_awlen,
+    input  wire [2:0]             s_axi_awsize,
+    input  wire [1:0]             s_axi_awburst,
+    input  wire                   s_axi_awlock,
+    input  wire [3:0]             s_axi_awcache,
+    input  wire [2:0]             s_axi_awprot,
+    input  wire                   s_axi_awvalid,
+    output wire                   s_axi_awready,
+    input  wire [DATA_WIDTH-1:0]  s_axi_wdata,
+    input  wire [STRB_WIDTH-1:0]  s_axi_wstrb,
+    input  wire                   s_axi_wlast,
+    input  wire                   s_axi_wvalid,
+    output wire                   s_axi_wready,
+    output wire [ID_WIDTH-1:0]    s_axi_bid,
+    output wire [1:0]             s_axi_bresp,
+    output wire                   s_axi_bvalid,
+    input  wire                   s_axi_bready,
+    input  wire [ID_WIDTH-1:0]    s_axi_arid,
+    input  wire [ADDR_WIDTH-1:0]  s_axi_araddr,
+    input  wire [7:0]             s_axi_arlen,
+    input  wire [2:0]             s_axi_arsize,
+    input  wire [1:0]             s_axi_arburst,
+    input  wire                   s_axi_arlock,
+    input  wire [3:0]             s_axi_arcache,
+    input  wire [2:0]             s_axi_arprot,
+    input  wire                   s_axi_arvalid,
+    output wire                   s_axi_arready,
+    output wire [ID_WIDTH-1:0]    s_axi_rid,
+    output wire [DATA_WIDTH-1:0]  s_axi_rdata,
+    output wire [1:0]             s_axi_rresp,
+    output wire                   s_axi_rlast,
+    output wire                   s_axi_rvalid,
+    input  wire                   s_axi_rready
+);
+
+// State encoding for Write State Machine
+localparam WRITE_STATE_IDLE  = 2'b00,
+           WRITE_STATE_BURST = 2'b01,
+           WRITE_STATE_RESP  = 2'b10;
+
+// State encoding for Read State Machine
+localparam READ_STATE_IDLE  = 2'b00,
+           READ_STATE_BURST = 2'b01;
+
+// Internal signals
+reg [1:0] write_state, write_state_next;
+reg [1:0] read_state, read_state_next;
+reg [ADDR_WIDTH-1:0] awaddr_reg, araddr_reg, addr;
+
+reg [ID_WIDTH-1:0] bid_reg, rid_reg;
+reg [7:0] burst_len;
+reg [DATA_WIDTH-1:0] mem [(1<<ADDR_WIDTH)-1:0]; // Memory array
+reg [DATA_WIDTH-1:0] rdata_reg;
+reg rvalid_reg, bvalid_reg, wready_reg, awready_reg, arready_reg;
+reg wlast_reg, rlast_reg;
+
+// Write state machine
+always @(posedge clk or posedge rst) begin
+    if (rst) begin
+        write_state <= WRITE_STATE_IDLE;
+        awaddr_reg <= {ADDR_WIDTH{1'b0}};
+        burst_len <= 8'b0;
+        bvalid_reg <= 1'b0;
+        wready_reg <= 1'b0;
+    end else begin
+        write_state <= write_state_next;
+        if (s_axi_awvalid && s_axi_awready) begin
+            awaddr_reg <= s_axi_awaddr;
+            burst_len <= s_axi_awlen;
+        end
+        if (write_state == WRITE_STATE_BURST && s_axi_wvalid && s_axi_wready) begin
+            if (s_axi_wstrb[0]) mem[awaddr_reg][ 7: 0] <= s_axi_wdata[ 7: 0];
+            if (s_axi_wstrb[1]) mem[awaddr_reg][15: 8] <= s_axi_wdata[15: 8];
+            if (s_axi_wstrb[2]) mem[awaddr_reg][23:16] <= s_axi_wdata[23:16];
+            if (s_axi_wstrb[3]) mem[awaddr_reg][31:24] <= s_axi_wdata[31:24];
+            if (burst_len > 0) awaddr_reg <= awaddr_reg + (1 << s_axi_awsize); // Increment address
+            burst_len <= burst_len - 1;
+        end
+        if (write_state == WRITE_STATE_RESP && s_axi_bready) begin
+            bvalid_reg <= 1'b0;
+        end
+    end
+end
+
+always @(*) begin
+    case (write_state)
+        WRITE_STATE_IDLE: begin
+            awready_reg = 1'b1;
+            wready_reg = 1'b0;
+            bvalid_reg = 1'b0;
+            if (s_axi_awvalid) write_state_next = WRITE_STATE_BURST;
+            else write_state_next = WRITE_STATE_IDLE;
+        end
+        WRITE_STATE_BURST: begin
+            awready_reg = 1'b0;
+            wready_reg = 1'b1;
+            if (s_axi_wvalid && s_axi_wready && s_axi_wlast) write_state_next = WRITE_STATE_RESP;
+            else write_state_next = WRITE_STATE_BURST;
+        end
+        WRITE_STATE_RESP: begin
+            awready_reg = 1'b0;
+            wready_reg = 1'b0;
+            bvalid_reg = 1'b1;
+            if (s_axi_bready) write_state_next = WRITE_STATE_IDLE;
+            else write_state_next = WRITE_STATE_RESP;
+        end
+        default: write_state_next = WRITE_STATE_IDLE;
+    endcase
+end
+
+assign s_axi_awready = awready_reg;
+assign s_axi_wready = wready_reg;
+assign s_axi_bvalid = bvalid_reg;
+assign s_axi_bid = s_axi_awid;
+assign s_axi_bresp = 2'b00; // OKAY response
+
+// Read state machine
+always @(posedge clk or posedge rst) begin
+    if (rst) begin
+        read_state <= READ_STATE_IDLE;
+        araddr_reg <= {ADDR_WIDTH{1'b0}};
+        burst_len <= 8'b0;
+        rvalid_reg <= 1'b0;
+        arready_reg <= 1'b0;
+        rlast_reg <= 1'b0;
+    end else begin
+        read_state <= read_state_next;
+        if (s_axi_arvalid && s_axi_arready) begin
+            araddr_reg <= s_axi_araddr;
+            burst_len <= s_axi_arlen;
+        end
+        if (read_state == READ_STATE_BURST && s_axi_rvalid && s_axi_rready) begin
+            if (burst_len > 0) araddr_reg <= araddr_reg + (1 << s_axi_arsize); // Increment address
+            burst_len <= burst_len - 1;
+        end
+    end
+end
+
+always @(*) begin
+    case (read_state)
+        READ_STATE_IDLE: begin
+            arready_reg = 1'b1;
+            rvalid_reg = 1'b0;
+            rlast_reg = 1'b0;
+            if (s_axi_arvalid) read_state_next = READ_STATE_BURST;
+            else read_state_next = READ_STATE_IDLE;
+        end
+        READ_STATE_BURST: begin
+            arready_reg = 1'b0;
+            rvalid_reg = 1'b1;
+            if (burst_len == 0) rlast_reg = 1'b1;
+            if (s_axi_rvalid && s_axi_rready && rlast_reg) read_state_next = READ_STATE_IDLE;
+            else read_state_next = READ_STATE_BURST;
+        end
+        default: read_state_next = READ_STATE_IDLE;
+    endcase
+end
+
+always @(posedge clk) begin
+    if (read_state == READ_STATE_BURST && s_axi_rvalid && s_axi_rready) begin
+        rdata_reg <= mem[araddr_reg];
+    end
+end
+
+assign s_axi_arready = arready_reg;
+assign s_axi_rvalid = rvalid_reg;
+assign s_axi_rlast = rlast_reg;
+assign s_axi_rid = s_axi_arid;
+assign s_axi_rdata = rdata_reg;
+assign s_axi_rresp = 2'b00; // OKAY response
+
+endmodule

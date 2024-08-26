@@ -1,0 +1,250 @@
+module axi_dma_rd #
+(
+    // Parameters
+    parameter AXI_DATA_WIDTH = 32,  // Width of AXI data bus in bits
+    parameter AXI_ADDR_WIDTH = 16,  // Width of AXI address bus in bits
+    parameter AXI_STRB_WIDTH = (AXI_DATA_WIDTH/8),  // Width of AXI wstrb (width of data bus in words)
+    parameter AXI_ID_WIDTH = 8,  // Width of AXI ID signal
+    parameter AXI_MAX_BURST_LEN = 16,  // Maximum AXI burst length to generate
+    parameter AXIS_DATA_WIDTH = AXI_DATA_WIDTH,  // Width of AXI stream interfaces in bits
+    parameter AXIS_KEEP_ENABLE = (AXIS_DATA_WIDTH>8),  // Use AXI stream tkeep signal
+    parameter AXIS_KEEP_WIDTH = (AXIS_DATA_WIDTH/8),  // AXI stream tkeep signal width (words per cycle)
+    parameter AXIS_LAST_ENABLE = 1,  // Use AXI stream tlast signal
+    parameter AXIS_ID_ENABLE = 0,  // Propagate AXI stream tid signal
+    parameter AXIS_ID_WIDTH = 8,  // AXI stream tid signal width
+    parameter AXIS_DEST_ENABLE = 0,  // Propagate AXI stream tdest signal
+    parameter AXIS_DEST_WIDTH = 8,  // AXI stream tdest signal width
+    parameter AXIS_USER_ENABLE = 1,  // Propagate AXI stream tuser signal
+    parameter AXIS_USER_WIDTH = 1,  // AXI stream tuser signal width
+    parameter LEN_WIDTH = 20,  // Width of length field
+    parameter TAG_WIDTH = 8,  // Width of tag field
+    parameter ENABLE_SG = 0,  // Enable support for scatter/gather DMA (multiple descriptors per AXI stream frame)
+    parameter ENABLE_UNALIGNED = 0  // Enable support for unaligned transfers
+)
+(
+    // Ports
+    input  wire                       clk,  // Clock signal
+    input  wire                       rst,  // Reset signal
+
+    // AXI read descriptor input
+    input  wire [AXI_ADDR_WIDTH-1:0]  s_axis_read_desc_addr,
+    input  wire [LEN_WIDTH-1:0]       s_axis_read_desc_len,
+    input  wire [TAG_WIDTH-1:0]       s_axis_read_desc_tag,
+    input  wire [AXIS_ID_WIDTH-1:0]   s_axis_read_desc_id,
+    input  wire [AXIS_DEST_WIDTH-1:0] s_axis_read_desc_dest,
+    input  wire [AXIS_USER_WIDTH-1:0] s_axis_read_desc_user,
+    input  wire                       s_axis_read_desc_valid,
+    output wire                       s_axis_read_desc_ready,
+
+    // AXI read descriptor status output
+    output wire [TAG_WIDTH-1:0]       m_axis_read_desc_status_tag,
+    output wire [3:0]                 m_axis_read_desc_status_error,
+    output wire                       m_axis_read_desc_status_valid,
+
+    // AXI stream read data output
+    output wire [AXIS_DATA_WIDTH-1:0] m_axis_read_data_tdata,
+    output wire [AXIS_KEEP_WIDTH-1:0] m_axis_read_data_tkeep,
+    output wire                       m_axis_read_data_tvalid,
+    input  wire                       m_axis_read_data_tready,
+    output wire                       m_axis_read_data_tlast,
+    output wire [AXIS_ID_WIDTH-1:0]   m_axis_read_data_tid,
+    output wire [AXIS_DEST_WIDTH-1:0] m_axis_read_data_tdest,
+    output wire [AXIS_USER_WIDTH-1:0] m_axis_read_data_tuser,
+
+    // AXI master interface
+    output wire [AXI_ID_WIDTH-1:0]    m_axi_arid,
+    output wire [AXI_ADDR_WIDTH-1:0]  m_axi_araddr,
+    output wire [7:0]                 m_axi_arlen,
+    output wire [2:0]                 m_axi_arsize,
+    output wire [1:0]                 m_axi_arburst,
+    output wire                       m_axi_arlock,
+    output wire [3:0]                 m_axi_arcache,
+    output wire [2:0]                 m_axi_arprot,
+    output wire                       m_axi_arvalid,
+    input  wire                       m_axi_arready,
+    input  wire [AXI_ID_WIDTH-1:0]    m_axi_rid,
+    input  wire [AXI_DATA_WIDTH-1:0]  m_axi_rdata,
+    input  wire [1:0]                 m_axi_rresp,
+    input  wire                       m_axi_rlast,
+    input  wire                       m_axi_rvalid,
+    output wire                       m_axi_rready,
+
+    // Configuration
+    input  wire                       enable  // Configuration enable signal
+);
+
+localparam [1:0]
+    AXI_STATE_IDLE = 2'b00,
+    AXI_STATE_START = 2'b01,
+    AXI_STATE_DATA = 2'b10,
+    AXI_STATE_DONE = 2'b11;
+
+reg [1:0] axi_state_reg = AXI_STATE_IDLE, axi_state_next;
+
+reg [AXI_ADDR_WIDTH-1:0] axi_addr_reg, axi_addr_next;
+reg [LEN_WIDTH-1:0] axi_len_reg, axi_len_next;
+reg [TAG_WIDTH-1:0] axi_tag_reg, axi_tag_next;
+reg [AXIS_ID_WIDTH-1:0] axi_id_reg, axi_id_next;
+reg [AXIS_DEST_WIDTH-1:0] axi_dest_reg, axi_dest_next;
+reg [AXIS_USER_WIDTH-1:0] axi_user_reg, axi_user_next;
+
+reg s_axis_read_desc_ready_reg, s_axis_read_desc_ready_next;
+
+reg [TAG_WIDTH-1:0] m_axis_read_desc_status_tag_reg, m_axis_read_desc_status_tag_next;
+reg [3:0] m_axis_read_desc_status_error_reg, m_axis_read_desc_status_error_next;
+reg m_axis_read_desc_status_valid_reg, m_axis_read_desc_status_valid_next;
+
+reg [AXIS_DATA_WIDTH-1:0] m_axis_read_data_tdata_reg, m_axis_read_data_tdata_next;
+reg [AXIS_KEEP_WIDTH-1:0] m_axis_read_data_tkeep_reg, m_axis_read_data_tkeep_next;
+reg m_axis_read_data_tvalid_reg, m_axis_read_data_tvalid_next;
+reg m_axis_read_data_tlast_reg, m_axis_read_data_tlast_next;
+reg [AXIS_ID_WIDTH-1:0] m_axis_read_data_tid_reg, m_axis_read_data_tid_next;
+reg [AXIS_DEST_WIDTH-1:0] m_axis_read_data_tdest_reg, m_axis_read_data_tdest_next;
+reg [AXIS_USER_WIDTH-1:0] m_axis_read_data_tuser_reg, m_axis_read_data_tuser_next;
+
+always @(posedge clk or posedge rst) begin
+    if (rst) begin
+        axi_state_reg <= AXI_STATE_IDLE;
+        axi_addr_reg <= 0;
+        axi_len_reg <= 0;
+        axi_tag_reg <= 0;
+        axi_id_reg <= 0;
+        axi_dest_reg <= 0;
+        axi_user_reg <= 0;
+        s_axis_read_desc_ready_reg <= 1'b0;
+        m_axis_read_desc_status_tag_reg <= 0;
+        m_axis_read_desc_status_error_reg <= 0;
+        m_axis_read_desc_status_valid_reg <= 1'b0;
+        m_axis_read_data_tdata_reg <= 0;
+        m_axis_read_data_tkeep_reg <= 0;
+        m_axis_read_data_tvalid_reg <= 1'b0;
+        m_axis_read_data_tlast_reg <= 1'b0;
+        m_axis_read_data_tid_reg <= 0;
+        m_axis_read_data_tdest_reg <= 0;
+        m_axis_read_data_tuser_reg <= 0;
+    end else begin
+        axi_state_reg <= axi_state_next;
+        axi_addr_reg <= axi_addr_next;
+        axi_len_reg <= axi_len_next;
+        axi_tag_reg <= axi_tag_next;
+        axi_id_reg <= axi_id_next;
+        axi_dest_reg <= axi_dest_next;
+        axi_user_reg <= axi_user_next;
+        s_axis_read_desc_ready_reg <= s_axis_read_desc_ready_next;
+        m_axis_read_desc_status_tag_reg <= m_axis_read_desc_status_tag_next;
+        m_axis_read_desc_status_error_reg <= m_axis_read_desc_status_error_next;
+        m_axis_read_desc_status_valid_reg <= m_axis_read_desc_status_valid_next;
+        m_axis_read_data_tdata_reg <= m_axis_read_data_tdata_next;
+        m_axis_read_data_tkeep_reg <= m_axis_read_data_tkeep_next;
+        m_axis_read_data_tvalid_reg <= m_axis_read_data_tvalid_next;
+        m_axis_read_data_tlast_reg <= m_axis_read_data_tlast_next;
+        m_axis_read_data_tid_reg <= m_axis_read_data_tid_next;
+        m_axis_read_data_tdest_reg <= m_axis_read_data_tdest_next;
+        m_axis_read_data_tuser_reg <= m_axis_read_data_tuser_next;
+    end
+end
+
+always @* begin
+    axi_state_next = axi_state_reg;
+    axi_addr_next = axi_addr_reg;
+    axi_len_next = axi_len_reg;
+    axi_tag_next = axi_tag_reg;
+    axi_id_next = axi_id_reg;
+    axi_dest_next = axi_dest_reg;
+    axi_user_next = axi_user_reg;
+    s_axis_read_desc_ready_next = 1'b0;
+    m_axis_read_desc_status_tag_next = m_axis_read_desc_status_tag_reg;
+    m_axis_read_desc_status_error_next = m_axis_read_desc_status_error_reg;
+    m_axis_read_desc_status_valid_next = 1'b0;
+    m_axis_read_data_tdata_next = m_axis_read_data_tdata_reg;
+    m_axis_read_data_tkeep_next = m_axis_read_data_tkeep_reg;
+    m_axis_read_data_tvalid_next = 1'b0;
+    m_axis_read_data_tlast_next = 1'b0;
+    m_axis_read_data_tid_next = m_axis_read_data_tid_reg;
+    m_axis_read_data_tdest_next = m_axis_read_data_tdest_reg;
+    m_axis_read_data_tuser_next = m_axis_read_data_tuser_reg;
+
+    m_axi_arid = axi_tag_reg;
+    m_axi_araddr = axi_addr_reg;
+    m_axi_arlen = (axi_len_reg > AXI_MAX_BURST_LEN) ? AXI_MAX_BURST_LEN - 1 : axi_len_reg - 1;
+    m_axi_arsize = $clog2(AXI_STRB_WIDTH);
+    m_axi_arburst = 2'b01;
+    m_axi_arlock = 1'b0;
+    m_axi_arcache = 4'b0011;
+    m_axi_arprot = 3'b000;
+    m_axi_arvalid = 1'b0;
+    m_axi_rready = 1'b1;
+
+    case (axi_state_reg)
+        AXI_STATE_IDLE: begin
+            // Wait for descriptor
+            if (s_axis_read_desc_valid) begin
+                axi_addr_next = s_axis_read_desc_addr;
+                axi_len_next = s_axis_read_desc_len;
+                axi_tag_next = s_axis_read_desc_tag;
+                axi_id_next = s_axis_read_desc_id;
+                axi_dest_next = s_axis_read_desc_dest;
+                axi_user_next = s_axis_read_desc_user;
+                s_axis_read_desc_ready_next = 1'b1;
+                axi_state_next = AXI_STATE_START;
+            end
+        end
+        AXI_STATE_START: begin
+            // Start AXI transfer
+            if (s_axis_read_desc_valid && s_axis_read_desc_ready) begin
+                m_axi_arvalid = 1'b1;
+                if (m_axi_arready) begin
+                    axi_addr_next = axi_addr_reg + (AXI_MAX_BURST_LEN * AXI_STRB_WIDTH);
+                    axi_len_next = axi_len_reg - AXI_MAX_BURST_LEN;
+                    axi_state_next = AXI_STATE_DATA;
+                end
+            end
+        end
+        AXI_STATE_DATA: begin
+            // Transfer data
+            if (m_axi_rvalid) begin
+                m_axis_read_data_tdata_next = m_axi_rdata;
+                m_axis_read_data_tkeep_next = {AXIS_KEEP_WIDTH{1'b1}};
+                m_axis_read_data_tvalid_next = 1'b1;
+                m_axis_read_data_tlast_next = m_axi_rlast;
+                if (AXIS_ID_ENABLE) begin
+                    m_axis_read_data_tid_next = axi_id_reg;
+                end
+                if (AXIS_DEST_ENABLE) begin
+                    m_axis_read_data_tdest_next = axi_dest_reg;
+                end
+                if (AXIS_USER_ENABLE) begin
+                    m_axis_read_data_tuser_next = axi_user_reg;
+                end
+                if (m_axis_read_data_tready) begin
+                    if (m_axi_rlast) begin
+                        axi_state_next = AXI_STATE_DONE;
+                    end
+                end
+            end
+        end
+        AXI_STATE_DONE: begin
+            // Transfer complete
+            m_axis_read_desc_status_tag_next = axi_tag_reg;
+            m_axis_read_desc_status_error_next = 4'b0000;
+            m_axis_read_desc_status_valid_next = 1'b1;
+            axi_state_next = AXI_STATE_IDLE;
+        end
+    endcase
+end
+
+assign s_axis_read_desc_ready = s_axis_read_desc_ready_reg;
+
+assign m_axis_read_desc_status_tag = m_axis_read_desc_status_tag_reg;
+assign m_axis_read_desc_status_error = m_axis_read_desc_status_error_reg;
+assign m_axis_read_desc_status_valid = m_axis_read_desc_status_valid_reg;
+
+assign m_axis_read_data_tdata = m_axis_read_data_tdata_reg;
+assign m_axis_read_data_tkeep = m_axis_read_data_tkeep_reg;
+assign m_axis_read_data_tvalid = m_axis_read_data_tvalid_reg;
+assign m_axis_read_data_tlast = m_axis_read_data_tlast_reg;
+assign m_axis_read_data_tid = m_axis_read_data_tid_reg;
+assign m_axis_read_data_tdest = m_axis_read_data_tdest_reg;
+assign m_axis_read_data_tuser = m_axis_read_data_tuser_reg;
+
+endmodule

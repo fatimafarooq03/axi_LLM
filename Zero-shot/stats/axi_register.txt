@@ -1,0 +1,779 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.12.4, pytest-7.1.2, pluggy-1.5.0
+rootdir: /Users/fatimafarooq/Desktop/axi_LLM
+plugins: cocotb-test-0.2.5, anyio-4.4.0
+collected 12 items
+
+tests/test_axi_register.py FFFFFFFFFFFF                                  [100%]
+
+=================================== FAILURES ===================================
+__________________________ test_axi_register[8-None] ___________________________
+
+request = <FixtureRequest for <Function test_axi_register[8-None]>>
+data_width = 8, reg_type = None
+
+    @pytest.mark.parametrize("reg_type", [None, 0, 1, 2])
+    @pytest.mark.parametrize("data_width", [8, 16, 32])
+    def test_axi_register(request, data_width, reg_type):
+        dut = "axi_register"
+        module = os.path.splitext(os.path.basename(__file__))[0]
+        toplevel = dut
+    
+        verilog_sources = [
+            os.path.join(rtl_dir, f"{dut}.v"),
+            os.path.join(rtl_dir, f"{dut}_rd.v"),
+            os.path.join(rtl_dir, f"{dut}_wr.v"),
+        ]
+    
+        parameters = {}
+    
+        parameters['DATA_WIDTH'] = data_width
+        parameters['ADDR_WIDTH'] = 32
+        parameters['STRB_WIDTH'] = parameters['DATA_WIDTH'] // 8
+        parameters['ID_WIDTH'] = 8
+        parameters['AWUSER_ENABLE'] = 0
+        parameters['AWUSER_WIDTH'] = 1
+        parameters['WUSER_ENABLE'] = 0
+        parameters['WUSER_WIDTH'] = 1
+        parameters['BUSER_ENABLE'] = 0
+        parameters['BUSER_WIDTH'] = 1
+        parameters['ARUSER_ENABLE'] = 0
+        parameters['ARUSER_WIDTH'] = 1
+        parameters['RUSER_ENABLE'] = 0
+        parameters['RUSER_WIDTH'] = 1
+        parameters['AW_REG_TYPE'] = 1 if reg_type is None else reg_type
+        parameters['W_REG_TYPE'] = 2 if reg_type is None else reg_type
+        parameters['B_REG_TYPE'] = 1 if reg_type is None else reg_type
+        parameters['AR_REG_TYPE'] = 1 if reg_type is None else reg_type
+        parameters['R_REG_TYPE'] = 2 if reg_type is None else reg_type
+    
+        extra_env = {f'PARAM_{k}': str(v) for k, v in parameters.items()}
+    
+        sim_build = os.path.join(tests_dir, "sim_build",
+            request.node.name.replace('[', '-').replace(']', ''))
+    
+>       cocotb_test.simulator.run(
+            python_search=[tests_dir],
+            verilog_sources=verilog_sources,
+            toplevel=toplevel,
+            module=module,
+            parameters=parameters,
+            sim_build=sim_build,
+            extra_env=extra_env,
+        )
+E       SystemExit: Process iverilog terminated with error 1
+
+tests/test_axi_register.py:251: SystemExit
+------------------------------ Captured log call -------------------------------
+INFO     cocotb:simulator.py:334 Running command: iverilog -o /Users/fatimafarooq/Desktop/axi_LLM/tests/sim_build/test_axi_register-8-None/axi_register.vvp -D COCOTB_SIM=1 -g2012 -s axi_register -Paxi_register.DATA_WIDTH=8 -Paxi_register.ADDR_WIDTH=32 -Paxi_register.STRB_WIDTH=1 -Paxi_register.ID_WIDTH=8 -Paxi_register.AWUSER_ENABLE=0 -Paxi_register.AWUSER_WIDTH=1 -Paxi_register.WUSER_ENABLE=0 -Paxi_register.WUSER_WIDTH=1 -Paxi_register.BUSER_ENABLE=0 -Paxi_register.BUSER_WIDTH=1 -Paxi_register.ARUSER_ENABLE=0 -Paxi_register.ARUSER_WIDTH=1 -Paxi_register.RUSER_ENABLE=0 -Paxi_register.RUSER_WIDTH=1 -Paxi_register.AW_REG_TYPE=1 -Paxi_register.W_REG_TYPE=2 -Paxi_register.B_REG_TYPE=1 -Paxi_register.AR_REG_TYPE=1 -Paxi_register.R_REG_TYPE=2 /Users/fatimafarooq/Desktop/modules/axi_register.v /Users/fatimafarooq/Desktop/modules/axi_register_rd.v /Users/fatimafarooq/Desktop/modules/axi_register_wr.v
+ERROR    cocotb:simulator.py:305 /Users/fatimafarooq/Desktop/modules/axi_register.v: No such file or directory
+ERROR    cocotb:simulator.py:305 error: Unable to find the root module "axi_register" in the Verilog source.
+ERROR    cocotb:simulator.py:305      : Perhaps ``-s axi_register'' is incorrect?
+ERROR    cocotb:simulator.py:305 1 error(s) during elaboration.
+____________________________ test_axi_register[8-0] ____________________________
+
+request = <FixtureRequest for <Function test_axi_register[8-0]>>, data_width = 8
+reg_type = 0
+
+    @pytest.mark.parametrize("reg_type", [None, 0, 1, 2])
+    @pytest.mark.parametrize("data_width", [8, 16, 32])
+    def test_axi_register(request, data_width, reg_type):
+        dut = "axi_register"
+        module = os.path.splitext(os.path.basename(__file__))[0]
+        toplevel = dut
+    
+        verilog_sources = [
+            os.path.join(rtl_dir, f"{dut}.v"),
+            os.path.join(rtl_dir, f"{dut}_rd.v"),
+            os.path.join(rtl_dir, f"{dut}_wr.v"),
+        ]
+    
+        parameters = {}
+    
+        parameters['DATA_WIDTH'] = data_width
+        parameters['ADDR_WIDTH'] = 32
+        parameters['STRB_WIDTH'] = parameters['DATA_WIDTH'] // 8
+        parameters['ID_WIDTH'] = 8
+        parameters['AWUSER_ENABLE'] = 0
+        parameters['AWUSER_WIDTH'] = 1
+        parameters['WUSER_ENABLE'] = 0
+        parameters['WUSER_WIDTH'] = 1
+        parameters['BUSER_ENABLE'] = 0
+        parameters['BUSER_WIDTH'] = 1
+        parameters['ARUSER_ENABLE'] = 0
+        parameters['ARUSER_WIDTH'] = 1
+        parameters['RUSER_ENABLE'] = 0
+        parameters['RUSER_WIDTH'] = 1
+        parameters['AW_REG_TYPE'] = 1 if reg_type is None else reg_type
+        parameters['W_REG_TYPE'] = 2 if reg_type is None else reg_type
+        parameters['B_REG_TYPE'] = 1 if reg_type is None else reg_type
+        parameters['AR_REG_TYPE'] = 1 if reg_type is None else reg_type
+        parameters['R_REG_TYPE'] = 2 if reg_type is None else reg_type
+    
+        extra_env = {f'PARAM_{k}': str(v) for k, v in parameters.items()}
+    
+        sim_build = os.path.join(tests_dir, "sim_build",
+            request.node.name.replace('[', '-').replace(']', ''))
+    
+>       cocotb_test.simulator.run(
+            python_search=[tests_dir],
+            verilog_sources=verilog_sources,
+            toplevel=toplevel,
+            module=module,
+            parameters=parameters,
+            sim_build=sim_build,
+            extra_env=extra_env,
+        )
+E       SystemExit: Process iverilog terminated with error 1
+
+tests/test_axi_register.py:251: SystemExit
+------------------------------ Captured log call -------------------------------
+INFO     cocotb:simulator.py:334 Running command: iverilog -o /Users/fatimafarooq/Desktop/axi_LLM/tests/sim_build/test_axi_register-8-0/axi_register.vvp -D COCOTB_SIM=1 -g2012 -s axi_register -Paxi_register.DATA_WIDTH=8 -Paxi_register.ADDR_WIDTH=32 -Paxi_register.STRB_WIDTH=1 -Paxi_register.ID_WIDTH=8 -Paxi_register.AWUSER_ENABLE=0 -Paxi_register.AWUSER_WIDTH=1 -Paxi_register.WUSER_ENABLE=0 -Paxi_register.WUSER_WIDTH=1 -Paxi_register.BUSER_ENABLE=0 -Paxi_register.BUSER_WIDTH=1 -Paxi_register.ARUSER_ENABLE=0 -Paxi_register.ARUSER_WIDTH=1 -Paxi_register.RUSER_ENABLE=0 -Paxi_register.RUSER_WIDTH=1 -Paxi_register.AW_REG_TYPE=0 -Paxi_register.W_REG_TYPE=0 -Paxi_register.B_REG_TYPE=0 -Paxi_register.AR_REG_TYPE=0 -Paxi_register.R_REG_TYPE=0 /Users/fatimafarooq/Desktop/modules/axi_register.v /Users/fatimafarooq/Desktop/modules/axi_register_rd.v /Users/fatimafarooq/Desktop/modules/axi_register_wr.v
+ERROR    cocotb:simulator.py:305 /Users/fatimafarooq/Desktop/modules/axi_register.v: No such file or directory
+ERROR    cocotb:simulator.py:305 error: Unable to find the root module "axi_register" in the Verilog source.
+ERROR    cocotb:simulator.py:305      : Perhaps ``-s axi_register'' is incorrect?
+ERROR    cocotb:simulator.py:305 1 error(s) during elaboration.
+____________________________ test_axi_register[8-1] ____________________________
+
+request = <FixtureRequest for <Function test_axi_register[8-1]>>, data_width = 8
+reg_type = 1
+
+    @pytest.mark.parametrize("reg_type", [None, 0, 1, 2])
+    @pytest.mark.parametrize("data_width", [8, 16, 32])
+    def test_axi_register(request, data_width, reg_type):
+        dut = "axi_register"
+        module = os.path.splitext(os.path.basename(__file__))[0]
+        toplevel = dut
+    
+        verilog_sources = [
+            os.path.join(rtl_dir, f"{dut}.v"),
+            os.path.join(rtl_dir, f"{dut}_rd.v"),
+            os.path.join(rtl_dir, f"{dut}_wr.v"),
+        ]
+    
+        parameters = {}
+    
+        parameters['DATA_WIDTH'] = data_width
+        parameters['ADDR_WIDTH'] = 32
+        parameters['STRB_WIDTH'] = parameters['DATA_WIDTH'] // 8
+        parameters['ID_WIDTH'] = 8
+        parameters['AWUSER_ENABLE'] = 0
+        parameters['AWUSER_WIDTH'] = 1
+        parameters['WUSER_ENABLE'] = 0
+        parameters['WUSER_WIDTH'] = 1
+        parameters['BUSER_ENABLE'] = 0
+        parameters['BUSER_WIDTH'] = 1
+        parameters['ARUSER_ENABLE'] = 0
+        parameters['ARUSER_WIDTH'] = 1
+        parameters['RUSER_ENABLE'] = 0
+        parameters['RUSER_WIDTH'] = 1
+        parameters['AW_REG_TYPE'] = 1 if reg_type is None else reg_type
+        parameters['W_REG_TYPE'] = 2 if reg_type is None else reg_type
+        parameters['B_REG_TYPE'] = 1 if reg_type is None else reg_type
+        parameters['AR_REG_TYPE'] = 1 if reg_type is None else reg_type
+        parameters['R_REG_TYPE'] = 2 if reg_type is None else reg_type
+    
+        extra_env = {f'PARAM_{k}': str(v) for k, v in parameters.items()}
+    
+        sim_build = os.path.join(tests_dir, "sim_build",
+            request.node.name.replace('[', '-').replace(']', ''))
+    
+>       cocotb_test.simulator.run(
+            python_search=[tests_dir],
+            verilog_sources=verilog_sources,
+            toplevel=toplevel,
+            module=module,
+            parameters=parameters,
+            sim_build=sim_build,
+            extra_env=extra_env,
+        )
+E       SystemExit: Process iverilog terminated with error 1
+
+tests/test_axi_register.py:251: SystemExit
+------------------------------ Captured log call -------------------------------
+INFO     cocotb:simulator.py:334 Running command: iverilog -o /Users/fatimafarooq/Desktop/axi_LLM/tests/sim_build/test_axi_register-8-1/axi_register.vvp -D COCOTB_SIM=1 -g2012 -s axi_register -Paxi_register.DATA_WIDTH=8 -Paxi_register.ADDR_WIDTH=32 -Paxi_register.STRB_WIDTH=1 -Paxi_register.ID_WIDTH=8 -Paxi_register.AWUSER_ENABLE=0 -Paxi_register.AWUSER_WIDTH=1 -Paxi_register.WUSER_ENABLE=0 -Paxi_register.WUSER_WIDTH=1 -Paxi_register.BUSER_ENABLE=0 -Paxi_register.BUSER_WIDTH=1 -Paxi_register.ARUSER_ENABLE=0 -Paxi_register.ARUSER_WIDTH=1 -Paxi_register.RUSER_ENABLE=0 -Paxi_register.RUSER_WIDTH=1 -Paxi_register.AW_REG_TYPE=1 -Paxi_register.W_REG_TYPE=1 -Paxi_register.B_REG_TYPE=1 -Paxi_register.AR_REG_TYPE=1 -Paxi_register.R_REG_TYPE=1 /Users/fatimafarooq/Desktop/modules/axi_register.v /Users/fatimafarooq/Desktop/modules/axi_register_rd.v /Users/fatimafarooq/Desktop/modules/axi_register_wr.v
+ERROR    cocotb:simulator.py:305 /Users/fatimafarooq/Desktop/modules/axi_register.v: No such file or directory
+ERROR    cocotb:simulator.py:305 error: Unable to find the root module "axi_register" in the Verilog source.
+ERROR    cocotb:simulator.py:305      : Perhaps ``-s axi_register'' is incorrect?
+ERROR    cocotb:simulator.py:305 1 error(s) during elaboration.
+____________________________ test_axi_register[8-2] ____________________________
+
+request = <FixtureRequest for <Function test_axi_register[8-2]>>, data_width = 8
+reg_type = 2
+
+    @pytest.mark.parametrize("reg_type", [None, 0, 1, 2])
+    @pytest.mark.parametrize("data_width", [8, 16, 32])
+    def test_axi_register(request, data_width, reg_type):
+        dut = "axi_register"
+        module = os.path.splitext(os.path.basename(__file__))[0]
+        toplevel = dut
+    
+        verilog_sources = [
+            os.path.join(rtl_dir, f"{dut}.v"),
+            os.path.join(rtl_dir, f"{dut}_rd.v"),
+            os.path.join(rtl_dir, f"{dut}_wr.v"),
+        ]
+    
+        parameters = {}
+    
+        parameters['DATA_WIDTH'] = data_width
+        parameters['ADDR_WIDTH'] = 32
+        parameters['STRB_WIDTH'] = parameters['DATA_WIDTH'] // 8
+        parameters['ID_WIDTH'] = 8
+        parameters['AWUSER_ENABLE'] = 0
+        parameters['AWUSER_WIDTH'] = 1
+        parameters['WUSER_ENABLE'] = 0
+        parameters['WUSER_WIDTH'] = 1
+        parameters['BUSER_ENABLE'] = 0
+        parameters['BUSER_WIDTH'] = 1
+        parameters['ARUSER_ENABLE'] = 0
+        parameters['ARUSER_WIDTH'] = 1
+        parameters['RUSER_ENABLE'] = 0
+        parameters['RUSER_WIDTH'] = 1
+        parameters['AW_REG_TYPE'] = 1 if reg_type is None else reg_type
+        parameters['W_REG_TYPE'] = 2 if reg_type is None else reg_type
+        parameters['B_REG_TYPE'] = 1 if reg_type is None else reg_type
+        parameters['AR_REG_TYPE'] = 1 if reg_type is None else reg_type
+        parameters['R_REG_TYPE'] = 2 if reg_type is None else reg_type
+    
+        extra_env = {f'PARAM_{k}': str(v) for k, v in parameters.items()}
+    
+        sim_build = os.path.join(tests_dir, "sim_build",
+            request.node.name.replace('[', '-').replace(']', ''))
+    
+>       cocotb_test.simulator.run(
+            python_search=[tests_dir],
+            verilog_sources=verilog_sources,
+            toplevel=toplevel,
+            module=module,
+            parameters=parameters,
+            sim_build=sim_build,
+            extra_env=extra_env,
+        )
+E       SystemExit: Process iverilog terminated with error 1
+
+tests/test_axi_register.py:251: SystemExit
+------------------------------ Captured log call -------------------------------
+INFO     cocotb:simulator.py:334 Running command: iverilog -o /Users/fatimafarooq/Desktop/axi_LLM/tests/sim_build/test_axi_register-8-2/axi_register.vvp -D COCOTB_SIM=1 -g2012 -s axi_register -Paxi_register.DATA_WIDTH=8 -Paxi_register.ADDR_WIDTH=32 -Paxi_register.STRB_WIDTH=1 -Paxi_register.ID_WIDTH=8 -Paxi_register.AWUSER_ENABLE=0 -Paxi_register.AWUSER_WIDTH=1 -Paxi_register.WUSER_ENABLE=0 -Paxi_register.WUSER_WIDTH=1 -Paxi_register.BUSER_ENABLE=0 -Paxi_register.BUSER_WIDTH=1 -Paxi_register.ARUSER_ENABLE=0 -Paxi_register.ARUSER_WIDTH=1 -Paxi_register.RUSER_ENABLE=0 -Paxi_register.RUSER_WIDTH=1 -Paxi_register.AW_REG_TYPE=2 -Paxi_register.W_REG_TYPE=2 -Paxi_register.B_REG_TYPE=2 -Paxi_register.AR_REG_TYPE=2 -Paxi_register.R_REG_TYPE=2 /Users/fatimafarooq/Desktop/modules/axi_register.v /Users/fatimafarooq/Desktop/modules/axi_register_rd.v /Users/fatimafarooq/Desktop/modules/axi_register_wr.v
+ERROR    cocotb:simulator.py:305 /Users/fatimafarooq/Desktop/modules/axi_register.v: No such file or directory
+ERROR    cocotb:simulator.py:305 error: Unable to find the root module "axi_register" in the Verilog source.
+ERROR    cocotb:simulator.py:305      : Perhaps ``-s axi_register'' is incorrect?
+ERROR    cocotb:simulator.py:305 1 error(s) during elaboration.
+__________________________ test_axi_register[16-None] __________________________
+
+request = <FixtureRequest for <Function test_axi_register[16-None]>>
+data_width = 16, reg_type = None
+
+    @pytest.mark.parametrize("reg_type", [None, 0, 1, 2])
+    @pytest.mark.parametrize("data_width", [8, 16, 32])
+    def test_axi_register(request, data_width, reg_type):
+        dut = "axi_register"
+        module = os.path.splitext(os.path.basename(__file__))[0]
+        toplevel = dut
+    
+        verilog_sources = [
+            os.path.join(rtl_dir, f"{dut}.v"),
+            os.path.join(rtl_dir, f"{dut}_rd.v"),
+            os.path.join(rtl_dir, f"{dut}_wr.v"),
+        ]
+    
+        parameters = {}
+    
+        parameters['DATA_WIDTH'] = data_width
+        parameters['ADDR_WIDTH'] = 32
+        parameters['STRB_WIDTH'] = parameters['DATA_WIDTH'] // 8
+        parameters['ID_WIDTH'] = 8
+        parameters['AWUSER_ENABLE'] = 0
+        parameters['AWUSER_WIDTH'] = 1
+        parameters['WUSER_ENABLE'] = 0
+        parameters['WUSER_WIDTH'] = 1
+        parameters['BUSER_ENABLE'] = 0
+        parameters['BUSER_WIDTH'] = 1
+        parameters['ARUSER_ENABLE'] = 0
+        parameters['ARUSER_WIDTH'] = 1
+        parameters['RUSER_ENABLE'] = 0
+        parameters['RUSER_WIDTH'] = 1
+        parameters['AW_REG_TYPE'] = 1 if reg_type is None else reg_type
+        parameters['W_REG_TYPE'] = 2 if reg_type is None else reg_type
+        parameters['B_REG_TYPE'] = 1 if reg_type is None else reg_type
+        parameters['AR_REG_TYPE'] = 1 if reg_type is None else reg_type
+        parameters['R_REG_TYPE'] = 2 if reg_type is None else reg_type
+    
+        extra_env = {f'PARAM_{k}': str(v) for k, v in parameters.items()}
+    
+        sim_build = os.path.join(tests_dir, "sim_build",
+            request.node.name.replace('[', '-').replace(']', ''))
+    
+>       cocotb_test.simulator.run(
+            python_search=[tests_dir],
+            verilog_sources=verilog_sources,
+            toplevel=toplevel,
+            module=module,
+            parameters=parameters,
+            sim_build=sim_build,
+            extra_env=extra_env,
+        )
+E       SystemExit: Process iverilog terminated with error 1
+
+tests/test_axi_register.py:251: SystemExit
+------------------------------ Captured log call -------------------------------
+INFO     cocotb:simulator.py:334 Running command: iverilog -o /Users/fatimafarooq/Desktop/axi_LLM/tests/sim_build/test_axi_register-16-None/axi_register.vvp -D COCOTB_SIM=1 -g2012 -s axi_register -Paxi_register.DATA_WIDTH=16 -Paxi_register.ADDR_WIDTH=32 -Paxi_register.STRB_WIDTH=2 -Paxi_register.ID_WIDTH=8 -Paxi_register.AWUSER_ENABLE=0 -Paxi_register.AWUSER_WIDTH=1 -Paxi_register.WUSER_ENABLE=0 -Paxi_register.WUSER_WIDTH=1 -Paxi_register.BUSER_ENABLE=0 -Paxi_register.BUSER_WIDTH=1 -Paxi_register.ARUSER_ENABLE=0 -Paxi_register.ARUSER_WIDTH=1 -Paxi_register.RUSER_ENABLE=0 -Paxi_register.RUSER_WIDTH=1 -Paxi_register.AW_REG_TYPE=1 -Paxi_register.W_REG_TYPE=2 -Paxi_register.B_REG_TYPE=1 -Paxi_register.AR_REG_TYPE=1 -Paxi_register.R_REG_TYPE=2 /Users/fatimafarooq/Desktop/modules/axi_register.v /Users/fatimafarooq/Desktop/modules/axi_register_rd.v /Users/fatimafarooq/Desktop/modules/axi_register_wr.v
+ERROR    cocotb:simulator.py:305 /Users/fatimafarooq/Desktop/modules/axi_register.v: No such file or directory
+ERROR    cocotb:simulator.py:305 error: Unable to find the root module "axi_register" in the Verilog source.
+ERROR    cocotb:simulator.py:305      : Perhaps ``-s axi_register'' is incorrect?
+ERROR    cocotb:simulator.py:305 1 error(s) during elaboration.
+___________________________ test_axi_register[16-0] ____________________________
+
+request = <FixtureRequest for <Function test_axi_register[16-0]>>
+data_width = 16, reg_type = 0
+
+    @pytest.mark.parametrize("reg_type", [None, 0, 1, 2])
+    @pytest.mark.parametrize("data_width", [8, 16, 32])
+    def test_axi_register(request, data_width, reg_type):
+        dut = "axi_register"
+        module = os.path.splitext(os.path.basename(__file__))[0]
+        toplevel = dut
+    
+        verilog_sources = [
+            os.path.join(rtl_dir, f"{dut}.v"),
+            os.path.join(rtl_dir, f"{dut}_rd.v"),
+            os.path.join(rtl_dir, f"{dut}_wr.v"),
+        ]
+    
+        parameters = {}
+    
+        parameters['DATA_WIDTH'] = data_width
+        parameters['ADDR_WIDTH'] = 32
+        parameters['STRB_WIDTH'] = parameters['DATA_WIDTH'] // 8
+        parameters['ID_WIDTH'] = 8
+        parameters['AWUSER_ENABLE'] = 0
+        parameters['AWUSER_WIDTH'] = 1
+        parameters['WUSER_ENABLE'] = 0
+        parameters['WUSER_WIDTH'] = 1
+        parameters['BUSER_ENABLE'] = 0
+        parameters['BUSER_WIDTH'] = 1
+        parameters['ARUSER_ENABLE'] = 0
+        parameters['ARUSER_WIDTH'] = 1
+        parameters['RUSER_ENABLE'] = 0
+        parameters['RUSER_WIDTH'] = 1
+        parameters['AW_REG_TYPE'] = 1 if reg_type is None else reg_type
+        parameters['W_REG_TYPE'] = 2 if reg_type is None else reg_type
+        parameters['B_REG_TYPE'] = 1 if reg_type is None else reg_type
+        parameters['AR_REG_TYPE'] = 1 if reg_type is None else reg_type
+        parameters['R_REG_TYPE'] = 2 if reg_type is None else reg_type
+    
+        extra_env = {f'PARAM_{k}': str(v) for k, v in parameters.items()}
+    
+        sim_build = os.path.join(tests_dir, "sim_build",
+            request.node.name.replace('[', '-').replace(']', ''))
+    
+>       cocotb_test.simulator.run(
+            python_search=[tests_dir],
+            verilog_sources=verilog_sources,
+            toplevel=toplevel,
+            module=module,
+            parameters=parameters,
+            sim_build=sim_build,
+            extra_env=extra_env,
+        )
+E       SystemExit: Process iverilog terminated with error 1
+
+tests/test_axi_register.py:251: SystemExit
+------------------------------ Captured log call -------------------------------
+INFO     cocotb:simulator.py:334 Running command: iverilog -o /Users/fatimafarooq/Desktop/axi_LLM/tests/sim_build/test_axi_register-16-0/axi_register.vvp -D COCOTB_SIM=1 -g2012 -s axi_register -Paxi_register.DATA_WIDTH=16 -Paxi_register.ADDR_WIDTH=32 -Paxi_register.STRB_WIDTH=2 -Paxi_register.ID_WIDTH=8 -Paxi_register.AWUSER_ENABLE=0 -Paxi_register.AWUSER_WIDTH=1 -Paxi_register.WUSER_ENABLE=0 -Paxi_register.WUSER_WIDTH=1 -Paxi_register.BUSER_ENABLE=0 -Paxi_register.BUSER_WIDTH=1 -Paxi_register.ARUSER_ENABLE=0 -Paxi_register.ARUSER_WIDTH=1 -Paxi_register.RUSER_ENABLE=0 -Paxi_register.RUSER_WIDTH=1 -Paxi_register.AW_REG_TYPE=0 -Paxi_register.W_REG_TYPE=0 -Paxi_register.B_REG_TYPE=0 -Paxi_register.AR_REG_TYPE=0 -Paxi_register.R_REG_TYPE=0 /Users/fatimafarooq/Desktop/modules/axi_register.v /Users/fatimafarooq/Desktop/modules/axi_register_rd.v /Users/fatimafarooq/Desktop/modules/axi_register_wr.v
+ERROR    cocotb:simulator.py:305 /Users/fatimafarooq/Desktop/modules/axi_register.v: No such file or directory
+ERROR    cocotb:simulator.py:305 error: Unable to find the root module "axi_register" in the Verilog source.
+ERROR    cocotb:simulator.py:305      : Perhaps ``-s axi_register'' is incorrect?
+ERROR    cocotb:simulator.py:305 1 error(s) during elaboration.
+___________________________ test_axi_register[16-1] ____________________________
+
+request = <FixtureRequest for <Function test_axi_register[16-1]>>
+data_width = 16, reg_type = 1
+
+    @pytest.mark.parametrize("reg_type", [None, 0, 1, 2])
+    @pytest.mark.parametrize("data_width", [8, 16, 32])
+    def test_axi_register(request, data_width, reg_type):
+        dut = "axi_register"
+        module = os.path.splitext(os.path.basename(__file__))[0]
+        toplevel = dut
+    
+        verilog_sources = [
+            os.path.join(rtl_dir, f"{dut}.v"),
+            os.path.join(rtl_dir, f"{dut}_rd.v"),
+            os.path.join(rtl_dir, f"{dut}_wr.v"),
+        ]
+    
+        parameters = {}
+    
+        parameters['DATA_WIDTH'] = data_width
+        parameters['ADDR_WIDTH'] = 32
+        parameters['STRB_WIDTH'] = parameters['DATA_WIDTH'] // 8
+        parameters['ID_WIDTH'] = 8
+        parameters['AWUSER_ENABLE'] = 0
+        parameters['AWUSER_WIDTH'] = 1
+        parameters['WUSER_ENABLE'] = 0
+        parameters['WUSER_WIDTH'] = 1
+        parameters['BUSER_ENABLE'] = 0
+        parameters['BUSER_WIDTH'] = 1
+        parameters['ARUSER_ENABLE'] = 0
+        parameters['ARUSER_WIDTH'] = 1
+        parameters['RUSER_ENABLE'] = 0
+        parameters['RUSER_WIDTH'] = 1
+        parameters['AW_REG_TYPE'] = 1 if reg_type is None else reg_type
+        parameters['W_REG_TYPE'] = 2 if reg_type is None else reg_type
+        parameters['B_REG_TYPE'] = 1 if reg_type is None else reg_type
+        parameters['AR_REG_TYPE'] = 1 if reg_type is None else reg_type
+        parameters['R_REG_TYPE'] = 2 if reg_type is None else reg_type
+    
+        extra_env = {f'PARAM_{k}': str(v) for k, v in parameters.items()}
+    
+        sim_build = os.path.join(tests_dir, "sim_build",
+            request.node.name.replace('[', '-').replace(']', ''))
+    
+>       cocotb_test.simulator.run(
+            python_search=[tests_dir],
+            verilog_sources=verilog_sources,
+            toplevel=toplevel,
+            module=module,
+            parameters=parameters,
+            sim_build=sim_build,
+            extra_env=extra_env,
+        )
+E       SystemExit: Process iverilog terminated with error 1
+
+tests/test_axi_register.py:251: SystemExit
+------------------------------ Captured log call -------------------------------
+INFO     cocotb:simulator.py:334 Running command: iverilog -o /Users/fatimafarooq/Desktop/axi_LLM/tests/sim_build/test_axi_register-16-1/axi_register.vvp -D COCOTB_SIM=1 -g2012 -s axi_register -Paxi_register.DATA_WIDTH=16 -Paxi_register.ADDR_WIDTH=32 -Paxi_register.STRB_WIDTH=2 -Paxi_register.ID_WIDTH=8 -Paxi_register.AWUSER_ENABLE=0 -Paxi_register.AWUSER_WIDTH=1 -Paxi_register.WUSER_ENABLE=0 -Paxi_register.WUSER_WIDTH=1 -Paxi_register.BUSER_ENABLE=0 -Paxi_register.BUSER_WIDTH=1 -Paxi_register.ARUSER_ENABLE=0 -Paxi_register.ARUSER_WIDTH=1 -Paxi_register.RUSER_ENABLE=0 -Paxi_register.RUSER_WIDTH=1 -Paxi_register.AW_REG_TYPE=1 -Paxi_register.W_REG_TYPE=1 -Paxi_register.B_REG_TYPE=1 -Paxi_register.AR_REG_TYPE=1 -Paxi_register.R_REG_TYPE=1 /Users/fatimafarooq/Desktop/modules/axi_register.v /Users/fatimafarooq/Desktop/modules/axi_register_rd.v /Users/fatimafarooq/Desktop/modules/axi_register_wr.v
+ERROR    cocotb:simulator.py:305 /Users/fatimafarooq/Desktop/modules/axi_register.v: No such file or directory
+ERROR    cocotb:simulator.py:305 error: Unable to find the root module "axi_register" in the Verilog source.
+ERROR    cocotb:simulator.py:305      : Perhaps ``-s axi_register'' is incorrect?
+ERROR    cocotb:simulator.py:305 1 error(s) during elaboration.
+___________________________ test_axi_register[16-2] ____________________________
+
+request = <FixtureRequest for <Function test_axi_register[16-2]>>
+data_width = 16, reg_type = 2
+
+    @pytest.mark.parametrize("reg_type", [None, 0, 1, 2])
+    @pytest.mark.parametrize("data_width", [8, 16, 32])
+    def test_axi_register(request, data_width, reg_type):
+        dut = "axi_register"
+        module = os.path.splitext(os.path.basename(__file__))[0]
+        toplevel = dut
+    
+        verilog_sources = [
+            os.path.join(rtl_dir, f"{dut}.v"),
+            os.path.join(rtl_dir, f"{dut}_rd.v"),
+            os.path.join(rtl_dir, f"{dut}_wr.v"),
+        ]
+    
+        parameters = {}
+    
+        parameters['DATA_WIDTH'] = data_width
+        parameters['ADDR_WIDTH'] = 32
+        parameters['STRB_WIDTH'] = parameters['DATA_WIDTH'] // 8
+        parameters['ID_WIDTH'] = 8
+        parameters['AWUSER_ENABLE'] = 0
+        parameters['AWUSER_WIDTH'] = 1
+        parameters['WUSER_ENABLE'] = 0
+        parameters['WUSER_WIDTH'] = 1
+        parameters['BUSER_ENABLE'] = 0
+        parameters['BUSER_WIDTH'] = 1
+        parameters['ARUSER_ENABLE'] = 0
+        parameters['ARUSER_WIDTH'] = 1
+        parameters['RUSER_ENABLE'] = 0
+        parameters['RUSER_WIDTH'] = 1
+        parameters['AW_REG_TYPE'] = 1 if reg_type is None else reg_type
+        parameters['W_REG_TYPE'] = 2 if reg_type is None else reg_type
+        parameters['B_REG_TYPE'] = 1 if reg_type is None else reg_type
+        parameters['AR_REG_TYPE'] = 1 if reg_type is None else reg_type
+        parameters['R_REG_TYPE'] = 2 if reg_type is None else reg_type
+    
+        extra_env = {f'PARAM_{k}': str(v) for k, v in parameters.items()}
+    
+        sim_build = os.path.join(tests_dir, "sim_build",
+            request.node.name.replace('[', '-').replace(']', ''))
+    
+>       cocotb_test.simulator.run(
+            python_search=[tests_dir],
+            verilog_sources=verilog_sources,
+            toplevel=toplevel,
+            module=module,
+            parameters=parameters,
+            sim_build=sim_build,
+            extra_env=extra_env,
+        )
+E       SystemExit: Process iverilog terminated with error 1
+
+tests/test_axi_register.py:251: SystemExit
+------------------------------ Captured log call -------------------------------
+INFO     cocotb:simulator.py:334 Running command: iverilog -o /Users/fatimafarooq/Desktop/axi_LLM/tests/sim_build/test_axi_register-16-2/axi_register.vvp -D COCOTB_SIM=1 -g2012 -s axi_register -Paxi_register.DATA_WIDTH=16 -Paxi_register.ADDR_WIDTH=32 -Paxi_register.STRB_WIDTH=2 -Paxi_register.ID_WIDTH=8 -Paxi_register.AWUSER_ENABLE=0 -Paxi_register.AWUSER_WIDTH=1 -Paxi_register.WUSER_ENABLE=0 -Paxi_register.WUSER_WIDTH=1 -Paxi_register.BUSER_ENABLE=0 -Paxi_register.BUSER_WIDTH=1 -Paxi_register.ARUSER_ENABLE=0 -Paxi_register.ARUSER_WIDTH=1 -Paxi_register.RUSER_ENABLE=0 -Paxi_register.RUSER_WIDTH=1 -Paxi_register.AW_REG_TYPE=2 -Paxi_register.W_REG_TYPE=2 -Paxi_register.B_REG_TYPE=2 -Paxi_register.AR_REG_TYPE=2 -Paxi_register.R_REG_TYPE=2 /Users/fatimafarooq/Desktop/modules/axi_register.v /Users/fatimafarooq/Desktop/modules/axi_register_rd.v /Users/fatimafarooq/Desktop/modules/axi_register_wr.v
+ERROR    cocotb:simulator.py:305 /Users/fatimafarooq/Desktop/modules/axi_register.v: No such file or directory
+ERROR    cocotb:simulator.py:305 error: Unable to find the root module "axi_register" in the Verilog source.
+ERROR    cocotb:simulator.py:305      : Perhaps ``-s axi_register'' is incorrect?
+ERROR    cocotb:simulator.py:305 1 error(s) during elaboration.
+__________________________ test_axi_register[32-None] __________________________
+
+request = <FixtureRequest for <Function test_axi_register[32-None]>>
+data_width = 32, reg_type = None
+
+    @pytest.mark.parametrize("reg_type", [None, 0, 1, 2])
+    @pytest.mark.parametrize("data_width", [8, 16, 32])
+    def test_axi_register(request, data_width, reg_type):
+        dut = "axi_register"
+        module = os.path.splitext(os.path.basename(__file__))[0]
+        toplevel = dut
+    
+        verilog_sources = [
+            os.path.join(rtl_dir, f"{dut}.v"),
+            os.path.join(rtl_dir, f"{dut}_rd.v"),
+            os.path.join(rtl_dir, f"{dut}_wr.v"),
+        ]
+    
+        parameters = {}
+    
+        parameters['DATA_WIDTH'] = data_width
+        parameters['ADDR_WIDTH'] = 32
+        parameters['STRB_WIDTH'] = parameters['DATA_WIDTH'] // 8
+        parameters['ID_WIDTH'] = 8
+        parameters['AWUSER_ENABLE'] = 0
+        parameters['AWUSER_WIDTH'] = 1
+        parameters['WUSER_ENABLE'] = 0
+        parameters['WUSER_WIDTH'] = 1
+        parameters['BUSER_ENABLE'] = 0
+        parameters['BUSER_WIDTH'] = 1
+        parameters['ARUSER_ENABLE'] = 0
+        parameters['ARUSER_WIDTH'] = 1
+        parameters['RUSER_ENABLE'] = 0
+        parameters['RUSER_WIDTH'] = 1
+        parameters['AW_REG_TYPE'] = 1 if reg_type is None else reg_type
+        parameters['W_REG_TYPE'] = 2 if reg_type is None else reg_type
+        parameters['B_REG_TYPE'] = 1 if reg_type is None else reg_type
+        parameters['AR_REG_TYPE'] = 1 if reg_type is None else reg_type
+        parameters['R_REG_TYPE'] = 2 if reg_type is None else reg_type
+    
+        extra_env = {f'PARAM_{k}': str(v) for k, v in parameters.items()}
+    
+        sim_build = os.path.join(tests_dir, "sim_build",
+            request.node.name.replace('[', '-').replace(']', ''))
+    
+>       cocotb_test.simulator.run(
+            python_search=[tests_dir],
+            verilog_sources=verilog_sources,
+            toplevel=toplevel,
+            module=module,
+            parameters=parameters,
+            sim_build=sim_build,
+            extra_env=extra_env,
+        )
+E       SystemExit: Process iverilog terminated with error 1
+
+tests/test_axi_register.py:251: SystemExit
+------------------------------ Captured log call -------------------------------
+INFO     cocotb:simulator.py:334 Running command: iverilog -o /Users/fatimafarooq/Desktop/axi_LLM/tests/sim_build/test_axi_register-32-None/axi_register.vvp -D COCOTB_SIM=1 -g2012 -s axi_register -Paxi_register.DATA_WIDTH=32 -Paxi_register.ADDR_WIDTH=32 -Paxi_register.STRB_WIDTH=4 -Paxi_register.ID_WIDTH=8 -Paxi_register.AWUSER_ENABLE=0 -Paxi_register.AWUSER_WIDTH=1 -Paxi_register.WUSER_ENABLE=0 -Paxi_register.WUSER_WIDTH=1 -Paxi_register.BUSER_ENABLE=0 -Paxi_register.BUSER_WIDTH=1 -Paxi_register.ARUSER_ENABLE=0 -Paxi_register.ARUSER_WIDTH=1 -Paxi_register.RUSER_ENABLE=0 -Paxi_register.RUSER_WIDTH=1 -Paxi_register.AW_REG_TYPE=1 -Paxi_register.W_REG_TYPE=2 -Paxi_register.B_REG_TYPE=1 -Paxi_register.AR_REG_TYPE=1 -Paxi_register.R_REG_TYPE=2 /Users/fatimafarooq/Desktop/modules/axi_register.v /Users/fatimafarooq/Desktop/modules/axi_register_rd.v /Users/fatimafarooq/Desktop/modules/axi_register_wr.v
+ERROR    cocotb:simulator.py:305 /Users/fatimafarooq/Desktop/modules/axi_register.v: No such file or directory
+ERROR    cocotb:simulator.py:305 error: Unable to find the root module "axi_register" in the Verilog source.
+ERROR    cocotb:simulator.py:305      : Perhaps ``-s axi_register'' is incorrect?
+ERROR    cocotb:simulator.py:305 1 error(s) during elaboration.
+___________________________ test_axi_register[32-0] ____________________________
+
+request = <FixtureRequest for <Function test_axi_register[32-0]>>
+data_width = 32, reg_type = 0
+
+    @pytest.mark.parametrize("reg_type", [None, 0, 1, 2])
+    @pytest.mark.parametrize("data_width", [8, 16, 32])
+    def test_axi_register(request, data_width, reg_type):
+        dut = "axi_register"
+        module = os.path.splitext(os.path.basename(__file__))[0]
+        toplevel = dut
+    
+        verilog_sources = [
+            os.path.join(rtl_dir, f"{dut}.v"),
+            os.path.join(rtl_dir, f"{dut}_rd.v"),
+            os.path.join(rtl_dir, f"{dut}_wr.v"),
+        ]
+    
+        parameters = {}
+    
+        parameters['DATA_WIDTH'] = data_width
+        parameters['ADDR_WIDTH'] = 32
+        parameters['STRB_WIDTH'] = parameters['DATA_WIDTH'] // 8
+        parameters['ID_WIDTH'] = 8
+        parameters['AWUSER_ENABLE'] = 0
+        parameters['AWUSER_WIDTH'] = 1
+        parameters['WUSER_ENABLE'] = 0
+        parameters['WUSER_WIDTH'] = 1
+        parameters['BUSER_ENABLE'] = 0
+        parameters['BUSER_WIDTH'] = 1
+        parameters['ARUSER_ENABLE'] = 0
+        parameters['ARUSER_WIDTH'] = 1
+        parameters['RUSER_ENABLE'] = 0
+        parameters['RUSER_WIDTH'] = 1
+        parameters['AW_REG_TYPE'] = 1 if reg_type is None else reg_type
+        parameters['W_REG_TYPE'] = 2 if reg_type is None else reg_type
+        parameters['B_REG_TYPE'] = 1 if reg_type is None else reg_type
+        parameters['AR_REG_TYPE'] = 1 if reg_type is None else reg_type
+        parameters['R_REG_TYPE'] = 2 if reg_type is None else reg_type
+    
+        extra_env = {f'PARAM_{k}': str(v) for k, v in parameters.items()}
+    
+        sim_build = os.path.join(tests_dir, "sim_build",
+            request.node.name.replace('[', '-').replace(']', ''))
+    
+>       cocotb_test.simulator.run(
+            python_search=[tests_dir],
+            verilog_sources=verilog_sources,
+            toplevel=toplevel,
+            module=module,
+            parameters=parameters,
+            sim_build=sim_build,
+            extra_env=extra_env,
+        )
+E       SystemExit: Process iverilog terminated with error 1
+
+tests/test_axi_register.py:251: SystemExit
+------------------------------ Captured log call -------------------------------
+INFO     cocotb:simulator.py:334 Running command: iverilog -o /Users/fatimafarooq/Desktop/axi_LLM/tests/sim_build/test_axi_register-32-0/axi_register.vvp -D COCOTB_SIM=1 -g2012 -s axi_register -Paxi_register.DATA_WIDTH=32 -Paxi_register.ADDR_WIDTH=32 -Paxi_register.STRB_WIDTH=4 -Paxi_register.ID_WIDTH=8 -Paxi_register.AWUSER_ENABLE=0 -Paxi_register.AWUSER_WIDTH=1 -Paxi_register.WUSER_ENABLE=0 -Paxi_register.WUSER_WIDTH=1 -Paxi_register.BUSER_ENABLE=0 -Paxi_register.BUSER_WIDTH=1 -Paxi_register.ARUSER_ENABLE=0 -Paxi_register.ARUSER_WIDTH=1 -Paxi_register.RUSER_ENABLE=0 -Paxi_register.RUSER_WIDTH=1 -Paxi_register.AW_REG_TYPE=0 -Paxi_register.W_REG_TYPE=0 -Paxi_register.B_REG_TYPE=0 -Paxi_register.AR_REG_TYPE=0 -Paxi_register.R_REG_TYPE=0 /Users/fatimafarooq/Desktop/modules/axi_register.v /Users/fatimafarooq/Desktop/modules/axi_register_rd.v /Users/fatimafarooq/Desktop/modules/axi_register_wr.v
+ERROR    cocotb:simulator.py:305 /Users/fatimafarooq/Desktop/modules/axi_register.v: No such file or directory
+ERROR    cocotb:simulator.py:305 error: Unable to find the root module "axi_register" in the Verilog source.
+ERROR    cocotb:simulator.py:305      : Perhaps ``-s axi_register'' is incorrect?
+ERROR    cocotb:simulator.py:305 1 error(s) during elaboration.
+___________________________ test_axi_register[32-1] ____________________________
+
+request = <FixtureRequest for <Function test_axi_register[32-1]>>
+data_width = 32, reg_type = 1
+
+    @pytest.mark.parametrize("reg_type", [None, 0, 1, 2])
+    @pytest.mark.parametrize("data_width", [8, 16, 32])
+    def test_axi_register(request, data_width, reg_type):
+        dut = "axi_register"
+        module = os.path.splitext(os.path.basename(__file__))[0]
+        toplevel = dut
+    
+        verilog_sources = [
+            os.path.join(rtl_dir, f"{dut}.v"),
+            os.path.join(rtl_dir, f"{dut}_rd.v"),
+            os.path.join(rtl_dir, f"{dut}_wr.v"),
+        ]
+    
+        parameters = {}
+    
+        parameters['DATA_WIDTH'] = data_width
+        parameters['ADDR_WIDTH'] = 32
+        parameters['STRB_WIDTH'] = parameters['DATA_WIDTH'] // 8
+        parameters['ID_WIDTH'] = 8
+        parameters['AWUSER_ENABLE'] = 0
+        parameters['AWUSER_WIDTH'] = 1
+        parameters['WUSER_ENABLE'] = 0
+        parameters['WUSER_WIDTH'] = 1
+        parameters['BUSER_ENABLE'] = 0
+        parameters['BUSER_WIDTH'] = 1
+        parameters['ARUSER_ENABLE'] = 0
+        parameters['ARUSER_WIDTH'] = 1
+        parameters['RUSER_ENABLE'] = 0
+        parameters['RUSER_WIDTH'] = 1
+        parameters['AW_REG_TYPE'] = 1 if reg_type is None else reg_type
+        parameters['W_REG_TYPE'] = 2 if reg_type is None else reg_type
+        parameters['B_REG_TYPE'] = 1 if reg_type is None else reg_type
+        parameters['AR_REG_TYPE'] = 1 if reg_type is None else reg_type
+        parameters['R_REG_TYPE'] = 2 if reg_type is None else reg_type
+    
+        extra_env = {f'PARAM_{k}': str(v) for k, v in parameters.items()}
+    
+        sim_build = os.path.join(tests_dir, "sim_build",
+            request.node.name.replace('[', '-').replace(']', ''))
+    
+>       cocotb_test.simulator.run(
+            python_search=[tests_dir],
+            verilog_sources=verilog_sources,
+            toplevel=toplevel,
+            module=module,
+            parameters=parameters,
+            sim_build=sim_build,
+            extra_env=extra_env,
+        )
+E       SystemExit: Process iverilog terminated with error 1
+
+tests/test_axi_register.py:251: SystemExit
+------------------------------ Captured log call -------------------------------
+INFO     cocotb:simulator.py:334 Running command: iverilog -o /Users/fatimafarooq/Desktop/axi_LLM/tests/sim_build/test_axi_register-32-1/axi_register.vvp -D COCOTB_SIM=1 -g2012 -s axi_register -Paxi_register.DATA_WIDTH=32 -Paxi_register.ADDR_WIDTH=32 -Paxi_register.STRB_WIDTH=4 -Paxi_register.ID_WIDTH=8 -Paxi_register.AWUSER_ENABLE=0 -Paxi_register.AWUSER_WIDTH=1 -Paxi_register.WUSER_ENABLE=0 -Paxi_register.WUSER_WIDTH=1 -Paxi_register.BUSER_ENABLE=0 -Paxi_register.BUSER_WIDTH=1 -Paxi_register.ARUSER_ENABLE=0 -Paxi_register.ARUSER_WIDTH=1 -Paxi_register.RUSER_ENABLE=0 -Paxi_register.RUSER_WIDTH=1 -Paxi_register.AW_REG_TYPE=1 -Paxi_register.W_REG_TYPE=1 -Paxi_register.B_REG_TYPE=1 -Paxi_register.AR_REG_TYPE=1 -Paxi_register.R_REG_TYPE=1 /Users/fatimafarooq/Desktop/modules/axi_register.v /Users/fatimafarooq/Desktop/modules/axi_register_rd.v /Users/fatimafarooq/Desktop/modules/axi_register_wr.v
+ERROR    cocotb:simulator.py:305 /Users/fatimafarooq/Desktop/modules/axi_register.v: No such file or directory
+ERROR    cocotb:simulator.py:305 error: Unable to find the root module "axi_register" in the Verilog source.
+ERROR    cocotb:simulator.py:305      : Perhaps ``-s axi_register'' is incorrect?
+ERROR    cocotb:simulator.py:305 1 error(s) during elaboration.
+___________________________ test_axi_register[32-2] ____________________________
+
+request = <FixtureRequest for <Function test_axi_register[32-2]>>
+data_width = 32, reg_type = 2
+
+    @pytest.mark.parametrize("reg_type", [None, 0, 1, 2])
+    @pytest.mark.parametrize("data_width", [8, 16, 32])
+    def test_axi_register(request, data_width, reg_type):
+        dut = "axi_register"
+        module = os.path.splitext(os.path.basename(__file__))[0]
+        toplevel = dut
+    
+        verilog_sources = [
+            os.path.join(rtl_dir, f"{dut}.v"),
+            os.path.join(rtl_dir, f"{dut}_rd.v"),
+            os.path.join(rtl_dir, f"{dut}_wr.v"),
+        ]
+    
+        parameters = {}
+    
+        parameters['DATA_WIDTH'] = data_width
+        parameters['ADDR_WIDTH'] = 32
+        parameters['STRB_WIDTH'] = parameters['DATA_WIDTH'] // 8
+        parameters['ID_WIDTH'] = 8
+        parameters['AWUSER_ENABLE'] = 0
+        parameters['AWUSER_WIDTH'] = 1
+        parameters['WUSER_ENABLE'] = 0
+        parameters['WUSER_WIDTH'] = 1
+        parameters['BUSER_ENABLE'] = 0
+        parameters['BUSER_WIDTH'] = 1
+        parameters['ARUSER_ENABLE'] = 0
+        parameters['ARUSER_WIDTH'] = 1
+        parameters['RUSER_ENABLE'] = 0
+        parameters['RUSER_WIDTH'] = 1
+        parameters['AW_REG_TYPE'] = 1 if reg_type is None else reg_type
+        parameters['W_REG_TYPE'] = 2 if reg_type is None else reg_type
+        parameters['B_REG_TYPE'] = 1 if reg_type is None else reg_type
+        parameters['AR_REG_TYPE'] = 1 if reg_type is None else reg_type
+        parameters['R_REG_TYPE'] = 2 if reg_type is None else reg_type
+    
+        extra_env = {f'PARAM_{k}': str(v) for k, v in parameters.items()}
+    
+        sim_build = os.path.join(tests_dir, "sim_build",
+            request.node.name.replace('[', '-').replace(']', ''))
+    
+>       cocotb_test.simulator.run(
+            python_search=[tests_dir],
+            verilog_sources=verilog_sources,
+            toplevel=toplevel,
+            module=module,
+            parameters=parameters,
+            sim_build=sim_build,
+            extra_env=extra_env,
+        )
+E       SystemExit: Process iverilog terminated with error 1
+
+tests/test_axi_register.py:251: SystemExit
+------------------------------ Captured log call -------------------------------
+INFO     cocotb:simulator.py:334 Running command: iverilog -o /Users/fatimafarooq/Desktop/axi_LLM/tests/sim_build/test_axi_register-32-2/axi_register.vvp -D COCOTB_SIM=1 -g2012 -s axi_register -Paxi_register.DATA_WIDTH=32 -Paxi_register.ADDR_WIDTH=32 -Paxi_register.STRB_WIDTH=4 -Paxi_register.ID_WIDTH=8 -Paxi_register.AWUSER_ENABLE=0 -Paxi_register.AWUSER_WIDTH=1 -Paxi_register.WUSER_ENABLE=0 -Paxi_register.WUSER_WIDTH=1 -Paxi_register.BUSER_ENABLE=0 -Paxi_register.BUSER_WIDTH=1 -Paxi_register.ARUSER_ENABLE=0 -Paxi_register.ARUSER_WIDTH=1 -Paxi_register.RUSER_ENABLE=0 -Paxi_register.RUSER_WIDTH=1 -Paxi_register.AW_REG_TYPE=2 -Paxi_register.W_REG_TYPE=2 -Paxi_register.B_REG_TYPE=2 -Paxi_register.AR_REG_TYPE=2 -Paxi_register.R_REG_TYPE=2 /Users/fatimafarooq/Desktop/modules/axi_register.v /Users/fatimafarooq/Desktop/modules/axi_register_rd.v /Users/fatimafarooq/Desktop/modules/axi_register_wr.v
+ERROR    cocotb:simulator.py:305 /Users/fatimafarooq/Desktop/modules/axi_register.v: No such file or directory
+ERROR    cocotb:simulator.py:305 error: Unable to find the root module "axi_register" in the Verilog source.
+ERROR    cocotb:simulator.py:305      : Perhaps ``-s axi_register'' is incorrect?
+ERROR    cocotb:simulator.py:305 1 error(s) during elaboration.
+=========================== short test summary info ============================
+FAILED tests/test_axi_register.py::test_axi_register[8-None] - SystemExit: Pr...
+FAILED tests/test_axi_register.py::test_axi_register[8-0] - SystemExit: Proce...
+FAILED tests/test_axi_register.py::test_axi_register[8-1] - SystemExit: Proce...
+FAILED tests/test_axi_register.py::test_axi_register[8-2] - SystemExit: Proce...
+FAILED tests/test_axi_register.py::test_axi_register[16-None] - SystemExit: P...
+FAILED tests/test_axi_register.py::test_axi_register[16-0] - SystemExit: Proc...
+FAILED tests/test_axi_register.py::test_axi_register[16-1] - SystemExit: Proc...
+FAILED tests/test_axi_register.py::test_axi_register[16-2] - SystemExit: Proc...
+FAILED tests/test_axi_register.py::test_axi_register[32-None] - SystemExit: P...
+FAILED tests/test_axi_register.py::test_axi_register[32-0] - SystemExit: Proc...
+FAILED tests/test_axi_register.py::test_axi_register[32-1] - SystemExit: Proc...
+FAILED tests/test_axi_register.py::test_axi_register[32-2] - SystemExit: Proc...
+============================== 12 failed in 0.50s ==============================

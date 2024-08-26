@@ -1,0 +1,135 @@
+```verilog
+module axil_register_rd #
+(
+    // Parameters
+    parameter DATA_WIDTH = 32,  // Width of data bus in bits
+    parameter ADDR_WIDTH = 32,  // Width of address bus in bits
+    parameter STRB_WIDTH = (DATA_WIDTH/8),  // Width of wstrb (width of data bus in words)
+    parameter AR_REG_TYPE = 1,  // AR channel register type: 0 to bypass, 1 for simple buffer
+    parameter R_REG_TYPE = 1  // R channel register type: 0 to bypass, 1 for simple buffer
+)
+(
+    // Ports
+    input  wire                     clk,  // Clock signal
+    input  wire                     rst,  // Reset signal
+
+    /*
+     * AXI lite slave interface
+     */
+    input  wire [ADDR_WIDTH-1:0]    s_axil_araddr,  // Read address
+    input  wire [2:0]               s_axil_arprot,  // Read protection type
+    input  wire                     s_axil_arvalid,  // Read address valid
+    output wire                     s_axil_arready,  // Read address ready
+    output wire [DATA_WIDTH-1:0]    s_axil_rdata,  // Read data
+    output wire [1:0]               s_axil_rresp,  // Read response
+    output wire                     s_axil_rvalid,  // Read response valid
+    input  wire                     s_axil_rready,  // Read response ready
+
+    /*
+     * AXI lite master interface
+     */
+    output wire [ADDR_WIDTH-1:0]    m_axil_araddr,  // Master read address
+    output wire [2:0]               m_axil_arprot,  // Master read protection type
+    output wire                     m_axil_arvalid,  // Master read address valid
+    input  wire                     m_axil_arready,  // Master read address ready
+    input  wire [DATA_WIDTH-1:0]    m_axil_rdata,  // Master read data
+    input  wire [1:0]               m_axil_rresp,  // Master read response
+    input  wire                     m_axil_rvalid,  // Master read response valid
+    output wire                     m_axil_rready  // Master read response ready
+);
+
+// Internal signals
+reg [ADDR_WIDTH-1:0] araddr_reg;
+reg [2:0] arprot_reg;
+reg arvalid_reg, arready_reg;
+reg [DATA_WIDTH-1:0] rdata_reg;
+reg [1:0] rresp_reg;
+reg rvalid_reg, rready_reg;
+
+// AR Channel Logic
+generate
+    if (AR_REG_TYPE > 1) begin
+        // Skid Buffer
+        always @(posedge clk) begin
+            if (rst) begin
+                arready_reg <= 1'b0;
+                arvalid_reg <= 1'b0;
+            end else begin
+                if (!arvalid_reg || (arvalid_reg && m_axil_arready)) begin
+                    arvalid_reg <= s_axil_arvalid;
+                    araddr_reg <= s_axil_araddr;
+                    arprot_reg <= s_axil_arprot;
+                end
+                arready_reg <= !arvalid_reg || m_axil_arready;
+            end
+        end
+    end else if (AR_REG_TYPE == 1) begin
+        // Simple Buffer
+        always @(posedge clk) begin
+            if (rst) begin
+                arready_reg <= 1'b0;
+                arvalid_reg <= 1'b0;
+            end else begin
+                arvalid_reg <= s_axil_arvalid;
+                araddr_reg <= s_axil_araddr;
+                arprot_reg <= s_axil_arprot;
+                arready_reg <= !s_axil_arvalid || m_axil_arready;
+            end
+        end
+    end else begin
+        // Bypass
+        assign m_axil_araddr = s_axil_araddr;
+        assign m_axil_arprot = s_axil_arprot;
+        assign m_axil_arvalid = s_axil_arvalid;
+        assign s_axil_arready = m_axil_arready;
+    end
+endgenerate
+
+assign m_axil_araddr = araddr_reg;
+assign m_axil_arprot = arprot_reg;
+assign m_axil_arvalid = arvalid_reg;
+assign s_axil_arready = arready_reg;
+
+// R Channel Logic
+generate
+    if (R_REG_TYPE > 1) begin
+        // Skid Buffer
+        always @(posedge clk) begin
+            if (rst) begin
+                rvalid_reg <= 1'b0;
+            end else begin
+                if (!rvalid_reg || (rvalid_reg && s_axil_rready)) begin
+                    rvalid_reg <= m_axil_rvalid;
+                    rdata_reg <= m_axil_rdata;
+                    rresp_reg <= m_axil_rresp;
+                end
+            end
+        end
+        assign m_axil_rready = !rvalid_reg || s_axil_rready;
+    end else if (R_REG_TYPE == 1) begin
+        // Simple Buffer
+        always @(posedge clk) begin
+            if (rst) begin
+                rvalid_reg <= 1'b0;
+            end else begin
+                rvalid_reg <= m_axil_rvalid;
+                rdata_reg <= m_axil_rdata;
+                rresp_reg <= m_axil_rresp;
+            end
+        end
+        assign m_axil_rready = !m_axil_rvalid || s_axil_rready;
+    end else begin
+        // Bypass
+        assign s_axil_rdata = m_axil_rdata;
+        assign s_axil_rresp = m_axil_rresp;
+        assign s_axil_rvalid = m_axil_rvalid;
+        assign m_axil_rready = s_axil_rready;
+    end
+endgenerate
+
+assign s_axil_rdata = rdata_reg;
+assign s_axil_rresp = rresp_reg;
+assign s_axil_rvalid = rvalid_reg;
+
+endmodule
+```

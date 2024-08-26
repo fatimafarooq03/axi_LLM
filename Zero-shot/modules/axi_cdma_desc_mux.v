@@ -1,0 +1,115 @@
+module axi_cdma_desc_mux #
+(
+    // Parameters
+    parameter PORTS = 2,                    // Number of ports
+    parameter AXI_ADDR_WIDTH = 16,          // AXI address width
+    parameter LEN_WIDTH = 20,               // Length field width
+    parameter S_TAG_WIDTH = 8,              // Input tag field width
+    parameter M_TAG_WIDTH = S_TAG_WIDTH+$clog2(PORTS),  // Output tag field width (towards CDMA module)
+    parameter ARB_TYPE_ROUND_ROBIN = 1,     // Select round robin arbitration
+    parameter ARB_LSB_HIGH_PRIORITY = 1     // LSB priority selection
+)
+(
+    // Ports
+    input  wire                            clk,                       // Clock signal
+    input  wire                            rst,                       // Reset signal
+
+    // Descriptor output (to AXI CDMA core)
+    output wire [AXI_ADDR_WIDTH-1:0]       m_axis_desc_read_addr,
+    output wire [AXI_ADDR_WIDTH-1:0]       m_axis_desc_write_addr,
+    output wire [LEN_WIDTH-1:0]            m_axis_desc_len,
+    output wire [M_TAG_WIDTH-1:0]          m_axis_desc_tag,
+    output wire                            m_axis_desc_valid,
+    input  wire                            m_axis_desc_ready,
+
+    // Descriptor status input (from AXI CDMA core)
+    input  wire [M_TAG_WIDTH-1:0]          s_axis_desc_status_tag,
+    input  wire [3:0]                      s_axis_desc_status_error,
+    input  wire                            s_axis_desc_status_valid,
+
+    // Descriptor input
+    input  wire [PORTS*AXI_ADDR_WIDTH-1:0] s_axis_desc_read_addr,
+    input  wire [PORTS*AXI_ADDR_WIDTH-1:0] s_axis_desc_write_addr,
+    input  wire [PORTS*LEN_WIDTH-1:0]      s_axis_desc_len,
+    input  wire [PORTS*S_TAG_WIDTH-1:0]    s_axis_desc_tag,
+    input  wire [PORTS-1:0]                s_axis_desc_valid,
+    output wire [PORTS-1:0]                s_axis_desc_ready,
+
+    // Descriptor status output
+    output wire [PORTS*S_TAG_WIDTH-1:0]    m_axis_desc_status_tag,
+    output wire [PORTS*4-1:0]              m_axis_desc_status_error,
+    output wire [PORTS-1:0]                m_axis_desc_status_valid
+);
+
+// Internal Signals
+reg [PORTS-1:0] grant;
+reg [$clog2(PORTS)-1:0] grant_encoded;
+reg [AXI_ADDR_WIDTH-1:0]    selected_read_addr;
+reg [AXI_ADDR_WIDTH-1:0]    selected_write_addr;
+reg [LEN_WIDTH-1:0]         selected_len;
+reg [S_TAG_WIDTH-1:0]       selected_tag;
+reg                         selected_valid;
+reg [PORTS-1:0]             status_valid_reg;
+reg [PORTS*S_TAG_WIDTH-1:0] status_tag_reg;
+reg [PORTS*4-1:0]           status_error_reg;
+
+// Arbiter instantiation
+arbiter #(
+    .PORTS(PORTS),
+    .TYPE_ROUND_ROBIN(ARB_TYPE_ROUND_ROBIN),
+    .LSB_HIGH_PRIORITY(ARB_LSB_HIGH_PRIORITY)
+)
+arbiter_inst (
+    .clk(clk),
+    .rst(rst),
+    .request(s_axis_desc_valid),
+    .grant(grant),
+    .grant_encoded(grant_encoded),
+    .grant_valid()
+);
+
+// Descriptor selection
+always @* begin
+    selected_valid = 0;
+    selected_read_addr = 0;
+    selected_write_addr = 0;
+    selected_len = 0;
+    selected_tag = 0;
+    
+    if (grant != 0) begin
+        selected_valid = 1;
+        selected_read_addr = s_axis_desc_read_addr[grant_encoded*AXI_ADDR_WIDTH +: AXI_ADDR_WIDTH];
+        selected_write_addr = s_axis_desc_write_addr[grant_encoded*AXI_ADDR_WIDTH +: AXI_ADDR_WIDTH];
+        selected_len = s_axis_desc_len[grant_encoded*LEN_WIDTH +: LEN_WIDTH];
+        selected_tag = s_axis_desc_tag[grant_encoded*S_TAG_WIDTH +: S_TAG_WIDTH];
+    end
+end
+
+// Output assignments
+assign m_axis_desc_read_addr = selected_read_addr;
+assign m_axis_desc_write_addr = selected_write_addr;
+assign m_axis_desc_len = selected_len;
+assign m_axis_desc_tag = {grant_encoded, selected_tag};
+assign m_axis_desc_valid = selected_valid;
+assign s_axis_desc_ready = grant;
+
+// Descriptor status demultiplexing
+always @(posedge clk or posedge rst) begin
+    if (rst) begin
+        status_valid_reg <= 0;
+        status_tag_reg <= 0;
+        status_error_reg <= 0;
+    end else if (s_axis_desc_status_valid) begin
+        status_valid_reg[s_axis_desc_status_tag[$clog2(PORTS)-1:0]] <= 1;
+        status_tag_reg[s_axis_desc_status_tag[$clog2(PORTS)-1:0]*S_TAG_WIDTH +: S_TAG_WIDTH] 
+                      <= s_axis_desc_status_tag[M_TAG_WIDTH-1:$clog2(PORTS)];
+        status_error_reg[s_axis_desc_status_tag[$clog2(PORTS)-1:0]*4 +: 4] 
+                      <= s_axis_desc_status_error;
+    end
+end
+
+assign m_axis_desc_status_valid = status_valid_reg;
+assign m_axis_desc_status_tag = status_tag_reg;
+assign m_axis_desc_status_error = status_error_reg;
+
+endmodule

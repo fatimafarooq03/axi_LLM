@@ -1,0 +1,8 @@
+<testsuites name="results">
+  <testsuite name="all" package="all">
+    <property name="random_seed" value="1724419971" />
+    <testcase name="test_axi_crossbar_addr" classname="test_axi_crossbar_addr" file="/Users/fatimafarooq/Desktop/axi_LLM/tb/axi_crossbar_addr/test_axi_crossbar_addr.py" lineno="76" time="96850.17677640915" sim_time_ns="1569267935.0" ratio_time="16203.046677166662">
+      <failure />
+    </testcase>
+  </testsuite>
+</testsuites>

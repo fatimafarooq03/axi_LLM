@@ -1,0 +1,395 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.12.4, pytest-7.1.2, pluggy-1.5.0
+rootdir: /Users/fatimafarooq/Desktop/axi_LLM
+plugins: cocotb-test-0.2.5, anyio-4.4.0
+collected 6 items
+
+tests/test_axi_dma_wr.py FFFFFF                                          [100%]
+
+=================================== FAILURES ===================================
+_____________________________ test_axi_dma_wr[8-0] _____________________________
+
+request = <FixtureRequest for <Function test_axi_dma_wr[8-0]>>
+axi_data_width = 8, unaligned = 0
+
+    @pytest.mark.parametrize("unaligned", [0, 1])
+    @pytest.mark.parametrize("axi_data_width", [8, 16, 32])
+    def test_axi_dma_wr(request, axi_data_width, unaligned):
+        dut = "axi_dma_wr"
+        module = os.path.splitext(os.path.basename(__file__))[0]
+        toplevel = dut
+    
+        verilog_sources = [
+            os.path.join(rtl_dir, f"{dut}.v"),
+        ]
+    
+        parameters = {}
+    
+        axis_data_width = axi_data_width
+    
+        parameters['AXI_DATA_WIDTH'] = axi_data_width
+        parameters['AXI_ADDR_WIDTH'] = 16
+        parameters['AXI_STRB_WIDTH'] = parameters['AXI_DATA_WIDTH'] // 8
+        parameters['AXI_ID_WIDTH'] = 8
+        parameters['AXI_MAX_BURST_LEN'] = 16
+        parameters['AXIS_DATA_WIDTH'] = axis_data_width
+        parameters['AXIS_KEEP_ENABLE'] = int(parameters['AXIS_DATA_WIDTH'] > 8)
+        parameters['AXIS_KEEP_WIDTH'] = parameters['AXIS_DATA_WIDTH'] // 8
+        parameters['AXIS_LAST_ENABLE'] = 1
+        parameters['AXIS_ID_ENABLE'] = 1
+        parameters['AXIS_ID_WIDTH'] = 8
+        parameters['AXIS_DEST_ENABLE'] = 0
+        parameters['AXIS_DEST_WIDTH'] = 8
+        parameters['AXIS_USER_ENABLE'] = 1
+        parameters['AXIS_USER_WIDTH'] = 1
+        parameters['LEN_WIDTH'] = 20
+        parameters['TAG_WIDTH'] = 8
+        parameters['ENABLE_SG'] = 0
+        parameters['ENABLE_UNALIGNED'] = unaligned
+    
+        extra_env = {f'PARAM_{k}': str(v) for k, v in parameters.items()}
+    
+        sim_build = os.path.join(tests_dir, "sim_build",
+            request.node.name.replace('[', '-').replace(']', ''))
+    
+>       cocotb_test.simulator.run(
+            python_search=[tests_dir],
+            verilog_sources=verilog_sources,
+            toplevel=toplevel,
+            module=module,
+            parameters=parameters,
+            sim_build=sim_build,
+            extra_env=extra_env,
+        )
+E       SystemExit: Process iverilog terminated with error 1
+
+tests/test_axi_dma_wr.py:208: SystemExit
+------------------------------ Captured log call -------------------------------
+INFO     cocotb:simulator.py:334 Running command: iverilog -o /Users/fatimafarooq/Desktop/axi_LLM/tests/sim_build/test_axi_dma_wr-8-0/axi_dma_wr.vvp -D COCOTB_SIM=1 -g2012 -s axi_dma_wr -Paxi_dma_wr.AXI_DATA_WIDTH=8 -Paxi_dma_wr.AXI_ADDR_WIDTH=16 -Paxi_dma_wr.AXI_STRB_WIDTH=1 -Paxi_dma_wr.AXI_ID_WIDTH=8 -Paxi_dma_wr.AXI_MAX_BURST_LEN=16 -Paxi_dma_wr.AXIS_DATA_WIDTH=8 -Paxi_dma_wr.AXIS_KEEP_ENABLE=0 -Paxi_dma_wr.AXIS_KEEP_WIDTH=1 -Paxi_dma_wr.AXIS_LAST_ENABLE=1 -Paxi_dma_wr.AXIS_ID_ENABLE=1 -Paxi_dma_wr.AXIS_ID_WIDTH=8 -Paxi_dma_wr.AXIS_DEST_ENABLE=0 -Paxi_dma_wr.AXIS_DEST_WIDTH=8 -Paxi_dma_wr.AXIS_USER_ENABLE=1 -Paxi_dma_wr.AXIS_USER_WIDTH=1 -Paxi_dma_wr.LEN_WIDTH=20 -Paxi_dma_wr.TAG_WIDTH=8 -Paxi_dma_wr.ENABLE_SG=0 -Paxi_dma_wr.ENABLE_UNALIGNED=0 /Users/fatimafarooq/Desktop/modules/axi_dma_wr.v
+ERROR    cocotb:simulator.py:305 /Users/fatimafarooq/Desktop/modules/axi_dma_wr.v: No such file or directory
+ERROR    cocotb:simulator.py:305 error: Unable to find the root module "axi_dma_wr" in the Verilog source.
+ERROR    cocotb:simulator.py:305      : Perhaps ``-s axi_dma_wr'' is incorrect?
+ERROR    cocotb:simulator.py:305 1 error(s) during elaboration.
+_____________________________ test_axi_dma_wr[8-1] _____________________________
+
+request = <FixtureRequest for <Function test_axi_dma_wr[8-1]>>
+axi_data_width = 8, unaligned = 1
+
+    @pytest.mark.parametrize("unaligned", [0, 1])
+    @pytest.mark.parametrize("axi_data_width", [8, 16, 32])
+    def test_axi_dma_wr(request, axi_data_width, unaligned):
+        dut = "axi_dma_wr"
+        module = os.path.splitext(os.path.basename(__file__))[0]
+        toplevel = dut
+    
+        verilog_sources = [
+            os.path.join(rtl_dir, f"{dut}.v"),
+        ]
+    
+        parameters = {}
+    
+        axis_data_width = axi_data_width
+    
+        parameters['AXI_DATA_WIDTH'] = axi_data_width
+        parameters['AXI_ADDR_WIDTH'] = 16
+        parameters['AXI_STRB_WIDTH'] = parameters['AXI_DATA_WIDTH'] // 8
+        parameters['AXI_ID_WIDTH'] = 8
+        parameters['AXI_MAX_BURST_LEN'] = 16
+        parameters['AXIS_DATA_WIDTH'] = axis_data_width
+        parameters['AXIS_KEEP_ENABLE'] = int(parameters['AXIS_DATA_WIDTH'] > 8)
+        parameters['AXIS_KEEP_WIDTH'] = parameters['AXIS_DATA_WIDTH'] // 8
+        parameters['AXIS_LAST_ENABLE'] = 1
+        parameters['AXIS_ID_ENABLE'] = 1
+        parameters['AXIS_ID_WIDTH'] = 8
+        parameters['AXIS_DEST_ENABLE'] = 0
+        parameters['AXIS_DEST_WIDTH'] = 8
+        parameters['AXIS_USER_ENABLE'] = 1
+        parameters['AXIS_USER_WIDTH'] = 1
+        parameters['LEN_WIDTH'] = 20
+        parameters['TAG_WIDTH'] = 8
+        parameters['ENABLE_SG'] = 0
+        parameters['ENABLE_UNALIGNED'] = unaligned
+    
+        extra_env = {f'PARAM_{k}': str(v) for k, v in parameters.items()}
+    
+        sim_build = os.path.join(tests_dir, "sim_build",
+            request.node.name.replace('[', '-').replace(']', ''))
+    
+>       cocotb_test.simulator.run(
+            python_search=[tests_dir],
+            verilog_sources=verilog_sources,
+            toplevel=toplevel,
+            module=module,
+            parameters=parameters,
+            sim_build=sim_build,
+            extra_env=extra_env,
+        )
+E       SystemExit: Process iverilog terminated with error 1
+
+tests/test_axi_dma_wr.py:208: SystemExit
+------------------------------ Captured log call -------------------------------
+INFO     cocotb:simulator.py:334 Running command: iverilog -o /Users/fatimafarooq/Desktop/axi_LLM/tests/sim_build/test_axi_dma_wr-8-1/axi_dma_wr.vvp -D COCOTB_SIM=1 -g2012 -s axi_dma_wr -Paxi_dma_wr.AXI_DATA_WIDTH=8 -Paxi_dma_wr.AXI_ADDR_WIDTH=16 -Paxi_dma_wr.AXI_STRB_WIDTH=1 -Paxi_dma_wr.AXI_ID_WIDTH=8 -Paxi_dma_wr.AXI_MAX_BURST_LEN=16 -Paxi_dma_wr.AXIS_DATA_WIDTH=8 -Paxi_dma_wr.AXIS_KEEP_ENABLE=0 -Paxi_dma_wr.AXIS_KEEP_WIDTH=1 -Paxi_dma_wr.AXIS_LAST_ENABLE=1 -Paxi_dma_wr.AXIS_ID_ENABLE=1 -Paxi_dma_wr.AXIS_ID_WIDTH=8 -Paxi_dma_wr.AXIS_DEST_ENABLE=0 -Paxi_dma_wr.AXIS_DEST_WIDTH=8 -Paxi_dma_wr.AXIS_USER_ENABLE=1 -Paxi_dma_wr.AXIS_USER_WIDTH=1 -Paxi_dma_wr.LEN_WIDTH=20 -Paxi_dma_wr.TAG_WIDTH=8 -Paxi_dma_wr.ENABLE_SG=0 -Paxi_dma_wr.ENABLE_UNALIGNED=1 /Users/fatimafarooq/Desktop/modules/axi_dma_wr.v
+ERROR    cocotb:simulator.py:305 /Users/fatimafarooq/Desktop/modules/axi_dma_wr.v: No such file or directory
+ERROR    cocotb:simulator.py:305 error: Unable to find the root module "axi_dma_wr" in the Verilog source.
+ERROR    cocotb:simulator.py:305      : Perhaps ``-s axi_dma_wr'' is incorrect?
+ERROR    cocotb:simulator.py:305 1 error(s) during elaboration.
+____________________________ test_axi_dma_wr[16-0] _____________________________
+
+request = <FixtureRequest for <Function test_axi_dma_wr[16-0]>>
+axi_data_width = 16, unaligned = 0
+
+    @pytest.mark.parametrize("unaligned", [0, 1])
+    @pytest.mark.parametrize("axi_data_width", [8, 16, 32])
+    def test_axi_dma_wr(request, axi_data_width, unaligned):
+        dut = "axi_dma_wr"
+        module = os.path.splitext(os.path.basename(__file__))[0]
+        toplevel = dut
+    
+        verilog_sources = [
+            os.path.join(rtl_dir, f"{dut}.v"),
+        ]
+    
+        parameters = {}
+    
+        axis_data_width = axi_data_width
+    
+        parameters['AXI_DATA_WIDTH'] = axi_data_width
+        parameters['AXI_ADDR_WIDTH'] = 16
+        parameters['AXI_STRB_WIDTH'] = parameters['AXI_DATA_WIDTH'] // 8
+        parameters['AXI_ID_WIDTH'] = 8
+        parameters['AXI_MAX_BURST_LEN'] = 16
+        parameters['AXIS_DATA_WIDTH'] = axis_data_width
+        parameters['AXIS_KEEP_ENABLE'] = int(parameters['AXIS_DATA_WIDTH'] > 8)
+        parameters['AXIS_KEEP_WIDTH'] = parameters['AXIS_DATA_WIDTH'] // 8
+        parameters['AXIS_LAST_ENABLE'] = 1
+        parameters['AXIS_ID_ENABLE'] = 1
+        parameters['AXIS_ID_WIDTH'] = 8
+        parameters['AXIS_DEST_ENABLE'] = 0
+        parameters['AXIS_DEST_WIDTH'] = 8
+        parameters['AXIS_USER_ENABLE'] = 1
+        parameters['AXIS_USER_WIDTH'] = 1
+        parameters['LEN_WIDTH'] = 20
+        parameters['TAG_WIDTH'] = 8
+        parameters['ENABLE_SG'] = 0
+        parameters['ENABLE_UNALIGNED'] = unaligned
+    
+        extra_env = {f'PARAM_{k}': str(v) for k, v in parameters.items()}
+    
+        sim_build = os.path.join(tests_dir, "sim_build",
+            request.node.name.replace('[', '-').replace(']', ''))
+    
+>       cocotb_test.simulator.run(
+            python_search=[tests_dir],
+            verilog_sources=verilog_sources,
+            toplevel=toplevel,
+            module=module,
+            parameters=parameters,
+            sim_build=sim_build,
+            extra_env=extra_env,
+        )
+E       SystemExit: Process iverilog terminated with error 1
+
+tests/test_axi_dma_wr.py:208: SystemExit
+------------------------------ Captured log call -------------------------------
+INFO     cocotb:simulator.py:334 Running command: iverilog -o /Users/fatimafarooq/Desktop/axi_LLM/tests/sim_build/test_axi_dma_wr-16-0/axi_dma_wr.vvp -D COCOTB_SIM=1 -g2012 -s axi_dma_wr -Paxi_dma_wr.AXI_DATA_WIDTH=16 -Paxi_dma_wr.AXI_ADDR_WIDTH=16 -Paxi_dma_wr.AXI_STRB_WIDTH=2 -Paxi_dma_wr.AXI_ID_WIDTH=8 -Paxi_dma_wr.AXI_MAX_BURST_LEN=16 -Paxi_dma_wr.AXIS_DATA_WIDTH=16 -Paxi_dma_wr.AXIS_KEEP_ENABLE=1 -Paxi_dma_wr.AXIS_KEEP_WIDTH=2 -Paxi_dma_wr.AXIS_LAST_ENABLE=1 -Paxi_dma_wr.AXIS_ID_ENABLE=1 -Paxi_dma_wr.AXIS_ID_WIDTH=8 -Paxi_dma_wr.AXIS_DEST_ENABLE=0 -Paxi_dma_wr.AXIS_DEST_WIDTH=8 -Paxi_dma_wr.AXIS_USER_ENABLE=1 -Paxi_dma_wr.AXIS_USER_WIDTH=1 -Paxi_dma_wr.LEN_WIDTH=20 -Paxi_dma_wr.TAG_WIDTH=8 -Paxi_dma_wr.ENABLE_SG=0 -Paxi_dma_wr.ENABLE_UNALIGNED=0 /Users/fatimafarooq/Desktop/modules/axi_dma_wr.v
+ERROR    cocotb:simulator.py:305 /Users/fatimafarooq/Desktop/modules/axi_dma_wr.v: No such file or directory
+ERROR    cocotb:simulator.py:305 error: Unable to find the root module "axi_dma_wr" in the Verilog source.
+ERROR    cocotb:simulator.py:305      : Perhaps ``-s axi_dma_wr'' is incorrect?
+ERROR    cocotb:simulator.py:305 1 error(s) during elaboration.
+____________________________ test_axi_dma_wr[16-1] _____________________________
+
+request = <FixtureRequest for <Function test_axi_dma_wr[16-1]>>
+axi_data_width = 16, unaligned = 1
+
+    @pytest.mark.parametrize("unaligned", [0, 1])
+    @pytest.mark.parametrize("axi_data_width", [8, 16, 32])
+    def test_axi_dma_wr(request, axi_data_width, unaligned):
+        dut = "axi_dma_wr"
+        module = os.path.splitext(os.path.basename(__file__))[0]
+        toplevel = dut
+    
+        verilog_sources = [
+            os.path.join(rtl_dir, f"{dut}.v"),
+        ]
+    
+        parameters = {}
+    
+        axis_data_width = axi_data_width
+    
+        parameters['AXI_DATA_WIDTH'] = axi_data_width
+        parameters['AXI_ADDR_WIDTH'] = 16
+        parameters['AXI_STRB_WIDTH'] = parameters['AXI_DATA_WIDTH'] // 8
+        parameters['AXI_ID_WIDTH'] = 8
+        parameters['AXI_MAX_BURST_LEN'] = 16
+        parameters['AXIS_DATA_WIDTH'] = axis_data_width
+        parameters['AXIS_KEEP_ENABLE'] = int(parameters['AXIS_DATA_WIDTH'] > 8)
+        parameters['AXIS_KEEP_WIDTH'] = parameters['AXIS_DATA_WIDTH'] // 8
+        parameters['AXIS_LAST_ENABLE'] = 1
+        parameters['AXIS_ID_ENABLE'] = 1
+        parameters['AXIS_ID_WIDTH'] = 8
+        parameters['AXIS_DEST_ENABLE'] = 0
+        parameters['AXIS_DEST_WIDTH'] = 8
+        parameters['AXIS_USER_ENABLE'] = 1
+        parameters['AXIS_USER_WIDTH'] = 1
+        parameters['LEN_WIDTH'] = 20
+        parameters['TAG_WIDTH'] = 8
+        parameters['ENABLE_SG'] = 0
+        parameters['ENABLE_UNALIGNED'] = unaligned
+    
+        extra_env = {f'PARAM_{k}': str(v) for k, v in parameters.items()}
+    
+        sim_build = os.path.join(tests_dir, "sim_build",
+            request.node.name.replace('[', '-').replace(']', ''))
+    
+>       cocotb_test.simulator.run(
+            python_search=[tests_dir],
+            verilog_sources=verilog_sources,
+            toplevel=toplevel,
+            module=module,
+            parameters=parameters,
+            sim_build=sim_build,
+            extra_env=extra_env,
+        )
+E       SystemExit: Process iverilog terminated with error 1
+
+tests/test_axi_dma_wr.py:208: SystemExit
+------------------------------ Captured log call -------------------------------
+INFO     cocotb:simulator.py:334 Running command: iverilog -o /Users/fatimafarooq/Desktop/axi_LLM/tests/sim_build/test_axi_dma_wr-16-1/axi_dma_wr.vvp -D COCOTB_SIM=1 -g2012 -s axi_dma_wr -Paxi_dma_wr.AXI_DATA_WIDTH=16 -Paxi_dma_wr.AXI_ADDR_WIDTH=16 -Paxi_dma_wr.AXI_STRB_WIDTH=2 -Paxi_dma_wr.AXI_ID_WIDTH=8 -Paxi_dma_wr.AXI_MAX_BURST_LEN=16 -Paxi_dma_wr.AXIS_DATA_WIDTH=16 -Paxi_dma_wr.AXIS_KEEP_ENABLE=1 -Paxi_dma_wr.AXIS_KEEP_WIDTH=2 -Paxi_dma_wr.AXIS_LAST_ENABLE=1 -Paxi_dma_wr.AXIS_ID_ENABLE=1 -Paxi_dma_wr.AXIS_ID_WIDTH=8 -Paxi_dma_wr.AXIS_DEST_ENABLE=0 -Paxi_dma_wr.AXIS_DEST_WIDTH=8 -Paxi_dma_wr.AXIS_USER_ENABLE=1 -Paxi_dma_wr.AXIS_USER_WIDTH=1 -Paxi_dma_wr.LEN_WIDTH=20 -Paxi_dma_wr.TAG_WIDTH=8 -Paxi_dma_wr.ENABLE_SG=0 -Paxi_dma_wr.ENABLE_UNALIGNED=1 /Users/fatimafarooq/Desktop/modules/axi_dma_wr.v
+ERROR    cocotb:simulator.py:305 /Users/fatimafarooq/Desktop/modules/axi_dma_wr.v: No such file or directory
+ERROR    cocotb:simulator.py:305 error: Unable to find the root module "axi_dma_wr" in the Verilog source.
+ERROR    cocotb:simulator.py:305      : Perhaps ``-s axi_dma_wr'' is incorrect?
+ERROR    cocotb:simulator.py:305 1 error(s) during elaboration.
+____________________________ test_axi_dma_wr[32-0] _____________________________
+
+request = <FixtureRequest for <Function test_axi_dma_wr[32-0]>>
+axi_data_width = 32, unaligned = 0
+
+    @pytest.mark.parametrize("unaligned", [0, 1])
+    @pytest.mark.parametrize("axi_data_width", [8, 16, 32])
+    def test_axi_dma_wr(request, axi_data_width, unaligned):
+        dut = "axi_dma_wr"
+        module = os.path.splitext(os.path.basename(__file__))[0]
+        toplevel = dut
+    
+        verilog_sources = [
+            os.path.join(rtl_dir, f"{dut}.v"),
+        ]
+    
+        parameters = {}
+    
+        axis_data_width = axi_data_width
+    
+        parameters['AXI_DATA_WIDTH'] = axi_data_width
+        parameters['AXI_ADDR_WIDTH'] = 16
+        parameters['AXI_STRB_WIDTH'] = parameters['AXI_DATA_WIDTH'] // 8
+        parameters['AXI_ID_WIDTH'] = 8
+        parameters['AXI_MAX_BURST_LEN'] = 16
+        parameters['AXIS_DATA_WIDTH'] = axis_data_width
+        parameters['AXIS_KEEP_ENABLE'] = int(parameters['AXIS_DATA_WIDTH'] > 8)
+        parameters['AXIS_KEEP_WIDTH'] = parameters['AXIS_DATA_WIDTH'] // 8
+        parameters['AXIS_LAST_ENABLE'] = 1
+        parameters['AXIS_ID_ENABLE'] = 1
+        parameters['AXIS_ID_WIDTH'] = 8
+        parameters['AXIS_DEST_ENABLE'] = 0
+        parameters['AXIS_DEST_WIDTH'] = 8
+        parameters['AXIS_USER_ENABLE'] = 1
+        parameters['AXIS_USER_WIDTH'] = 1
+        parameters['LEN_WIDTH'] = 20
+        parameters['TAG_WIDTH'] = 8
+        parameters['ENABLE_SG'] = 0
+        parameters['ENABLE_UNALIGNED'] = unaligned
+    
+        extra_env = {f'PARAM_{k}': str(v) for k, v in parameters.items()}
+    
+        sim_build = os.path.join(tests_dir, "sim_build",
+            request.node.name.replace('[', '-').replace(']', ''))
+    
+>       cocotb_test.simulator.run(
+            python_search=[tests_dir],
+            verilog_sources=verilog_sources,
+            toplevel=toplevel,
+            module=module,
+            parameters=parameters,
+            sim_build=sim_build,
+            extra_env=extra_env,
+        )
+E       SystemExit: Process iverilog terminated with error 1
+
+tests/test_axi_dma_wr.py:208: SystemExit
+------------------------------ Captured log call -------------------------------
+INFO     cocotb:simulator.py:334 Running command: iverilog -o /Users/fatimafarooq/Desktop/axi_LLM/tests/sim_build/test_axi_dma_wr-32-0/axi_dma_wr.vvp -D COCOTB_SIM=1 -g2012 -s axi_dma_wr -Paxi_dma_wr.AXI_DATA_WIDTH=32 -Paxi_dma_wr.AXI_ADDR_WIDTH=16 -Paxi_dma_wr.AXI_STRB_WIDTH=4 -Paxi_dma_wr.AXI_ID_WIDTH=8 -Paxi_dma_wr.AXI_MAX_BURST_LEN=16 -Paxi_dma_wr.AXIS_DATA_WIDTH=32 -Paxi_dma_wr.AXIS_KEEP_ENABLE=1 -Paxi_dma_wr.AXIS_KEEP_WIDTH=4 -Paxi_dma_wr.AXIS_LAST_ENABLE=1 -Paxi_dma_wr.AXIS_ID_ENABLE=1 -Paxi_dma_wr.AXIS_ID_WIDTH=8 -Paxi_dma_wr.AXIS_DEST_ENABLE=0 -Paxi_dma_wr.AXIS_DEST_WIDTH=8 -Paxi_dma_wr.AXIS_USER_ENABLE=1 -Paxi_dma_wr.AXIS_USER_WIDTH=1 -Paxi_dma_wr.LEN_WIDTH=20 -Paxi_dma_wr.TAG_WIDTH=8 -Paxi_dma_wr.ENABLE_SG=0 -Paxi_dma_wr.ENABLE_UNALIGNED=0 /Users/fatimafarooq/Desktop/modules/axi_dma_wr.v
+ERROR    cocotb:simulator.py:305 /Users/fatimafarooq/Desktop/modules/axi_dma_wr.v: No such file or directory
+ERROR    cocotb:simulator.py:305 error: Unable to find the root module "axi_dma_wr" in the Verilog source.
+ERROR    cocotb:simulator.py:305      : Perhaps ``-s axi_dma_wr'' is incorrect?
+ERROR    cocotb:simulator.py:305 1 error(s) during elaboration.
+____________________________ test_axi_dma_wr[32-1] _____________________________
+
+request = <FixtureRequest for <Function test_axi_dma_wr[32-1]>>
+axi_data_width = 32, unaligned = 1
+
+    @pytest.mark.parametrize("unaligned", [0, 1])
+    @pytest.mark.parametrize("axi_data_width", [8, 16, 32])
+    def test_axi_dma_wr(request, axi_data_width, unaligned):
+        dut = "axi_dma_wr"
+        module = os.path.splitext(os.path.basename(__file__))[0]
+        toplevel = dut
+    
+        verilog_sources = [
+            os.path.join(rtl_dir, f"{dut}.v"),
+        ]
+    
+        parameters = {}
+    
+        axis_data_width = axi_data_width
+    
+        parameters['AXI_DATA_WIDTH'] = axi_data_width
+        parameters['AXI_ADDR_WIDTH'] = 16
+        parameters['AXI_STRB_WIDTH'] = parameters['AXI_DATA_WIDTH'] // 8
+        parameters['AXI_ID_WIDTH'] = 8
+        parameters['AXI_MAX_BURST_LEN'] = 16
+        parameters['AXIS_DATA_WIDTH'] = axis_data_width
+        parameters['AXIS_KEEP_ENABLE'] = int(parameters['AXIS_DATA_WIDTH'] > 8)
+        parameters['AXIS_KEEP_WIDTH'] = parameters['AXIS_DATA_WIDTH'] // 8
+        parameters['AXIS_LAST_ENABLE'] = 1
+        parameters['AXIS_ID_ENABLE'] = 1
+        parameters['AXIS_ID_WIDTH'] = 8
+        parameters['AXIS_DEST_ENABLE'] = 0
+        parameters['AXIS_DEST_WIDTH'] = 8
+        parameters['AXIS_USER_ENABLE'] = 1
+        parameters['AXIS_USER_WIDTH'] = 1
+        parameters['LEN_WIDTH'] = 20
+        parameters['TAG_WIDTH'] = 8
+        parameters['ENABLE_SG'] = 0
+        parameters['ENABLE_UNALIGNED'] = unaligned
+    
+        extra_env = {f'PARAM_{k}': str(v) for k, v in parameters.items()}
+    
+        sim_build = os.path.join(tests_dir, "sim_build",
+            request.node.name.replace('[', '-').replace(']', ''))
+    
+>       cocotb_test.simulator.run(
+            python_search=[tests_dir],
+            verilog_sources=verilog_sources,
+            toplevel=toplevel,
+            module=module,
+            parameters=parameters,
+            sim_build=sim_build,
+            extra_env=extra_env,
+        )
+E       SystemExit: Process iverilog terminated with error 1
+
+tests/test_axi_dma_wr.py:208: SystemExit
+------------------------------ Captured log call -------------------------------
+INFO     cocotb:simulator.py:334 Running command: iverilog -o /Users/fatimafarooq/Desktop/axi_LLM/tests/sim_build/test_axi_dma_wr-32-1/axi_dma_wr.vvp -D COCOTB_SIM=1 -g2012 -s axi_dma_wr -Paxi_dma_wr.AXI_DATA_WIDTH=32 -Paxi_dma_wr.AXI_ADDR_WIDTH=16 -Paxi_dma_wr.AXI_STRB_WIDTH=4 -Paxi_dma_wr.AXI_ID_WIDTH=8 -Paxi_dma_wr.AXI_MAX_BURST_LEN=16 -Paxi_dma_wr.AXIS_DATA_WIDTH=32 -Paxi_dma_wr.AXIS_KEEP_ENABLE=1 -Paxi_dma_wr.AXIS_KEEP_WIDTH=4 -Paxi_dma_wr.AXIS_LAST_ENABLE=1 -Paxi_dma_wr.AXIS_ID_ENABLE=1 -Paxi_dma_wr.AXIS_ID_WIDTH=8 -Paxi_dma_wr.AXIS_DEST_ENABLE=0 -Paxi_dma_wr.AXIS_DEST_WIDTH=8 -Paxi_dma_wr.AXIS_USER_ENABLE=1 -Paxi_dma_wr.AXIS_USER_WIDTH=1 -Paxi_dma_wr.LEN_WIDTH=20 -Paxi_dma_wr.TAG_WIDTH=8 -Paxi_dma_wr.ENABLE_SG=0 -Paxi_dma_wr.ENABLE_UNALIGNED=1 /Users/fatimafarooq/Desktop/modules/axi_dma_wr.v
+ERROR    cocotb:simulator.py:305 /Users/fatimafarooq/Desktop/modules/axi_dma_wr.v: No such file or directory
+ERROR    cocotb:simulator.py:305 error: Unable to find the root module "axi_dma_wr" in the Verilog source.
+ERROR    cocotb:simulator.py:305      : Perhaps ``-s axi_dma_wr'' is incorrect?
+ERROR    cocotb:simulator.py:305 1 error(s) during elaboration.
+=========================== short test summary info ============================
+FAILED tests/test_axi_dma_wr.py::test_axi_dma_wr[8-0] - SystemExit: Process i...
+FAILED tests/test_axi_dma_wr.py::test_axi_dma_wr[8-1] - SystemExit: Process i...
+FAILED tests/test_axi_dma_wr.py::test_axi_dma_wr[16-0] - SystemExit: Process ...
+FAILED tests/test_axi_dma_wr.py::test_axi_dma_wr[16-1] - SystemExit: Process ...
+FAILED tests/test_axi_dma_wr.py::test_axi_dma_wr[32-0] - SystemExit: Process ...
+FAILED tests/test_axi_dma_wr.py::test_axi_dma_wr[32-1] - SystemExit: Process ...
+============================== 6 failed in 0.45s ===============================

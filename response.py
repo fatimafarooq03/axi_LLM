@@ -8,7 +8,9 @@ import languagemodels as lm
 import conversation as cv
 import regex as reg  # Assumes this contains the extract_verilog_code function
 
-def generate_response(system_prompt, design_prompt, model_type, prompt_strategy=None):
+import stats as stat
+
+def generate_response(system_prompt, design_prompt, model_type, prompt_strategy=None, chat=None):
     """
     Generates a response from the language model based on the design prompt.
     
@@ -17,24 +19,28 @@ def generate_response(system_prompt, design_prompt, model_type, prompt_strategy=
     design_prompt (str): The prompt to input into the LLM.
     model_type (str): The type of LLM to use.
     prompt_strategy (str): The strategy for the system prompt.
+    chat (cv.Conversation): The conversation object to use.
     
     Returns:
     str: The generated response from the LLM.
     """
-    conv = cv.Conversation()
+    # Use the existing chat object if provided, otherwise create a new Conversation
+    if chat is None:
+        chat = cv.Conversation()
 
     # Set system prompt based on the strategy
     if system_prompt:
-        conv.add_message("system", system_prompt)
+        chat.add_message("system", system_prompt)
     else:
-        conv.add_message("system", get_sys_prompt(prompt_strategy))
+        chat.add_message("system", get_sys_prompt(prompt_strategy))
     
-    conv.add_message("user", design_prompt)
+    chat.add_message("user", design_prompt)
 
     # Generate the response
-    response = generate_verilog(conv, model_type)
+    response = generate_verilog(chat, model_type)
 
     return response
+
 
 def get_sys_prompt(prompt_strategy=None):
     framework_name = os.environ.get('framework_name', 'default_framework')
@@ -93,14 +99,21 @@ def get_most_consistent_response(responses):
     most_common_response = response_counts.most_common(1)[0][0]
     return most_common_response
 
-def get_response(design_prompt, module, model_type, outdir="", log=None, prompt_strategy=None, dirname="responses"):
+def get_response(design_prompt, module, model_type, outdir="", log=None, prompt_strategy=None, dirname="responses", chat=None):
     if outdir:
         outdir += "/"
 
-    conv = cv.Conversation()
+    # Use the existing chat object if provided, otherwise create a new Conversation
+    if chat is None:
+        chat = cv.Conversation()
 
-    conv.add_message("system", get_sys_prompt(prompt_strategy))
-    conv.add_message("user", design_prompt)
+    chat.add_message("system", get_sys_prompt(prompt_strategy))
+    chat.add_message("user", design_prompt)
+
+    print(f"outdir: {outdir}, type: {type(outdir)}")
+    print(f"prompt_strategy: {prompt_strategy}, type: {type(prompt_strategy)}")
+    print(f"dirname: {dirname}, type: {type(dirname)}")
+
 
     # Generate the directory path
     dir_path = os.path.join(outdir, prompt_strategy, dirname)
@@ -114,31 +127,32 @@ def get_response(design_prompt, module, model_type, outdir="", log=None, prompt_
     if prompt_strategy == 'Self-consistency':
         responses = []
         for i in range(5): 
-            response = generate_verilog(conv, model_type)
+            response = generate_verilog(chat, model_type)
             responses.append(reg.extract_verilog_code(response))
         # Select the most consistent response
         final_response = get_most_consistent_response(responses)
     elif prompt_strategy == 'Self-ask':
-        final_response = handle_self_ask(conv, model_type, module)
+        final_response = handle_self_ask(chat, model_type, module)
     elif prompt_strategy == 'Self-calibration':
-        response = generate_verilog(conv, model_type)
+        response = generate_verilog(chat, model_type)
         feedback_sys_prompt = 'You are an expert in Verilog code verification. Your task is to determine whether the provided Verilog code is correct. Respond with only "yes" if the code is correct or "no" if the code is incorrect. Do not provide any explanations, comments, or additional information. Simply answer "yes" or "no".'
         verilog_code = reg.extract_verilog_code(response)
-        feedback_response = generate_response(feedback_sys_prompt, verilog_code, model_type).strip().lower()
+        feedback_response = generate_response(feedback_sys_prompt, verilog_code, model_type, chat=chat).strip().lower()
         if feedback_response == "no":
             feedback_sys_prompt = 'You are an expert in Verilog coding and digital design. Your task is to review and correct the provided Verilog code. Identify and fix any syntax errors, logical errors, or common pitfalls in the code. Ensure that the corrected code is functional and meets the specifications provided. Respond with only the corrected Verilog code. Do not include any explanations or additional text.'
             prompt = design_prompt + "/nsolution:/n" + verilog_code
-            final_response = generate_response(feedback_sys_prompt, prompt, model_type)
+            final_response = generate_response(feedback_sys_prompt, prompt, model_type, chat=chat)
         else:
             final_response = response
     else:
-        final_response = generate_verilog(conv, model_type)
+        final_response = generate_verilog(chat, model_type)
 
     with open(filename, 'w') as file:
         file.write(final_response)
 
     print(f"Response written to {filename}")
     return final_response
+
 
 def handle_self_ask(conv, model_type, module):
     """
@@ -268,7 +282,10 @@ def main():
     else:
         logfile = None
 
-    get_response(prompt, module, model, outdir, logfile, prompt_strategy)
+
+    chat = stat.chat
+
+    get_response(prompt, module, model, outdir, logfile, prompt_strategy,chat=chat)
 
 if __name__ == "__main__":
     main()
